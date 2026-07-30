@@ -104,6 +104,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const renderAppSwitcherDropdown = () => (
     <div
+      className="app-switcher-dropdown"
       style={{
         position: 'absolute',
         right: platform !== 'hotstar' ? 0 : 'auto',
