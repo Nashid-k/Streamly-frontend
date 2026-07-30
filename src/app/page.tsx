@@ -295,8 +295,6 @@ export default function Home() {
   // Initial Data Fetching & Dynamic Platform Switching Sync
   useEffect(() => {
     let isMounted = true;
-    setIsLoadingPage(true);
-    setHasCompletedInitialLoad(false);
     
     async function loadData() {
       try {
