@@ -499,6 +499,7 @@ input:focus-visible,
 @keyframes spin { to { transform: rotate(360deg); } }
 .eyebrow { color: var(--primary-color) !important; font-size: .78rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
 
+main.hotstar-main-content { padding-left: 96px; }
 
 /* ───────────── COMPLETE RESPONSIVE DESIGN SYSTEM (Mobile & Tablet) ───────────── */
 
@@ -576,7 +577,7 @@ input:focus-visible,
   nav.desktop-nav-items { display: none !important; }
   nav.mobile-bottom-nav { display: flex !important; z-index: 2500 !important; }
   aside.hotstar-sidebar { display: none !important; }
-  main.hotstar-main-content { margin-left: 0 !important; width: 100% !important; }
+  main.hotstar-main-content { margin-left: 0 !important; padding-left: 0 !important; width: 100% !important; }
   header.hotstar-mobile-header { display: flex !important; }
 
   /* App Switcher Dropdown Mobile Positioning */

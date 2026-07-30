@@ -606,7 +606,7 @@ export default function Home() {
   }, [activeDetailMovie, allMovies]);
 
   return (
-    <main style={{ minHeight: '100vh', backgroundColor: 'var(--bg-color)', color: '#FFF', width: '100%', position: 'relative', paddingLeft: platform === 'hotstar' ? '96px' : '0' }}>
+    <main className={platform === 'hotstar' ? 'hotstar-main-content' : ''} style={{ minHeight: '100vh', backgroundColor: 'var(--bg-color)', color: '#FFF', width: '100%', position: 'relative' }}>
       {/* Top Navigation Bar with Status Bar Genre & Language Dropdowns */}
       <Navbar
         activeTab={activeTab}
