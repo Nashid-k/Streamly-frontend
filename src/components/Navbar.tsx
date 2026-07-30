@@ -175,6 +175,40 @@ export const Navbar: React.FC<NavbarProps> = ({
   if (platform === 'hotstar') {
     return (
       <>
+        {/* Hotstar Mobile Top Header (<768px) */}
+        <header className="hotstar-mobile-header" style={{ display: 'none', position: 'fixed', top: 0, left: 0, right: 0, height: '54px', background: 'rgba(15, 16, 20, 0.95)', backdropFilter: 'blur(12px)', borderBottom: '1px solid rgba(255,255,255,0.08)', zIndex: 1000, padding: '0 12px', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }} onClick={() => setActiveTab('home')}>
+            <img src="https://secure-media.hotstarext.com/web-assets/prod/images/brand-logos/disney-hotstar-logo-dark.svg" alt="Disney+ Hotstar" style={{ height: '28px' }} />
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+              <button onClick={() => setIsSearchOpen(!isSearchOpen)} style={{ background: 'none', border: 'none', color: '#FFF', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+                <Search size={20} color="#1F80E0" />
+              </button>
+              {isSearchOpen && (
+                <input type="text" placeholder="Search" value={searchQuery} onChange={(e) => onSearchChange(e.target.value)} autoFocus onBlur={() => { if (!searchQuery) setIsSearchOpen(false); }} style={{ background: 'rgba(0, 0, 0, 0.85)', border: '1px solid #1F80E0', color: '#FFF', padding: '6px 10px', marginLeft: '6px', width: '150px', fontSize: '0.85rem', outline: 'none', borderRadius: '6px' }} />
+              )}
+            </div>
+
+            <div style={{ position: 'relative' }} ref={appSwitcherRef}>
+              <button onClick={() => setShowAppSwitcher(!showAppSwitcher)} style={{ background: 'none', border: 'none', color: '#FFF', cursor: 'pointer', display: 'flex', alignItems: 'center' }} title="Switch Platform">
+                <Grip size={20} color="#1F80E0" />
+              </button>
+              {showAppSwitcher && renderAppSwitcherDropdown()}
+            </div>
+
+            <div onClick={onOpenProfileModal} style={{ width: '28px', height: '28px', borderRadius: '50%', overflow: 'hidden', cursor: 'pointer', border: '1.5px solid #1F80E0' }}>
+              {currentProfile?.avatarUrl ? (
+                <img src={currentProfile.avatarUrl} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                <div style={{ width: '100%', height: '100%', background: '#333', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Settings size={14} color="#FFF" /></div>
+              )}
+            </div>
+          </div>
+        </header>
+
+        {/* Hotstar Desktop Sidebar (>768px) */}
         {isHotstarExpanded && (
           <div 
             style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1999 }}
@@ -235,6 +269,26 @@ export const Navbar: React.FC<NavbarProps> = ({
              {showAppSwitcher && renderAppSwitcherDropdown()}
           </div>
         </aside>
+
+        {/* Hotstar Mobile Bottom Nav Bar (<768px) */}
+        <nav className="mobile-bottom-nav" style={{ display: 'none', position: 'fixed', bottom: 0, left: 0, right: 0, height: '56px', background: 'rgba(15, 16, 20, 0.96)', backdropFilter: 'blur(12px)', borderTop: '1px solid rgba(255,255,255,0.1)', zIndex: 2000, alignItems: 'center', justifyContent: 'space-around', padding: '0 8px' }}>
+          <button onClick={() => setActiveTab('home')} style={{ background: 'none', border: 'none', color: activeTab === 'home' ? '#1F80E0' : '#8F98B2', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', fontSize: '0.65rem', fontWeight: 700, cursor: 'pointer' }}>
+            <Home size={18} />
+            Home
+          </button>
+          <button onClick={() => setActiveTab('movies')} style={{ background: 'none', border: 'none', color: activeTab === 'movies' ? '#1F80E0' : '#8F98B2', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', fontSize: '0.65rem', fontWeight: 700, cursor: 'pointer' }}>
+            <Film size={18} />
+            Movies
+          </button>
+          <button onClick={() => setActiveTab('series')} style={{ background: 'none', border: 'none', color: activeTab === 'series' ? '#1F80E0' : '#8F98B2', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', fontSize: '0.65rem', fontWeight: 700, cursor: 'pointer' }}>
+            <Tv size={18} />
+            TV
+          </button>
+          <button onClick={() => setActiveTab('mylist')} style={{ background: 'none', border: 'none', color: activeTab === 'mylist' ? '#1F80E0' : '#8F98B2', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', fontSize: '0.65rem', fontWeight: 700, cursor: 'pointer' }}>
+            <Plus size={18} />
+            My Space
+          </button>
+        </nav>
       </>
     );
   }

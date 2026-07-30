@@ -507,6 +507,7 @@ input:focus-visible,
   /* 1. Header & Brand Navigation */
   header div.navbar { padding: 0 12px !important; height: 54px !important; }
   header div.navbar > div:first-child { gap: 8px !important; }
+  header.hotstar-mobile-header { display: flex !important; }
   .desktop-nav-items { display: none !important; }
   .mobile-bottom-nav { display: flex !important; height: 58px !important; }
   .hotstar-sidebar { display: none !important; }
