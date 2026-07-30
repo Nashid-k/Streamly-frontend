@@ -102,6 +102,22 @@ export const MovieCard: React.FC<MovieCardProps> = ({
             <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#FFF' }}>{movie.title}</span>
           </div>
         )}
+        {/* Hotstar Authentic Badges */}
+        {movie.isRecentlyAdded && !movie.isUpcoming && !movie.isLeavingSoon && (
+          <div style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 10, background: '#1F80E0', color: '#FFF', padding: '2px 8px', fontSize: '0.65rem', fontWeight: 800, borderRadius: '4px', textTransform: 'uppercase', letterSpacing: '0.04em', boxShadow: '0 2px 8px rgba(0,0,0,0.6)' }}>
+            NEW
+          </div>
+        )}
+        {movie.isLeavingSoon && (
+          <div style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 10, background: 'rgba(15,16,20,0.85)', border: '1px solid #F59E0B', color: '#F59E0B', padding: '2px 8px', fontSize: '0.65rem', fontWeight: 800, borderRadius: '4px', textTransform: 'uppercase', letterSpacing: '0.04em', backdropFilter: 'blur(4px)' }}>
+            LEAVING SOON
+          </div>
+        )}
+        {movie.isUpcoming && (
+          <div style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 10, background: '#F59E0B', color: '#000', padding: '2px 8px', fontSize: '0.65rem', fontWeight: 900, borderRadius: '4px', textTransform: 'uppercase', letterSpacing: '0.04em', boxShadow: '0 2px 8px rgba(0,0,0,0.6)' }}>
+            COMING SOON
+          </div>
+        )}
         {/* Hotstar Gradient Hover Sheet */}
         <div style={{
           position: 'absolute', inset: 0,
@@ -178,6 +194,22 @@ export const MovieCard: React.FC<MovieCardProps> = ({
         <div style={{ position: 'absolute', top: 0, left: 0, zIndex: 10, background: '#00A8E1', padding: '2px 8px', borderBottomRightRadius: '4px', fontSize: '0.65rem', fontWeight: 900, color: '#FFF', fontStyle: 'italic', letterSpacing: '0.04em' }}>
           prime
         </div>
+        {/* Prime Authentic Badges */}
+        {movie.isRecentlyAdded && !movie.isUpcoming && !movie.isLeavingSoon && (
+          <div style={{ position: 'absolute', top: '6px', right: '6px', zIndex: 10, background: '#00A8E1', color: '#FFF', padding: '2px 6px', fontSize: '0.6rem', fontWeight: 800, borderRadius: '3px', textTransform: 'uppercase', letterSpacing: '0.04em', boxShadow: '0 2px 6px rgba(0,0,0,0.7)' }}>
+            NEWLY ADDED
+          </div>
+        )}
+        {movie.isLeavingSoon && (
+          <div style={{ position: 'absolute', top: '6px', right: '6px', zIndex: 10, background: 'rgba(15,23,30,0.9)', border: '1px solid #FF9900', color: '#FF9900', padding: '2px 6px', fontSize: '0.6rem', fontWeight: 800, borderRadius: '3px', textTransform: 'uppercase', letterSpacing: '0.04em', backdropFilter: 'blur(4px)' }}>
+            LEAVING PRIME
+          </div>
+        )}
+        {movie.isUpcoming && (
+          <div style={{ position: 'absolute', top: '6px', right: '6px', zIndex: 10, background: '#FF9900', color: '#000', padding: '2px 6px', fontSize: '0.6rem', fontWeight: 900, borderRadius: '3px', textTransform: 'uppercase', letterSpacing: '0.04em', boxShadow: '0 2px 6px rgba(0,0,0,0.7)' }}>
+            COMING SOON
+          </div>
+        )}
         {/* Prime Hover Overlay */}
         <div style={{
           position: 'absolute', inset: 0,
@@ -245,20 +277,20 @@ export const MovieCard: React.FC<MovieCardProps> = ({
             <img src="https://upload.wikimedia.org/wikipedia/commons/1/18/Netflix_2016_N_logo.svg" alt="N" style={{ height: '14px' }} />
           </div>
         )}
-        {/* Badges */}
+        {/* Netflix Authentic Badges */}
         {movie.isRecentlyAdded && !movie.isUpcoming && !movie.isLeavingSoon && (
-          <div style={{ position: 'absolute', top: '8px', right: '8px', zIndex: 10, background: '#E50914', color: '#FFF', padding: '2px 4px', fontSize: '0.65rem', fontWeight: 900, borderRadius: '3px', textTransform: 'uppercase', boxShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
-            Recently Added
+          <div style={{ position: 'absolute', top: '8px', right: '8px', zIndex: 10, background: '#E50914', color: '#FFF', padding: '2px 6px', fontSize: '0.62rem', fontWeight: 900, borderRadius: '2px', textTransform: 'uppercase', letterSpacing: '0.05em', boxShadow: '0 2px 6px rgba(0,0,0,0.8)' }}>
+            NEW
           </div>
         )}
         {movie.isLeavingSoon && (
-          <div style={{ position: 'absolute', top: '8px', right: '8px', zIndex: 10, background: '#E50914', color: '#FFF', padding: '2px 4px', fontSize: '0.65rem', fontWeight: 900, borderRadius: '3px', textTransform: 'uppercase', boxShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
-            Leaving Soon
+          <div style={{ position: 'absolute', top: '8px', right: '8px', zIndex: 10, background: '#E50914', color: '#FFF', padding: '2px 6px', fontSize: '0.62rem', fontWeight: 900, borderRadius: '2px', textTransform: 'uppercase', letterSpacing: '0.05em', boxShadow: '0 2px 6px rgba(0,0,0,0.8)' }}>
+            LEAVING SOON
           </div>
         )}
         {movie.isUpcoming && (
-          <div style={{ position: 'absolute', top: '8px', right: '8px', zIndex: 10, background: '#E50914', color: '#FFF', padding: '2px 4px', fontSize: '0.65rem', fontWeight: 900, borderRadius: '3px', textTransform: 'uppercase', boxShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
-            Coming Soon
+          <div style={{ position: 'absolute', top: '8px', right: '8px', zIndex: 10, background: '#E50914', color: '#FFF', padding: '2px 6px', fontSize: '0.62rem', fontWeight: 900, borderRadius: '2px', textTransform: 'uppercase', letterSpacing: '0.05em', boxShadow: '0 2px 6px rgba(0,0,0,0.8)' }}>
+            COMING SOON
           </div>
         )}
         {imgSrc ? (
