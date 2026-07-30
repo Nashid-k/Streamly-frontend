@@ -55,11 +55,18 @@ export const PlatformProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const setPlatform = (p: Platform) => {
     localStorage.setItem('app_platform', p);
-    sessionStorage.setItem('is_switching', 'true');
     document.documentElement.setAttribute('data-theme', p);
     setPlatformState(p);
-    // Reload the page to reset all data and re-fetch with new platform
-    window.location.reload();
+    if (p === 'nprime') {
+      document.title = 'Prime Video';
+      setFavicon('nprime');
+    } else if (p === 'hotstar') {
+      document.title = 'Disney+ Hotstar';
+      setFavicon('hotstar');
+    } else {
+      document.title = 'Netflix';
+      setFavicon('nflix');
+    }
   };
 
   return (

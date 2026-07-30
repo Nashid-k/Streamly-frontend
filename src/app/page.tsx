@@ -281,15 +281,12 @@ export default function Home() {
   }, [isLoadingPage]);
   const [isSwitching, setIsSwitching] = useState(false);
 
-  // Initial Data Fetching & URL Sync
+  // Initial Data Fetching & Dynamic Platform Switching Sync
   useEffect(() => {
     let isMounted = true;
-    if (typeof window !== 'undefined') {
-      if (sessionStorage.getItem('is_switching')) {
-        setIsSwitching(true);
-        sessionStorage.removeItem('is_switching');
-      }
-    }
+    setIsLoadingPage(true);
+    setHasCompletedInitialLoad(false);
+    
     async function loadData() {
       try {
         const [featuredResult, categoriesResult, top10Result, userResult] = await Promise.allSettled([
@@ -409,7 +406,7 @@ export default function Home() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [platform]);
 
   // Live Search Handling
   useEffect(() => {
