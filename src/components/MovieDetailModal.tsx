@@ -34,15 +34,26 @@ function useMovieDetails(movie: Movie | null, selectedSeason: number, platform: 
     let isMounted = true;
     if (!movie) return;
     setIsLoadingDetails(true);
-    setIsLoadingEpisodes(movie.isSeries);
+    const isTvShow = Boolean(movie.isSeries || movie.id?.includes('-tv-') || movie.seasonsCount);
+    setIsLoadingEpisodes(isTvShow);
 
     // Fetch full movie details
     fetchMovieById(movie.id)
-      .then(data => { if (isMounted) setDetailedMovie(data); })
+      .then(data => { 
+        if (isMounted) {
+          setDetailedMovie(data);
+          const isTV = Boolean(data?.isSeries || data?.seasonsCount || movie.isSeries || movie.id?.includes('-tv-'));
+          if (isTV && selectedSeason) {
+            fetchSeasonEpisodes(movie.id, selectedSeason)
+              .then(epData => { if (isMounted) setEpisodes(Array.isArray(epData) ? epData : []); })
+              .catch(() => { if (isMounted) setEpisodes([]); });
+          }
+        } 
+      })
       .catch(() => { if (isMounted) setDetailedMovie(movie); })
       .finally(() => { if (isMounted) setIsLoadingDetails(false); });
 
-    if (movie.isSeries) {
+    if (isTvShow) {
       fetchSeasonEpisodes(movie.id, selectedSeason)
         .then(data => { if (isMounted) setEpisodes(Array.isArray(data) ? data : []); })
         .catch(() => { if (isMounted) setEpisodes([]); })
@@ -261,19 +272,17 @@ function NetflixModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
             <div><span style={{ color: '#777' }}>Genres: </span><span style={{ color: '#FFF' }}>{displayMovie?.genres?.join(', ')}</span></div>
             <div><span style={{ color: '#777' }}>This show is: </span><span style={{ color: '#FFF' }}>{displayMovie?.tags?.slice(0,3).join(', ')}</span></div>
           </div>
-        </div>
-
-        <div className="detail-bottom-section" style={{ padding: '0 40px 40px 40px' }}>
-          {movie.isSeries ? (
+        </div>        <div className="detail-bottom-section" style={{ padding: '0 40px 40px 40px' }}>
+          {(displayMovie?.isSeries || movie.isSeries || (displayMovie?.seasonsCount ?? 0) > 0) ? (
             <div style={{ display: 'flex', gap: '30px', borderBottom: '2px solid #404040', marginBottom: '20px' }}>
               <button onClick={() => setActiveTab('episodes')} style={{ background: 'none', border: 'none', color: activeTab === 'episodes' ? '#FFF' : '#808080', fontSize: '1.2rem', fontWeight: 700, paddingBottom: '16px', borderBottom: activeTab === 'episodes' ? '4px solid #E50914' : '4px solid transparent', cursor: 'pointer', transition: 'color 0.2s' }}>Episodes</button>
               <button onClick={() => setActiveTab('similar')} style={{ background: 'none', border: 'none', color: activeTab === 'similar' ? '#FFF' : '#808080', fontSize: '1.2rem', fontWeight: 700, paddingBottom: '16px', borderBottom: activeTab === 'similar' ? '4px solid #E50914' : '4px solid transparent', cursor: 'pointer', transition: 'color 0.2s' }}>More Like This</button>
             </div>
           ) : (
-            <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '20px' }}>More Like This</h3>
+            <h3 style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '20px' }}>More Like This</h3>
           )}
 
-          {(!movie.isSeries || activeTab === 'similar') && (
+          {(!(displayMovie?.isSeries || movie.isSeries || (displayMovie?.seasonsCount ?? 0) > 0) || activeTab === 'similar') && (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '16px' }}>
               {similarMovies.slice(0, 9).map(sim => (
                 <div key={sim.id} onClick={() => onOpenDetails(sim)} style={{ backgroundColor: '#2F2F2F', borderRadius: '4px', overflow: 'hidden', cursor: 'pointer' }}>
@@ -293,7 +302,7 @@ function NetflixModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
             </div>
           )}
 
-          {movie.isSeries && activeTab === 'episodes' && (
+          {(displayMovie?.isSeries || movie.isSeries || (displayMovie?.seasonsCount ?? 0) > 0) && activeTab === 'episodes' && (
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                 <span style={{ fontSize: '1.1rem', color: '#D2D2D2' }}>Season {selectedSeason}</span>
@@ -442,12 +451,12 @@ function PrimeModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, isM
           </p>
 
           <div style={{ display: 'flex', gap: '20px', borderBottom: '1px solid rgba(255,255,255,0.1)', marginTop: '30px', marginBottom: '24px' }}>
-            {movie.isSeries && <button onClick={() => setActiveTab('episodes')} style={{ background: 'none', border: 'none', color: activeTab === 'episodes' ? '#FFF' : '#8197a4', fontSize: '1.1rem', fontWeight: 700, paddingBottom: '12px', borderBottom: activeTab === 'episodes' ? '2px solid #FFF' : '2px solid transparent', cursor: 'pointer' }}>Episodes</button>}
+            {(displayMovie?.isSeries || movie.isSeries || (displayMovie?.seasonsCount ?? 0) > 0) && <button onClick={() => setActiveTab('episodes')} style={{ background: 'none', border: 'none', color: activeTab === 'episodes' ? '#FFF' : '#8197a4', fontSize: '1.1rem', fontWeight: 700, paddingBottom: '12px', borderBottom: activeTab === 'episodes' ? '2px solid #FFF' : '2px solid transparent', cursor: 'pointer' }}>Episodes</button>}
             <button onClick={() => setActiveTab('related')} style={{ background: 'none', border: 'none', color: activeTab === 'related' ? '#FFF' : '#8197a4', fontSize: '1.1rem', fontWeight: 700, paddingBottom: '12px', borderBottom: activeTab === 'related' ? '2px solid #FFF' : '2px solid transparent', cursor: 'pointer' }}>Related</button>
             <button onClick={() => setActiveTab('details')} style={{ background: 'none', border: 'none', color: activeTab === 'details' ? '#FFF' : '#8197a4', fontSize: '1.1rem', fontWeight: 700, paddingBottom: '12px', borderBottom: activeTab === 'details' ? '2px solid #FFF' : '2px solid transparent', cursor: 'pointer' }}>Details</button>
           </div>
 
-          {activeTab === 'episodes' && movie.isSeries && (
+          {activeTab === 'episodes' && (displayMovie?.isSeries || movie.isSeries || (displayMovie?.seasonsCount ?? 0) > 0) && (
              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '10px' }}>
                 <select value={selectedSeason} onChange={e => setSelectedSeason(Number(e.target.value))} style={{ background: '#19232d', color: '#FFF', border: '1px solid rgba(255,255,255,0.2)', padding: '10px 16px', borderRadius: '4px', fontSize: '1rem', cursor: 'pointer', width: 'fit-content', outline: 'none' }}>
@@ -615,11 +624,11 @@ function HotstarModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
           </div>
 
           <div style={{ display: 'flex', gap: '24px', borderBottom: '1px solid rgba(255,255,255,0.1)', marginBottom: '24px' }}>
-            {movie.isSeries && <button onClick={() => setActiveTab('episodes')} style={{ background: 'none', border: 'none', color: activeTab === 'episodes' ? '#FFF' : '#8F98B0', fontSize: '1.1rem', fontWeight: 700, paddingBottom: '12px', borderBottom: activeTab === 'episodes' ? '3px solid #FFF' : '3px solid transparent', cursor: 'pointer' }}>Episodes</button>}
+            {(displayMovie?.isSeries || movie.isSeries || (displayMovie?.seasonsCount ?? 0) > 0) && <button onClick={() => setActiveTab('episodes')} style={{ background: 'none', border: 'none', color: activeTab === 'episodes' ? '#FFF' : '#8F98B0', fontSize: '1.1rem', fontWeight: 700, paddingBottom: '12px', borderBottom: activeTab === 'episodes' ? '3px solid #FFF' : '3px solid transparent', cursor: 'pointer' }}>Episodes</button>}
             <button onClick={() => setActiveTab('more')} style={{ background: 'none', border: 'none', color: activeTab === 'more' ? '#FFF' : '#8F98B0', fontSize: '1.1rem', fontWeight: 700, paddingBottom: '12px', borderBottom: activeTab === 'more' ? '3px solid #FFF' : '3px solid transparent', cursor: 'pointer' }}>More Like This</button>
           </div>
 
-          {activeTab === 'episodes' && movie.isSeries && (
+          {activeTab === 'episodes' && (displayMovie?.isSeries || movie.isSeries || (displayMovie?.seasonsCount ?? 0) > 0) && (
              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '10px' }}>
                 <select value={selectedSeason} onChange={e => setSelectedSeason(Number(e.target.value))} style={{ background: '#191c24', color: '#FFF', border: '1px solid rgba(31,128,224,0.4)', padding: '10px 16px', borderRadius: '6px', fontSize: '1rem', cursor: 'pointer', width: 'fit-content', outline: 'none' }}>
