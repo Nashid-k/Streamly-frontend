@@ -70,6 +70,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
       aria-modal="true"
     >
       <div
+        className="onboarding-dialog"
         style={{
           width: '100%',
           maxWidth: '400px',

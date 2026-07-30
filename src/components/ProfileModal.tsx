@@ -23,6 +23,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div
+        className="profile-dialog"
         onClick={(e) => e.stopPropagation()}
         style={{
           display: 'flex',
@@ -35,14 +36,14 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
           animation: 'scaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       >
-        <h1 style={{ fontSize: '3.4rem', fontWeight: 900, color: '#FFF', marginBottom: '12px', letterSpacing: '-0.03em', textAlign: 'center' }}>
+        <h1 className="profile-title" style={{ fontSize: '3.4rem', fontWeight: 900, color: '#FFF', marginBottom: '12px', letterSpacing: '-0.03em', textAlign: 'center' }}>
           {(platform === 'nprime' || platform === 'hotstar') ? "Who's watching?" : "Who's Watching?"}
         </h1>
-        <p style={{ color: '#AAA', fontSize: '1.05rem', marginBottom: '48px', textAlign: 'center' }}>
+        <p className="profile-subtitle" style={{ color: '#AAA', fontSize: '1.05rem', marginBottom: '48px', textAlign: 'center' }}>
           Select your profile to customize watch history, recommendations, and watchlist.
         </p>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '36px', flexWrap: 'wrap', justifyContent: 'center' }}>
+        <div className="profile-grid" style={{ display: 'flex', alignItems: 'center', gap: '36px', flexWrap: 'wrap', justifyContent: 'center' }}>
           {profiles.map((prof) => {
             const isSelected = currentProfile?.id === prof.id;
             return (
@@ -64,6 +65,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
                 }}
               >
                 <div
+                  className="profile-avatar-box"
                   style={{
                     position: 'relative',
                     width: '140px',

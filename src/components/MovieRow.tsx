@@ -93,6 +93,7 @@ export const MovieRow: React.FC<MovieRowProps> = ({
         {/* Left Arrow Button */}
         {!isAtStart && (
         <button
+          className="row-nav-btn left"
           onClick={() => handleScroll('left')}
           aria-label={`Scroll ${title} left`}
           style={{
@@ -199,6 +200,7 @@ export const MovieRow: React.FC<MovieRowProps> = ({
         {/* Right Arrow Button */}
         {!isAtEnd && (
         <button
+          className="row-nav-btn right"
           onClick={() => handleScroll('right')}
           aria-label={`Scroll ${title} right`}
           style={{

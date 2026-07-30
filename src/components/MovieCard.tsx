@@ -198,7 +198,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
         overflow: 'visible',
       }}
     >
-      <div style={{
+      <div className="netflix-card-inner" style={{
         position: 'absolute',
         top: 0, left: 0,
         width: `${netflixWidth}px`,
@@ -233,6 +233,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
           </div>
         )}
         <img
+          className="netflix-card-img"
           src={imgSrc}
           alt={movie.title}
           onLoad={() => setIsImageLoaded(true)}
