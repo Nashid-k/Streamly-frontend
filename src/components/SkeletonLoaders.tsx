@@ -1,6 +1,90 @@
 import React from 'react';
 import { usePlatform } from './PlatformContext';
 
+export const PlatformInitialLoader = () => {
+  const { platform } = usePlatform();
+
+  if (platform === 'nflix') {
+    return (
+      <div style={{
+        position: 'fixed', inset: 0, zIndex: 9999,
+        background: '#141414',
+        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'
+      }}>
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg"
+          alt="Netflix"
+          style={{ height: '56px', width: 'auto', marginBottom: '32px', animation: 'scalePulse 1.5s infinite ease-in-out' }}
+        />
+        <div style={{
+          width: '50px', height: '50px',
+          border: '3px solid rgba(229, 9, 20, 0.2)',
+          borderTop: '3px solid #E50914',
+          borderRadius: '50%',
+          animation: 'spin 0.8s linear infinite'
+        }} />
+      </div>
+    );
+  }
+
+  if (platform === 'nprime') {
+    return (
+      <div style={{
+        position: 'fixed', inset: 0, zIndex: 9999,
+        background: '#0F171E',
+        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'
+      }}>
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/f/f1/Prime_Video.png"
+          alt="Prime Video"
+          style={{ height: '48px', width: 'auto', marginBottom: '32px', filter: 'drop-shadow(0 0 12px rgba(0,168,225,0.4))' }}
+        />
+        <div style={{
+          width: '200px', height: '4px',
+          background: 'rgba(255,255,255,0.1)',
+          borderRadius: '2px', overflow: 'hidden', position: 'relative'
+        }}>
+          <div style={{
+            position: 'absolute', top: 0, bottom: 0, width: '40%',
+            background: 'linear-gradient(90deg, transparent, #00A8E1, transparent)',
+            animation: 'primeShimmer 1.2s infinite ease-in-out'
+          }} />
+        </div>
+      </div>
+    );
+  }
+
+  // Hotstar Platform Loader
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 9999,
+      background: '#0F1014',
+      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'
+    }}>
+      <img
+        src="https://secure-media.hotstarext.com/web-assets/prod/images/brand-logos/disney-hotstar-logo-dark.svg"
+        alt="Disney+ Hotstar"
+        style={{ height: '52px', width: 'auto', marginBottom: '32px' }}
+      />
+      <div style={{
+        display: 'flex', gap: '8px'
+      }}>
+        {[0, 1, 2].map((idx) => (
+          <div
+            key={idx}
+            style={{
+              width: '12px', height: '12px', borderRadius: '50%',
+              backgroundColor: '#1F80E0',
+              animation: 'hotstarDotPulse 1.2s infinite ease-in-out',
+              animationDelay: `${idx * 0.2}s`
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
 export const HeroSkeleton = () => {
   return (
     <div style={{

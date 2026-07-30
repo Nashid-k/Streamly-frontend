@@ -11,7 +11,7 @@ import { ProfileModal } from '../components/ProfileModal';
 import { OnboardingModal } from '../components/OnboardingModal';
 import { MovieCard } from '../components/MovieCard';
 import { usePlatform } from '../components/PlatformContext';
-import { HeroSkeleton, MovieRowSkeleton } from '../components/SkeletonLoaders';
+import { HeroSkeleton, MovieRowSkeleton, PlatformInitialLoader } from '../components/SkeletonLoaders';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import {
@@ -625,14 +625,8 @@ export default function Home() {
         onOpenOnboardingModal={() => setShowOnboardingModal(true)}
       />
 
-      {/* Overlay Full-Page Loader (Skeletons instead of spinner) */}
-      {!hasCompletedInitialLoad && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 999, background: 'var(--bg-color)', overflowY: 'hidden' }}>
-          <HeroSkeleton />
-          <MovieRowSkeleton />
-          <MovieRowSkeleton />
-        </div>
-      )}
+      {/* Platform-Authentic Full-Page Initial Loader */}
+      {!hasCompletedInitialLoad && <PlatformInitialLoader />}
 
       {/* Main Page Content Router */}
       <div style={{ opacity: hasCompletedInitialLoad ? 1 : 0, transition: 'opacity 0.3s' }}>
