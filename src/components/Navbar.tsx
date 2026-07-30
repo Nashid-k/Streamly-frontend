@@ -144,7 +144,6 @@ export const Navbar: React.FC<NavbarProps> = ({
           style={{ background: 'transparent', border: 'none', padding: '12px 14px', borderRadius: '8px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px', transition: 'all 0.2s ease', touchAction: 'manipulation' }}
         >
           <span style={{ fontSize: '1.25rem', fontWeight: 900, color: '#E50914', letterSpacing: '-0.02em', fontFamily: 'Arial, sans-serif', textShadow: '0 2px 10px rgba(229,9,20,0.35)' }}>NETFLIX</span>
-          <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#888', letterSpacing: '0.04em' }}>netflix.com</span>
         </button>
       )}
       {platform !== 'nprime' && (
@@ -159,7 +158,6 @@ export const Navbar: React.FC<NavbarProps> = ({
             <span style={{ fontSize: '1.2rem', fontWeight: 900, color: '#FFF', letterSpacing: '-0.02em' }}>prime</span>
             <span style={{ fontSize: '1.2rem', fontWeight: 400, color: '#00A8E1', letterSpacing: '-0.02em' }}>video</span>
           </div>
-          <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#888', letterSpacing: '0.04em' }}>primevideo.com</span>
         </button>
       )}
       {platform !== 'hotstar' && (
@@ -174,7 +172,6 @@ export const Navbar: React.FC<NavbarProps> = ({
             <span style={{ fontSize: '1.15rem', fontWeight: 700, color: '#FFF', letterSpacing: '-0.02em' }}>Disney+</span>
             <span style={{ fontSize: '1.15rem', fontWeight: 900, color: '#1570E0', letterSpacing: '-0.02em' }}>hotstar</span>
           </div>
-          <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#888', letterSpacing: '0.04em' }}>hotstar.com</span>
         </button>
       )}
     </div>
@@ -310,13 +307,11 @@ export const Navbar: React.FC<NavbarProps> = ({
             {platform === 'nflix' && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }} onClick={() => setActiveTab('home')}>
                 <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" alt="Netflix" style={{ height: '24px' }} />
-                <span style={{ fontSize: '0.7rem', fontWeight: 700, color: '#E50914', background: 'rgba(229,9,20,0.15)', border: '1px solid rgba(229,9,20,0.3)', padding: '2px 6px', borderRadius: '3px', letterSpacing: '0.04em' }}>netflix.com</span>
               </div>
             )}
             {platform === 'nprime' && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }} onClick={() => setActiveTab('home')}>
                 <img src="https://upload.wikimedia.org/wikipedia/commons/f/f1/Prime_Video.png" alt="Prime Video" style={{ height: '32px' }} />
-                <span style={{ fontSize: '0.7rem', fontWeight: 700, color: '#00A8E1', background: 'rgba(0,168,225,0.15)', border: '1px solid rgba(0,168,225,0.3)', padding: '2px 6px', borderRadius: '3px', letterSpacing: '0.04em' }}>primevideo.com</span>
               </div>
             )}
             
