@@ -286,7 +286,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
 
       {/* Hotstar Specific Hero Carousel 5-Visible Thumbnail Bar with Scroll Arrows */}
       {platform === 'hotstar' && carouselMovies.length > 1 && (
-        <div style={{
+        <div className="hero-carousel-bar" style={{
           position: 'absolute',
           right: '4%',
           bottom: '36px',
