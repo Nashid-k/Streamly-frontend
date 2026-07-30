@@ -238,7 +238,7 @@ function NetflixModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
           </div>
         </div>
 
-        <div style={{ padding: '0 40px 40px 40px' }}>
+        <div className="detail-bottom-section" style={{ padding: '0 40px 40px 40px' }}>
           {movie.isSeries ? (
             <div style={{ display: 'flex', gap: '30px', borderBottom: '2px solid #404040', marginBottom: '20px' }}>
               <button onClick={() => setActiveTab('episodes')} style={{ background: 'none', border: 'none', color: activeTab === 'episodes' ? '#FFF' : '#808080', fontSize: '1.2rem', fontWeight: 700, paddingBottom: '16px', borderBottom: activeTab === 'episodes' ? '4px solid #E50914' : '4px solid transparent', cursor: 'pointer', transition: 'color 0.2s' }}>Episodes</button>
