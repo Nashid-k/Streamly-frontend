@@ -194,10 +194,11 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
           </div>
         )}
 
-        {/* Title Logo */}
-        {enrichedMovie.logoUrl ? (
-          <div style={{ marginBottom: '20px', minHeight: '80px', display: 'flex', alignItems: 'flex-end' }}>
+        {/* Title Logo / Stylized Title Text (Always visible, seamless logo swap) */}
+        <div style={{ marginBottom: '20px', minHeight: '80px', display: 'flex', alignItems: 'flex-end', position: 'relative' }}>
+          {enrichedMovie.logoUrl ? (
             <img
+              key={`logo-${enrichedMovie.id}`}
               src={enrichedMovie.logoUrl}
               alt={enrichedMovie.title}
               style={{
@@ -206,22 +207,21 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
                 objectFit: 'contain',
                 objectPosition: 'left bottom',
                 filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.9))',
+                animation: 'heroBackdropReveal 0.4s ease',
               }}
             />
-          </div>
-        ) : isLogoLoading ? (
-          <div style={{ marginBottom: '20px', height: '60px', width: '280px', background: 'rgba(255,255,255,0.08)', borderRadius: '8px', animation: 'pulse 1.5s infinite ease-in-out' }} />
-        ) : (
-          <h1
-            className="hero-title-text"
-            style={{
-              ...getFallbackTitleStyle(),
-              marginBottom: '16px',
-            }}
-          >
-            {enrichedMovie.title}
-          </h1>
-        )}
+          ) : (
+            <h1
+              className="hero-title-text"
+              style={{
+                ...getFallbackTitleStyle(),
+                marginBottom: '0px',
+              }}
+            >
+              {enrichedMovie.title}
+            </h1>
+          )}
+        </div>
 
         {/* Badges */}
         <div className="hero-meta-row" style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px', flexWrap: 'wrap' }}>
