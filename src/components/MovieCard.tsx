@@ -41,7 +41,11 @@ export const MovieCard: React.FC<MovieCardProps> = ({
   }
 
   const handleCardClick = () => {
-    onPlay(movie);
+    if (typeof window !== 'undefined' && window.innerWidth <= 768) {
+      onOpenDetails(movie);
+    } else {
+      onPlay(movie);
+    }
   };
 
   const handleMouseEnter = () => {
