@@ -361,11 +361,11 @@ export const MovieCard: React.FC<MovieCardProps> = ({
             </button>
           </div>
           {/* Info Row */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.75rem', fontWeight: 700, marginBottom: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.75rem', fontWeight: 700, marginBottom: '8px', flexWrap: 'wrap' }}>
             <span style={{ color: '#46d369' }}>{movie.matchScore}% Match</span>
-            <span style={{ border: '1px solid rgba(255,255,255,0.4)', padding: '0 4px', color: '#FFF' }}>16+</span>
-            <span style={{ color: '#FFF' }}>{movie.isSeries ? '2 Seasons' : '2h 14m'}</span>
-            <span style={{ border: '1px solid rgba(255,255,255,0.4)', padding: '0 4px', fontSize: '0.6rem', color: '#FFF', borderRadius: '2px' }}>HD</span>
+            <span style={{ border: '1px solid rgba(255,255,255,0.4)', padding: '0 4px', color: '#FFF' }}>{movie.maturityRating || 'U/A 13+'}</span>
+            <span style={{ color: '#FFF' }}>{movie.duration || (movie.isSeries ? 'Series' : 'Film')}</span>
+            <span style={{ border: '1px solid rgba(255,255,255,0.4)', padding: '0 4px', fontSize: '0.65rem', color: '#FFF', borderRadius: '2px', fontWeight: 800 }}>HD</span>
           </div>
           {/* Genre Row */}
           <div style={{ color: '#FFF', fontSize: '0.75rem' }}>
