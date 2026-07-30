@@ -61,19 +61,53 @@ export const REGIONAL_LANGUAGES: Record<string, { countryName: string; languages
 };
 
 export async function detectUserRegion(): Promise<RegionInfo> {
+  // 1. Try ipapi.co
   try {
-    const res = await fetch('https://ipapi.co/json/', { signal: AbortSignal.timeout(3000) });
+    const res = await fetch('https://ipapi.co/json/', { signal: AbortSignal.timeout(2500) });
     if (res.ok) {
       const data = await res.json();
-      const code = data.country_code || 'US';
-      const config = REGIONAL_LANGUAGES[code] || REGIONAL_LANGUAGES.DEFAULT;
-      return {
-        countryCode: code,
-        countryName: data.country_name || config.countryName,
-        languages: config.languages,
-      };
+      if (data.country_code) {
+        const code = data.country_code;
+        const config = REGIONAL_LANGUAGES[code] || REGIONAL_LANGUAGES.DEFAULT;
+        return {
+          countryCode: code,
+          countryName: data.country_name || config.countryName,
+          languages: config.languages,
+        };
+      }
     }
   } catch (err) {}
+
+  // 2. Try ip-api.com fallback
+  try {
+    const res = await fetch('http://ip-api.com/json/', { signal: AbortSignal.timeout(2500) });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.countryCode) {
+        const code = data.countryCode;
+        const config = REGIONAL_LANGUAGES[code] || REGIONAL_LANGUAGES.DEFAULT;
+        return {
+          countryCode: code,
+          countryName: data.country || config.countryName,
+          languages: config.languages,
+        };
+      }
+    }
+  } catch (err) {}
+
+  // 3. Fallback to Browser Timezone & Preferred Languages (e.g. Asia/Kolkata -> IN)
+  if (typeof Intl !== 'undefined' && Intl.DateTimeFormat) {
+    try {
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+      if (tz.includes('Kolkata') || tz.includes('Calcutta') || tz.includes('India')) {
+        return {
+          countryCode: 'IN',
+          countryName: 'India 🇮🇳',
+          languages: REGIONAL_LANGUAGES.IN.languages,
+        };
+      }
+    } catch (e) {}
+  }
 
   if (typeof navigator !== 'undefined') {
     const langs = (navigator.languages || [navigator.language || '']).join(',').toLowerCase();
@@ -94,8 +128,8 @@ export async function detectUserRegion(): Promise<RegionInfo> {
   }
 
   return {
-    countryCode: 'US',
-    countryName: 'United States 🇺🇸',
-    languages: REGIONAL_LANGUAGES.US.languages,
+    countryCode: 'IN',
+    countryName: 'India 🇮🇳',
+    languages: REGIONAL_LANGUAGES.IN.languages,
   };
 }
