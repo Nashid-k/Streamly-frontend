@@ -31,13 +31,12 @@ export const MovieCard: React.FC<MovieCardProps> = ({
   
   // Image logic: Prime/Netflix prefer landscape, Hotstar prefers portrait
   const preferPortrait = platform === 'hotstar' || top10Rank !== undefined;
-  let imgSrc = preferPortrait ? (movie.posterUrl || movie.backdropUrl) : (movie.backdropUrl || movie.posterUrl);
-  
-  if (imgFailed) {
-    imgSrc = preferPortrait ? (movie.backdropUrl || 'https://via.placeholder.com/300x450?text=No+Image') : (movie.posterUrl || 'https://via.placeholder.com/300x169?text=No+Image');
-  }
-  if (!imgSrc) {
-    imgSrc = preferPortrait ? 'https://via.placeholder.com/300x450?text=No+Image' : 'https://via.placeholder.com/300x169?text=No+Image';
+  const primaryImg = preferPortrait ? (movie.posterUrl || movie.backdropUrl) : (movie.backdropUrl || movie.posterUrl);
+  const fallbackImg = preferPortrait ? (movie.backdropUrl || movie.posterUrl) : (movie.posterUrl || movie.backdropUrl);
+
+  let imgSrc = primaryImg;
+  if (imgFailed || !imgSrc) {
+    imgSrc = fallbackImg && fallbackImg !== primaryImg ? fallbackImg : '';
   }
 
   const handleCardClick = () => {
@@ -81,15 +80,28 @@ export const MovieCard: React.FC<MovieCardProps> = ({
           willChange: 'transform, box-shadow',
         }}
       >
-        <img
-          src={imgSrc}
-          alt={movie.title}
-          loading="lazy"
-          decoding="async"
-          onLoad={() => setIsImageLoaded(true)}
-          onError={() => { setImgFailed(true); setIsImageLoaded(true); }}
-          style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: isImageLoaded ? 1 : 0, transition: 'opacity 0.2s ease, transform 0.4s ease', transform: isHovered ? 'scale(1.05)' : 'scale(1)' }}
-        />
+        {imgSrc ? (
+          <img
+            src={imgSrc}
+            alt={movie.title}
+            loading="lazy"
+            decoding="async"
+            onLoad={() => setIsImageLoaded(true)}
+            onError={() => { 
+              if (!imgFailed && fallbackImg && fallbackImg !== primaryImg) {
+                setImgFailed(true); 
+              } else {
+                setIsImageLoaded(true); 
+              }
+            }}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: isImageLoaded ? 1 : 0, transition: 'opacity 0.2s ease, transform 0.4s ease', transform: isHovered ? 'scale(1.05)' : 'scale(1)' }}
+          />
+        ) : (
+          <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, #1f2937 0%, #111827 100%)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '16px', textAlign: 'center' }}>
+            <Film size={28} color="#1F80E0" style={{ marginBottom: '8px' }} />
+            <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#FFF' }}>{movie.title}</span>
+          </div>
+        )}
         {/* Hotstar Gradient Hover Sheet */}
         <div style={{
           position: 'absolute', inset: 0,
@@ -141,15 +153,28 @@ export const MovieCard: React.FC<MovieCardProps> = ({
           willChange: 'transform, box-shadow',
         }}
       >
-        <img
-          src={imgSrc}
-          alt={movie.title}
-          loading="lazy"
-          decoding="async"
-          onLoad={() => setIsImageLoaded(true)}
-          onError={() => { setImgFailed(true); setIsImageLoaded(true); }}
-          style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: isImageLoaded ? 1 : 0, transition: 'transform 0.4s ease', transform: isHovered ? 'scale(1.05)' : 'scale(1)' }}
-        />
+        {imgSrc ? (
+          <img
+            src={imgSrc}
+            alt={movie.title}
+            loading="lazy"
+            decoding="async"
+            onLoad={() => setIsImageLoaded(true)}
+            onError={() => { 
+              if (!imgFailed && fallbackImg && fallbackImg !== primaryImg) {
+                setImgFailed(true); 
+              } else {
+                setIsImageLoaded(true); 
+              }
+            }}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: isImageLoaded ? 1 : 0, transition: 'transform 0.4s ease', transform: isHovered ? 'scale(1.05)' : 'scale(1)' }}
+          />
+        ) : (
+          <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, #0f172a 0%, #0284c7 100%)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '12px', textAlign: 'center' }}>
+            <Film size={24} color="#00A8E1" style={{ marginBottom: '6px' }} />
+            <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#FFF' }}>{movie.title}</span>
+          </div>
+        )}
         <div style={{ position: 'absolute', top: 0, left: 0, zIndex: 10, background: '#00A8E1', padding: '2px 8px', borderBottomRightRadius: '4px', fontSize: '0.65rem', fontWeight: 900, color: '#FFF', fontStyle: 'italic', letterSpacing: '0.04em' }}>
           prime
         </div>
@@ -236,14 +261,27 @@ export const MovieCard: React.FC<MovieCardProps> = ({
             Coming Soon
           </div>
         )}
-        <img
-          className="netflix-card-img"
-          src={imgSrc}
-          alt={movie.title}
-          onLoad={() => setIsImageLoaded(true)}
-          onError={() => { setImgFailed(true); setIsImageLoaded(true); }}
-          style={{ width: '100%', height: `${netflixHeight}px`, objectFit: 'cover', borderRadius: isHovered ? '4px 4px 0 0' : '4px', opacity: isImageLoaded ? 1 : 0 }}
-        />
+        {imgSrc ? (
+          <img
+            className="netflix-card-img"
+            src={imgSrc}
+            alt={movie.title}
+            onLoad={() => setIsImageLoaded(true)}
+            onError={() => { 
+              if (!imgFailed && fallbackImg && fallbackImg !== primaryImg) {
+                setImgFailed(true); 
+              } else {
+                setIsImageLoaded(true); 
+              }
+            }}
+            style={{ width: '100%', height: `${netflixHeight}px`, objectFit: 'cover', borderRadius: isHovered ? '4px 4px 0 0' : '4px', opacity: isImageLoaded ? 1 : 0 }}
+          />
+        ) : (
+          <div style={{ width: '100%', height: `${netflixHeight}px`, background: 'linear-gradient(135deg, #1f1f1f 0%, #111111 100%)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '12px', textAlign: 'center', borderRadius: '4px' }}>
+            <Film size={24} color="#E50914" style={{ marginBottom: '6px' }} />
+            <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#FFF' }}>{movie.title}</span>
+          </div>
+        )}
         
         {/* Title / Logo over image on Hover */}
         {isHovered && (
