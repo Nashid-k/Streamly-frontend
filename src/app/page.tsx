@@ -821,6 +821,10 @@ export default function Home() {
                         onOpenDetails={handleOpenDetails}
                         onToggleMyList={handleToggleMyListWithToast}
                         myList={myList}
+                        onExploreAll={(catTitle) => {
+                          const cleanName = catTitle.replace(/❯/g, '').trim();
+                          setSelectedGenreFilter(cleanName);
+                        }}
                       />
                     ))}
                   </>

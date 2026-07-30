@@ -14,6 +14,7 @@ interface MovieRowProps {
   onToggleMyList: (movieId: string) => void;
   myList: string[];
   isTop10?: boolean;
+  onExploreAll?: (title: string) => void;
 }
 
 export const MovieRow: React.FC<MovieRowProps> = ({
@@ -24,6 +25,7 @@ export const MovieRow: React.FC<MovieRowProps> = ({
   onToggleMyList,
   myList,
   isTop10,
+  onExploreAll,
 }) => {
   
   const { platform } = usePlatform();
@@ -90,24 +92,30 @@ export const MovieRow: React.FC<MovieRowProps> = ({
         </div>
 
         <button
-          onClick={() => handleScroll('right')}
+          onClick={() => {
+            if (onExploreAll) {
+              onExploreAll(title);
+            } else {
+              handleScroll('right');
+            }
+          }}
           className="row-explore-all"
           style={{
             background: 'none',
             border: 'none',
-            color: platform === 'nprime' ? '#00A8E1' : platform === 'hotstar' ? '#1F80E0' : '#564d4d',
-            fontSize: '0.88rem',
+            color: platform === 'nprime' ? '#00A8E1' : platform === 'hotstar' ? '#1F80E0' : '#808080',
+            fontSize: '0.9rem',
             fontWeight: 700,
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             gap: '4px',
-            transition: 'color 0.2s ease',
+            transition: 'all 0.2s ease',
           }}
           onMouseEnter={(e) => (e.currentTarget.style.color = '#FFF')}
-          onMouseLeave={(e) => (e.currentTarget.style.color = platform === 'nprime' ? '#00A8E1' : platform === 'hotstar' ? '#1F80E0' : '#564d4d')}
+          onMouseLeave={(e) => (e.currentTarget.style.color = platform === 'nprime' ? '#00A8E1' : platform === 'hotstar' ? '#1F80E0' : '#808080')}
         >
-          <span>Explore All</span>
+          <span>{platform === 'hotstar' ? 'Explore All' : 'See All'}</span>
           <ChevronRight size={16} />
         </button>
       </div>
