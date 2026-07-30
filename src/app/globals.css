@@ -500,46 +500,64 @@ input:focus-visible,
 .eyebrow { color: var(--primary-color) !important; font-size: .78rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
 
 
+/* ── COMPLETE RESPONSIVE BREAKPOINTS (Mobile & Tablet) ── */
+
 @media (max-width: 768px) {
-  /* Mobile Header & Platform Switcher */
+  /* 1. Header & Navigation */
+  .navbar-container { padding: 0 12px !important; height: 56px !important; }
   .desktop-nav-items { display: none !important; }
   .mobile-bottom-nav { display: flex !important; }
-  .navbar-container { padding: 0 16px !important; height: 60px !important; }
   .hotstar-sidebar { display: none !important; }
-  .hotstar-main-content { margin-left: 0 !important; width: 100% !important; }
+  .hotstar-main-content { margin-left: 0 !important; width: 100% !important; padding-bottom: 70px !important; }
 
-  /* Hero Banner Mobile Scaling */
-  .hero-container { min-height: 420px !important; height: 65vh !important; }
-  .hero-content { left: 4% !important; bottom: 80px !important; max-width: 92% !important; }
-  .hero-title-text { font-size: 1.8rem !important; }
-  .hero-description { font-size: 0.85rem !important; -webkit-line-clamp: 2 !important; margin-bottom: 16px !important; }
-  .hero-carousel-bar { bottom: 12px !important; right: 4% !important; left: 4% !important; justify-content: center !important; }
-  .hero-thumbnail-item { width: 70px !important; height: 42px !important; }
+  /* 2. Hero Banner Mobile Touch Scale */
+  .hero-container { min-height: 380px !important; height: 58vh !important; }
+  .hero-content { left: 5% !important; right: 5% !important; bottom: 70px !important; max-width: 90% !important; }
+  .hero-title-text { font-size: 1.6rem !important; line-height: 1.15 !important; }
+  .hero-meta-row { flex-wrap: wrap !important; gap: 6px !important; font-size: 0.75rem !important; margin-bottom: 12px !important; }
+  .hero-description { font-size: 0.8rem !important; -webkit-line-clamp: 2 !important; margin-bottom: 14px !important; }
+  .hero-actions-row { flex-wrap: wrap !important; gap: 8px !important; }
+  .hero-actions-row button { padding: 8px 16px !important; font-size: 0.85rem !important; flex: 1; justify-content: center; }
+  .hero-carousel-bar { bottom: 10px !important; right: 5% !important; left: 5% !important; justify-content: center !important; }
+  .hero-thumbnail-item { width: 60px !important; height: 36px !important; }
 
-  /* Touch-friendly Scroll Rows */
-  .catalog-row { margin-bottom: 28px !important; padding: 0 16px !important; }
-  .catalog-row-header h3 { font-size: 1.15rem !important; }
-  
-  /* Mobile Modal Responsiveness */
+  /* 3. Catalog Rows & Movie Cards Grid */
+  .catalog-row { margin-bottom: 24px !important; padding: 0 12px !important; }
+  .catalog-row-header { margin-bottom: 10px !important; }
+  .catalog-row-header h3 { font-size: 1.1rem !important; }
+  .movie-card.netflix-card { width: 160px !important; height: 90px !important; }
+  .movie-card.nprime-card { width: 160px !important; height: 90px !important; }
+  .movie-card.hotstar-card { width: 135px !important; height: 200px !important; }
+
+  /* 4. Full-Screen Detail Sheet Modal */
   .modal-overlay { padding: 0 !important; align-items: flex-end !important; }
-  .detail-dialog { width: 100% !important; max-height: 90vh !important; border-radius: 20px 20px 0 0 !important; overflow-y: auto !important; }
-  .detail-hero { height: 230px !important; }
-  .detail-hero-content h2 { font-size: 1.5rem !important; }
-  .detail-body { padding: 16px !important; }
-  .detail-overview-grid { grid-template-columns: 1fr !important; gap: 16px !important; }
+  .detail-dialog { width: 100% !important; max-height: 92vh !important; border-radius: 20px 20px 0 0 !important; overflow-y: auto !important; }
+  .detail-hero { height: 200px !important; }
+  .detail-hero-content { left: 14px !important; right: 14px !important; bottom: 12px !important; }
+  .detail-hero-content h2 { font-size: 1.35rem !important; }
+  .detail-body { padding: 14px !important; }
+  .detail-overview-grid { grid-template-columns: 1fr !important; gap: 14px !important; }
+  .episode-item { flex-direction: column !important; align-items: flex-start !important; gap: 8px !important; }
+  .episode-thumb { width: 100% !important; height: 160px !important; }
 
-  /* Video Player Mobile Controls */
-  .custom-player-controls { padding: 12px !important; }
-  .xray-panel { width: 100% !important; right: 0 !important; top: auto !important; bottom: 0 !important; height: 50vh !important; border-radius: 16px 16px 0 0 !important; }
+  /* 5. Custom Video Player Mobile HUD */
+  .player-overlay { padding: 0 !important; }
+  .custom-player-controls { padding: 10px 14px !important; }
+  .player-top-bar { font-size: 0.85rem !important; }
+  .player-btn-group { gap: 10px !important; }
+  .player-time-display { font-size: 0.75rem !important; }
+  .xray-panel { width: 100% !important; right: 0 !important; top: auto !important; bottom: 0 !important; height: 55vh !important; border-radius: 18px 18px 0 0 !important; }
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {
-  /* Tablet Breakpoint Adjustments */
-  .hero-container { height: 60vh !important; min-height: 480px !important; }
-  .hero-content { max-width: 70% !important; }
-  .hero-title-text { font-size: 2.3rem !important; }
-  .classic-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 16px !important; }
-  .detail-dialog { width: 90% !important; max-height: 85vh !important; }
+  /* Tablet Breakpoints (iPads / Android Tablets) */
+  .hero-container { height: 55vh !important; min-height: 440px !important; }
+  .hero-content { max-width: 75% !important; }
+  .hero-title-text { font-size: 2.1rem !important; }
+  .movie-card.netflix-card { width: 220px !important; height: 124px !important; }
+  .movie-card.nprime-card { width: 220px !important; height: 124px !important; }
+  .movie-card.hotstar-card { width: 160px !important; height: 240px !important; }
+  .detail-dialog { width: 88% !important; max-height: 88vh !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -75,6 +75,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
 
   return (
     <div
+      className="hero-container"
       style={{
         position: 'relative',
         height: '80vh',
@@ -109,7 +110,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
       />
 
       {/* Left Column: Hero Content */}
-      <div key={enrichedMovie.id}  style={{ maxWidth: '680px', zIndex: 10 }}>
+      <div key={enrichedMovie.id} className="hero-content" style={{ maxWidth: '680px', zIndex: 10 }}>
         {/* Upcoming Eyebrow Badge */}
         {enrichedMovie.isUpcoming && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--primary-color)', fontSize: '0.85rem', fontWeight: 900, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '12px' }}>
@@ -127,24 +128,24 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
           </div>
         )}
 
-        {/* Title Treatment Graphic Logo or Stylized Movie Poster Title */}
+        {/* Title Logo */}
         {enrichedMovie.logoUrl ? (
           <div style={{ marginBottom: '20px' }}>
             <img
               src={enrichedMovie.logoUrl}
               alt={enrichedMovie.title}
               style={{
-                maxWidth: '600px',
-                maxHeight: '220px',
-                width: 'auto',
-                height: 'auto',
+                maxHeight: '120px',
+                maxWidth: '100%',
                 objectFit: 'contain',
-                filter: 'drop-shadow(0 6px 20px rgba(0,0,0,0.95))',
+                objectPosition: 'left bottom',
+                filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.9))',
               }}
             />
           </div>
         ) : (
           <h1
+            className="hero-title-text"
             style={{
               ...getFallbackTitleStyle(),
               marginBottom: '16px',
@@ -155,7 +156,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
         )}
 
         {/* Badges */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px', flexWrap: 'wrap' }}>
+        <div className="hero-meta-row" style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px', flexWrap: 'wrap' }}>
           {enrichedMovie.isUpcoming ? (
             <span style={{ color: '#F59E0B', fontWeight: 800, fontSize: '1rem' }}>
               {enrichedMovie.releaseDate ? `Releasing ${enrichedMovie.releaseDate}` : 'Coming Soon'}
@@ -190,6 +191,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
 
         {/* Description */}
         <p
+          className="hero-description"
           style={{
             fontSize: '1rem',
             color: '#DDD',
@@ -206,7 +208,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
         </p>
 
         {/* Action Buttons */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+        <div className="hero-actions-row" style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
           <button
             onClick={() => onPlay(enrichedMovie)}
             style={{
