@@ -17,6 +17,12 @@ export interface Episode {
   sources?: StreamSource[];
 }
 
+export interface CastMember {
+  name: string;
+  character?: string;
+  profileUrl?: string | null;
+}
+
 export interface Movie {
   id: string;
   tmdbId?: string;
@@ -47,7 +53,7 @@ export interface Movie {
   /** Episode selected from the details view; used for an explicit Next action. */
   nextEpisode?: Episode;
   genres: string[];
-  cast: string[];
+  cast: (string | CastMember)[];
   director: string;
   isOriginal?: boolean;
   isTrending?: boolean;

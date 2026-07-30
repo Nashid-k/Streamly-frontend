@@ -16,6 +16,14 @@ interface MovieDetailModalProps {
   similarMovies: Movie[];
 }
 
+function formatCastNames(castList?: any[]): string {
+  if (!castList || !Array.isArray(castList) || castList.length === 0) return '';
+  return castList
+    .map((item) => (typeof item === 'string' ? item : item?.name || ''))
+    .filter(Boolean)
+    .join(', ');
+}
+
 function useMovieDetails(movie: Movie | null, selectedSeason: number, platform: string) {
   const [detailedMovie, setDetailedMovie] = useState<Movie | null>(null);
   const [episodes, setEpisodes] = useState<Episode[]>([]);
@@ -232,7 +240,7 @@ function NetflixModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
             </p>
           </div>
           <div style={{ flex: '1', fontSize: '0.9rem', color: '#777', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            <div><span style={{ color: '#777' }}>Cast: </span><span style={{ color: '#FFF' }}>{displayMovie?.cast?.slice(0,4).join(', ')} {(displayMovie?.cast?.length ?? 0) > 4 ? ', more' : ''}</span></div>
+            <div><span style={{ color: '#777' }}>Cast: </span><span style={{ color: '#FFF' }}>{formatCastNames(displayMovie?.cast?.slice(0,4))} {(displayMovie?.cast?.length ?? 0) > 4 ? ', more' : ''}</span></div>
             <div><span style={{ color: '#777' }}>Genres: </span><span style={{ color: '#FFF' }}>{displayMovie?.genres?.join(', ')}</span></div>
             <div><span style={{ color: '#777' }}>This show is: </span><span style={{ color: '#FFF' }}>{displayMovie?.tags?.slice(0,3).join(', ')}</span></div>
           </div>
@@ -307,7 +315,7 @@ function NetflixModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
             <h3 style={{ fontSize: '1.5rem', fontWeight: 400, marginBottom: '16px' }}>About <strong style={{ fontWeight: 700 }}>{movie.title}</strong></h3>
             <div style={{ color: '#777', fontSize: '0.9rem', display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <div><span style={{ color: '#777' }}>Director: </span><span style={{ color: '#FFF' }}>{displayMovie?.director || 'Unknown'}</span></div>
-              <div><span style={{ color: '#777' }}>Cast: </span><span style={{ color: '#FFF' }}>{displayMovie?.cast?.join(', ')}</span></div>
+              <div><span style={{ color: '#777' }}>Cast: </span><span style={{ color: '#FFF' }}>{formatCastNames(displayMovie?.cast)}</span></div>
               <div><span style={{ color: '#777' }}>Genres: </span><span style={{ color: '#FFF' }}>{displayMovie?.genres?.join(', ')}</span></div>
               {(displayMovie?.audioLanguages?.length ?? 0) > 0 && (
                 <div><span style={{ color: '#777' }}>Audio: </span><span style={{ color: '#FFF' }}>{displayMovie?.audioLanguages?.join(', ')}</span></div>
@@ -462,7 +470,7 @@ function PrimeModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, isM
               <div style={{ display: 'flex' }}><strong style={{ width: '150px', color: '#FFF' }}>Audio languages</strong> <span>{displayMovie?.audioLanguages?.join(', ') || 'English, English [Audio Description]'}</span></div>
               <div style={{ display: 'flex' }}><strong style={{ width: '150px', color: '#FFF' }}>Subtitles</strong> <span>{displayMovie?.subtitleLanguages?.join(', ') || 'English [CC]'}</span></div>
               <div style={{ display: 'flex' }}><strong style={{ width: '150px', color: '#FFF' }}>Directors</strong> <span>{displayMovie?.director || 'Unknown'}</span></div>
-              <div style={{ display: 'flex' }}><strong style={{ width: '150px', color: '#FFF' }}>Starring</strong> <span>{displayMovie?.cast?.join(', ')}</span></div>
+              <div style={{ display: 'flex' }}><strong style={{ width: '150px', color: '#FFF' }}>Starring</strong> <span>{formatCastNames(displayMovie?.cast)}</span></div>
               <div style={{ display: 'flex' }}><strong style={{ width: '150px', color: '#FFF' }}>Studio</strong> <span>Amazon Studios</span></div>
             </div>
           )}
@@ -565,7 +573,7 @@ function HotstarModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
             {(displayMovie?.cast?.length ?? 0) > 0 && (
               <div>
                 <strong style={{ color: '#FFF', display: 'block', marginBottom: '4px' }}>Cast</strong>
-                <div style={{ color: '#979CA6' }}>{displayMovie?.cast?.join(', ')}</div>
+                <div style={{ color: '#979CA6' }}>{formatCastNames(displayMovie?.cast)}</div>
               </div>
             )}
             {displayMovie?.director && (
