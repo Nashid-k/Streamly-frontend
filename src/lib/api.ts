@@ -29,11 +29,11 @@ async function request<T>(path: string, ttlMs: number, init?: RequestInit): Prom
   return value;
 }
 
-export const fetchFeaturedMovie = () => request<Movie | null>(`/movies/featured?platform=${getPlatform()}`, 300_000);
-export const fetchCategories = () => request<Category[]>(`/movies/categories?platform=${getPlatform()}`, 300_000);
-export const fetchTop10Movies = () => request<Movie[]>(`/movies/top10?platform=${getPlatform()}`, 300_000);
-export const fetchMovieById = (id: string) => request<Movie>(`/movies/${id}?platform=${getPlatform()}`, 300_000);
-export const fetchSeasonEpisodes = (id: string, season: number) => request<Episode[]>(`/movies/${id}/season/${season}?platform=${getPlatform()}`, 300_000);
+export const fetchFeaturedMovie = (p = getPlatform()) => request<Movie | null>(`/movies/featured?platform=${p}`, 300_000);
+export const fetchCategories = (p = getPlatform()) => request<Category[]>(`/movies/categories?platform=${p}`, 300_000);
+export const fetchTop10Movies = (p = getPlatform()) => request<Movie[]>(`/movies/top10?platform=${p}`, 300_000);
+export const fetchMovieById = (id: string, p = getPlatform()) => request<Movie>(`/movies/${id}?platform=${p}`, 300_000);
+export const fetchSeasonEpisodes = (id: string, season: number, p = getPlatform()) => request<Episode[]>(`/movies/${id}/season/${season}?platform=${p}`, 300_000);
 
 export function searchMovies(query: string, genre?: string): Promise<SearchResponse> {
   const params = new URLSearchParams();

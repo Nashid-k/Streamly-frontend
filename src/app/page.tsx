@@ -301,9 +301,9 @@ export default function Home() {
     async function loadData() {
       try {
         const [featuredResult, categoriesResult, top10Result, userResult] = await Promise.allSettled([
-          fetchFeaturedMovie(),
-          fetchCategories(),
-          fetchTop10Movies(),
+          fetchFeaturedMovie(platform),
+          fetchCategories(platform),
+          fetchTop10Movies(platform),
           fetchUser(),
         ]);
 
@@ -412,16 +412,22 @@ export default function Home() {
         if (isMounted) setCatalogError(error instanceof Error ? error.message : 'The catalog could not be loaded.');
       } finally {
         if (isMounted) {
-          // Fast & seamless platform transition — display authentic brand loader overlay for 600ms
           setTimeout(() => {
             if (isMounted) setIsLoadingPage(false);
-          }, 600);
+          }, 300);
         }
       }
     }
+
+    // Safety fallback timer to guarantee loader unmasks even on network stalls
+    const safetyTimer = setTimeout(() => {
+      if (isMounted) setIsLoadingPage(false);
+    }, 3500);
+
     loadData();
     return () => {
       isMounted = false;
+      clearTimeout(safetyTimer);
     };
   }, [platform]);
 
