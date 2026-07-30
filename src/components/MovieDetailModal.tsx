@@ -175,25 +175,25 @@ function NetflixModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
           <div className="detail-hero-content" style={{ position: 'absolute', bottom: '20px', left: '24px', right: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', zIndex: 20 }}>
             <div>
               {displayMovie?.logoUrl ? (
-                <img src={displayMovie.logoUrl} style={{ maxWidth: '350px', maxHeight: '120px', objectFit: 'contain', marginBottom: '20px' }} />
+                <img className="detail-logo-img" src={displayMovie.logoUrl} style={{ maxWidth: '350px', maxHeight: '120px', objectFit: 'contain', marginBottom: '20px' }} />
               ) : (
-                <h2 style={{ fontSize: '3rem', fontWeight: 900, marginBottom: '20px', textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>{movie.title}</h2>
+                <h2 className="detail-title-text" style={{ fontSize: '3rem', fontWeight: 900, marginBottom: '20px', textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>{movie.title}</h2>
               )}
 
-              <div style={{ display: 'flex', gap: '10px' }}>
-                <button onClick={() => onPlay(movie)} style={{
+              <div style={{ display: 'flex', gap: '10px', width: '100%' }}>
+                <button className="detail-play-btn" onClick={() => onPlay(movie)} style={{
                   background: '#FFF', color: '#000', border: 'none', borderRadius: '4px', padding: '8px 24px',
                   fontSize: '1.1rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer'
                 }}>
                   <Play fill="#000" size={24} /> Play
                 </button>
-                <button onClick={() => onToggleMyList(movie.id)} style={{
+                <button className="detail-action-btn" onClick={() => onToggleMyList(movie.id)} style={{
                   background: 'rgba(42,42,42,0.6)', border: '1px solid rgba(255,255,255,0.5)', borderRadius: '50%',
                   width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#FFF'
                 }}>
                   {isMyList ? <Check size={20} /> : <Plus size={20} />}
                 </button>
-                <button style={{
+                <button className="detail-action-btn" style={{
                   background: 'rgba(42,42,42,0.6)', border: '1px solid rgba(255,255,255,0.5)', borderRadius: '50%',
                   width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#FFF'
                 }}>
