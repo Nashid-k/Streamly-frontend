@@ -29,18 +29,34 @@ async function request<T>(path: string, ttlMs: number, init?: RequestInit): Prom
   return value;
 }
 
-export const fetchFeaturedMovie = () => request<Movie | null>(`/movies/featured?platform=${getPlatform()}`, 120_000);
-export const fetchCategories = () => request<Category[]>(`/movies/categories?platform=${getPlatform()}`, 120_000);
-export const fetchTop10Movies = () => request<Movie[]>(`/movies/top10?platform=${getPlatform()}`, 120_000);
-export const fetchMovieById = (id: string) => request<Movie>(`/movies/${id}?platform=${getPlatform()}`, 60_000);
-export const fetchSeasonEpisodes = (id: string, season: number) => request<Episode[]>(`/movies/${id}/season/${season}?platform=${getPlatform()}`, 60_000);
+export const fetchFeaturedMovie = () => request<Movie | null>(`/movies/featured?platform=${getPlatform()}`, 300_000);
+export const fetchCategories = () => request<Category[]>(`/movies/categories?platform=${getPlatform()}`, 300_000);
+export const fetchTop10Movies = () => request<Movie[]>(`/movies/top10?platform=${getPlatform()}`, 300_000);
+export const fetchMovieById = (id: string) => request<Movie>(`/movies/${id}?platform=${getPlatform()}`, 300_000);
+export const fetchSeasonEpisodes = (id: string, season: number) => request<Episode[]>(`/movies/${id}/season/${season}?platform=${getPlatform()}`, 300_000);
 
 export function searchMovies(query: string, genre?: string): Promise<SearchResponse> {
   const params = new URLSearchParams();
   if (query) params.set('q', query);
   if (genre) params.set('genre', genre);
   params.set('platform', getPlatform());
-  return request<SearchResponse>(`/movies/search?${params}`, 30_000);
+  return request<SearchResponse>(`/movies/search?${params}`, 120_000);
+}
+
+/** Pre-warms catalog data in the background for instant platform switching */
+export function prewarmPlatformCatalogs() {
+  if (typeof window === 'undefined') return;
+  const current = getPlatform();
+  const platforms: ('nflix' | 'nprime' | 'hotstar')[] = ['nflix', 'nprime', 'hotstar'];
+  platforms.filter(p => p !== current).forEach(async (p) => {
+    try {
+      await Promise.allSettled([
+        request(`/movies/categories?platform=${p}`, 300_000),
+        request(`/movies/featured?platform=${p}`, 300_000),
+        request(`/movies/top10?platform=${p}`, 300_000),
+      ]);
+    } catch (e) {}
+  });
 }
 
 export const fetchUser = () => request<User>('/user', 300_000);

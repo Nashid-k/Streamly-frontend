@@ -24,6 +24,7 @@ import {
   toggleMyListApi,
   updateUserPreferencesApi,
   switchProfileApi,
+  prewarmPlatformCatalogs,
 } from '../lib/api';
 
 import { Film, ArrowUp, Filter } from 'lucide-react';
@@ -334,21 +335,22 @@ export default function Home() {
         // Keep the ref up-to-date so toast handlers can resolve titles instantly
         allMoviesMapRef.current = movieMap;
 
-        // Pre-fetch logoUrl for top hero candidate titles before unmasking initial page load
-        const heroCandidateList = allMovieItems.slice(0, 10);
-        await Promise.allSettled(
-          heroCandidateList.map(async (m) => {
+        // Catalog data is ready — reveal UI immediately (0ms delay)
+        setIsLoadingPage(false);
+
+        // Background non-blocking pre-fetch for secondary platform catalogs & images
+        void Promise.resolve().then(() => {
+          prewarmPlatformCatalogs();
+          const heroCandidateList = allMovieItems.slice(0, 10);
+          heroCandidateList.forEach(async (m) => {
             if (!m.logoUrl && m.id) {
               try {
                 const fetched = await fetchMovieById(m.id);
                 if (fetched?.logoUrl) m.logoUrl = fetched.logoUrl;
               } catch (e) {}
             }
-          })
-        );
-
-        // Catalog data and hero logos are ready — UI is visible now.
-        setIsLoadingPage(false);
+          });
+        });
 
         // Fire-and-forget image preloader — don't block the UI thread
         const imageUrlsToPreload: string[] = [];
