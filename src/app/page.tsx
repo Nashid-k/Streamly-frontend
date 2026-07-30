@@ -295,6 +295,8 @@ export default function Home() {
   // Initial Data Fetching & Dynamic Platform Switching Sync
   useEffect(() => {
     let isMounted = true;
+    setIsLoadingPage(true);
+    setHasCompletedInitialLoad(false);
     
     async function loadData() {
       try {
@@ -409,7 +411,12 @@ export default function Home() {
       } catch (error) {
         if (isMounted) setCatalogError(error instanceof Error ? error.message : 'The catalog could not be loaded.');
       } finally {
-        if (isMounted) setIsLoadingPage(false);
+        if (isMounted) {
+          // Guaranteed minimum 400ms loader screen for smooth platform transition feel
+          setTimeout(() => {
+            if (isMounted) setIsLoadingPage(false);
+          }, 400);
+        }
       }
     }
     loadData();
