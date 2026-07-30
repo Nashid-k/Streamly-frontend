@@ -180,7 +180,8 @@ function NetflixModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
   const [selectedSeason, setSelectedSeason] = useState(1);
   const { detailedMovie, episodes, isLoadingEpisodes } = useMovieDetails(movie, selectedSeason, platform);
   const displayMovie = detailedMovie || movie;
-  const [activeTab, setActiveTab] = useState<'episodes' | 'similar'>('episodes');
+  const isTvShow = Boolean(displayMovie?.isSeries || movie?.isSeries || (displayMovie?.seasonsCount ?? 0) > 0);
+  const [activeTab, setActiveTab] = useState<'episodes' | 'similar'>(isTvShow ? 'episodes' : 'similar');
   const { isMuted, toggleMute, renderTrailer, hasTrailer } = useTrailerPlayer(displayMovie?.trailerUrl || '', movie?.backdropUrl || movie?.posterUrl || '');
 
   if (!movie) return null;
@@ -369,7 +370,8 @@ function PrimeModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, isM
   const [selectedSeason, setSelectedSeason] = useState(1);
   const { detailedMovie, episodes, isLoadingEpisodes } = useMovieDetails(movie, selectedSeason, platform);
   const displayMovie = detailedMovie || movie;
-  const [activeTab, setActiveTab] = useState<'episodes' | 'related' | 'details'>('episodes');
+  const isTvShow = Boolean(displayMovie?.isSeries || movie?.isSeries || (displayMovie?.seasonsCount ?? 0) > 0);
+  const [activeTab, setActiveTab] = useState<'episodes' | 'related' | 'details'>(isTvShow ? 'episodes' : 'related');
   const { isMuted, toggleMute, renderTrailer, hasTrailer } = useTrailerPlayer(displayMovie?.trailerUrl || '', movie?.backdropUrl || movie?.posterUrl || '');
 
   if (!movie) return null;
@@ -523,7 +525,8 @@ function HotstarModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
   const [selectedSeason, setSelectedSeason] = useState(1);
   const { detailedMovie, episodes, isLoadingEpisodes } = useMovieDetails(movie, selectedSeason, platform);
   const displayMovie = detailedMovie || movie;
-  const [activeTab, setActiveTab] = useState<'episodes' | 'more'>('episodes');
+  const isTvShow = Boolean(displayMovie?.isSeries || movie?.isSeries || (displayMovie?.seasonsCount ?? 0) > 0);
+  const [activeTab, setActiveTab] = useState<'episodes' | 'more'>(isTvShow ? 'episodes' : 'more');
   const { isMuted, toggleMute, renderTrailer, hasTrailer } = useTrailerPlayer(displayMovie?.trailerUrl || '', movie?.backdropUrl || movie?.posterUrl || '');
 
   if (!movie) return null;
@@ -659,11 +662,11 @@ function HotstarModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
              </div>
           )}
 
-          {(!movie.isSeries || activeTab === 'more') && (
+          {(!isTvShow || activeTab === 'more') && (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '16px' }}>
               {similarMovies.slice(0, 10).map(sim => (
                 <div key={sim.id} onClick={() => onOpenDetails(sim)} style={{ borderRadius: '8px', overflow: 'hidden', cursor: 'pointer', transition: 'transform 0.2s', backgroundColor: '#151820' }}>
-                  <img src={sim.posterUrl} style={{ width: '100%', aspectRatio: '2/3', objectFit: 'cover' }} />
+                  <img src={sim.posterUrl || sim.backdropUrl} style={{ width: '100%', aspectRatio: '2/3', objectFit: 'cover' }} />
                 </div>
               ))}
             </div>
