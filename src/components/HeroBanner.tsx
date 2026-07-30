@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Play, Info, Clock, Check, Plus } from 'lucide-react';
+import { Play, Info, Clock, Check, Plus, Volume2, VolumeX } from 'lucide-react';
 import { usePlatform } from './PlatformContext';
 import { Movie } from '../types';
 import { fetchMovieById } from '../lib/api';
@@ -45,6 +45,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
   const { platform } = usePlatform();
   const [enrichedMovie, setEnrichedMovie] = useState<Movie | null>(null);
   const [carouselScrollIndex, setCarouselScrollIndex] = useState(0);
+  const [isMuted, setIsMuted] = useState(true);
 
   // Persistent logo cache across banner transitions to eliminate text title flicker
   const logoCacheRef = React.useRef<Map<string, string>>(new Map());
@@ -308,6 +309,28 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
               {platform === 'hotstar' && <span>Watchlist</span>}
             </button>
           )}
+
+          {/* Authentic Hero Speaker Mute Toggle */}
+          <button
+            onClick={() => setIsMuted(!isMuted)}
+            style={{
+              width: '44px',
+              height: '44px',
+              borderRadius: '50%',
+              backgroundColor: 'rgba(0,0,0,0.5)',
+              border: '1px solid rgba(255,255,255,0.4)',
+              color: '#FFF',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              marginLeft: 'auto',
+              backdropFilter: 'blur(8px)',
+              transition: 'background 0.2s'
+            }}
+          >
+            {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+          </button>
         </div>
       </div>
 

@@ -771,6 +771,34 @@ export default function Home() {
                 {activeTab === 'home' && (
                   /* Home Tab: Continue Watching + Top 10 Row + Dynamic Categories */
                   <>
+                    {platform === 'hotstar' && (
+                      <div className="hotstar-category-pills" style={{ display: 'flex', gap: '10px', padding: '0 4% 16px 4%', overflowX: 'auto', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                        {['All', 'Popular', 'Hotstar Specials', 'Star Plus', 'Action', 'Comedies', 'Drama', 'Hindi', 'English', 'Tamil', 'Telugu'].map((pill) => {
+                          const isActive = selectedGenreFilter === pill;
+                          return (
+                            <button
+                              key={pill}
+                              onClick={() => setSelectedGenreFilter(pill)}
+                              style={{
+                                background: isActive ? '#1F80E0' : 'rgba(255, 255, 255, 0.08)',
+                                color: '#FFF',
+                                border: 'none',
+                                padding: '8px 18px',
+                                borderRadius: '20px',
+                                fontSize: '0.88rem',
+                                fontWeight: 700,
+                                cursor: 'pointer',
+                                whiteSpace: 'nowrap',
+                                transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+                                boxShadow: isActive ? '0 4px 14px rgba(31, 128, 224, 0.4)' : 'none'
+                              }}
+                            >
+                              {pill}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
                     {continueWatching.length > 0 && (
                       <MovieRow
                         title={`Continue Watching for ${currentProfile?.name || 'You'}`}
