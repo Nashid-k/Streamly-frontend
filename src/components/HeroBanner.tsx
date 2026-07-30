@@ -76,24 +76,26 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
 
     let isMounted = true;
 
-    // Preload logos for all candidate movies in the carousel so manual switching has 0ms logo delay
+    // Preload logos eagerly for all candidate movies in the carousel so switching has 0ms logo delay
     if (carouselMovies && carouselMovies.length > 0) {
-      carouselMovies.forEach((c) => {
-        if (!c.logoUrl && c.id && !logoCacheRef.current.has(c.id)) {
-          fetchMovieById(c.id)
-            .then((fetched) => {
+      Promise.allSettled(
+        carouselMovies.map(async (c) => {
+          if (!c.logoUrl && c.id && !logoCacheRef.current.has(c.id)) {
+            try {
+              const fetched = await fetchMovieById(c.id);
               if (fetched?.logoUrl) {
+                c.logoUrl = fetched.logoUrl;
                 logoCacheRef.current.set(c.id, fetched.logoUrl);
                 if (isMounted && movie.id === c.id) {
                   setEnrichedMovie((curr) => (curr?.id === c.id ? { ...curr, logoUrl: fetched.logoUrl } : curr));
                 }
               }
-            })
-            .catch(() => {});
-        } else if (c.logoUrl && c.id) {
-          logoCacheRef.current.set(c.id, c.logoUrl);
-        }
-      });
+            } catch (e) {}
+          } else if (c.logoUrl && c.id) {
+            logoCacheRef.current.set(c.id, c.logoUrl);
+          }
+        })
+      );
     }
 
     // Check if we already cached the logoUrl for this movie

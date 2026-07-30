@@ -327,7 +327,20 @@ export default function Home() {
         // Keep the ref up-to-date so toast handlers can resolve titles instantly
         allMoviesMapRef.current = movieMap;
 
-        // Catalog data is ready — UI is visible now.
+        // Pre-fetch logoUrl for top hero candidate titles before unmasking initial page load
+        const heroCandidateList = allMovieItems.slice(0, 10);
+        await Promise.allSettled(
+          heroCandidateList.map(async (m) => {
+            if (!m.logoUrl && m.id) {
+              try {
+                const fetched = await fetchMovieById(m.id);
+                if (fetched?.logoUrl) m.logoUrl = fetched.logoUrl;
+              } catch (e) {}
+            }
+          })
+        );
+
+        // Catalog data and hero logos are ready — UI is visible now.
         setIsLoadingPage(false);
 
         // Fire-and-forget image preloader — don't block the UI thread
