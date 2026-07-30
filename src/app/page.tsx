@@ -35,14 +35,24 @@ const normalizeGenre = (value: string) => value.trim().toLocaleLowerCase();
 const hasGenre = (movie: Movie, selected: string) => {
   if (selected === 'All') return true;
   const normSelected = normalizeGenre(selected);
-  if (normSelected === 'popular') return movie.matchScore >= 80 || (movie.seasonsCount ?? 0) > 1;
-  if (normSelected === 'hotstar specials' || normSelected === 'star plus') return Boolean(movie.isSeries) || Boolean(movie.logoUrl);
+  if (normSelected === 'popular') {
+    return (movie.matchScore >= 70) || (movie.seasonsCount ?? 0) > 0 || (movie.releaseYear >= 2020);
+  }
+  if (normSelected === 'hotstar specials' || normSelected === 'star plus') {
+    return Boolean(movie.isSeries) || Boolean(movie.logoUrl) || Boolean(movie.backdropUrl);
+  }
   if (['hindi', 'english', 'tamil', 'telugu', 'malayalam', 'kannada', 'marathi', 'bengali'].includes(normSelected)) {
     const audioMatch = (movie.audioLanguages || []).some(l => normalizeGenre(l) === normSelected);
     const subMatch = (movie.subtitleLanguages || []).some(l => normalizeGenre(l) === normSelected);
-    return audioMatch || subMatch;
+    const titleMatch = movie.title.toLowerCase().includes(normSelected) || (movie.originalTitle?.toLowerCase() || '').includes(normSelected);
+    return audioMatch || subMatch || titleMatch;
   }
-  return movie.genres.some((genre) => normalizeGenre(genre) === normSelected);
+  // Genre check with fallback keyword matching
+  const genreMatch = movie.genres.some((genre) => normalizeGenre(genre) === normSelected);
+  const keywordMatch = (movie.tags || []).some((tag) => normalizeGenre(tag).includes(normSelected)) ||
+                       movie.title.toLowerCase().includes(normSelected) ||
+                       (movie.description || '').toLowerCase().includes(normSelected);
+  return genreMatch || keywordMatch;
 };
 
 function shuffleForDiscovery<T>(items: T[], seedText: string): T[] {
@@ -822,21 +832,58 @@ export default function Home() {
                     {languageFilteredTop10.length > 0 && (
                       <MovieRow title="Top 10 Titles Today" movies={languageFilteredTop10} isTop10={true} onPlay={(m) => handlePlayMovie(m)} onOpenDetails={handleOpenDetails} onToggleMyList={handleToggleMyListWithToast} myList={myList} />
                     )}
-                    {curatedCategories.map((category) => (
-                      <MovieRow
-                        key={category.id}
-                        title={languageAwareCategoryTitle(category.name)}
-                        movies={category.movies}
-                        onPlay={(m) => handlePlayMovie(m)}
-                        onOpenDetails={handleOpenDetails}
-                        onToggleMyList={handleToggleMyListWithToast}
-                        myList={myList}
-                        onExploreAll={(catTitle) => {
-                          const cleanName = catTitle.replace(/❯/g, '').trim();
-                          setSelectedGenreFilter(cleanName);
-                        }}
-                      />
-                    ))}
+                    {selectedGenreFilter !== 'All' ? (
+                      /* Filtered Category Grid View for Hotstar & Pill Selections */
+                      <div style={{ padding: '20px 4%' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+                          <h3 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#FFF' }}>
+                            {selectedGenreFilter} Catalog
+                          </h3>
+                          <button
+                            onClick={() => setSelectedGenreFilter('All')}
+                            style={{ background: 'rgba(255,255,255,0.1)', color: '#FFF', border: 'none', padding: '6px 14px', borderRadius: '16px', fontSize: '0.82rem', cursor: 'pointer', fontWeight: 600 }}
+                          >
+                            Clear Filter ✕
+                          </button>
+                        </div>
+                        {allMovies.filter((m) => hasGenre(m, selectedGenreFilter)).length > 0 ? (
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '20px' }}>
+                            {allMovies
+                              .filter((m) => hasGenre(m, selectedGenreFilter))
+                              .map((movie) => (
+                                <MovieCard
+                                  key={movie.id}
+                                  movie={movie}
+                                  onPlay={(m) => handlePlayMovie(m)}
+                                  onOpenDetails={handleOpenDetails}
+                                  onToggleMyList={handleToggleMyListWithToast}
+                                  isMyList={myList.includes(movie.id)}
+                                />
+                              ))}
+                          </div>
+                        ) : (
+                          <div style={{ padding: '60px 0', textAlign: 'center', color: '#808080' }}>
+                            <p style={{ fontSize: '1.1rem' }}>No titles available in {selectedGenreFilter} right now.</p>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      curatedCategories.map((category) => (
+                        <MovieRow
+                          key={category.id}
+                          title={languageAwareCategoryTitle(category.name)}
+                          movies={category.movies}
+                          onPlay={(m) => handlePlayMovie(m)}
+                          onOpenDetails={handleOpenDetails}
+                          onToggleMyList={handleToggleMyListWithToast}
+                          myList={myList}
+                          onExploreAll={(catTitle) => {
+                            const cleanName = catTitle.replace(/❯/g, '').trim();
+                            setSelectedGenreFilter(cleanName);
+                          }}
+                        />
+                      ))
+                    )}
                   </>
                 )}
 
