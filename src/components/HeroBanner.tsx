@@ -46,28 +46,55 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
   const [enrichedMovie, setEnrichedMovie] = useState<Movie | null>(null);
   const [carouselScrollIndex, setCarouselScrollIndex] = useState(0);
 
+  // Persistent logo cache across banner transitions to eliminate text title flicker
+  const logoCacheRef = React.useRef<Map<string, string>>(new Map());
+
   useEffect(() => {
     if (!movie) { if (onHeroReady) onHeroReady(); return; }
 
     let isMounted = true;
 
-    // Instantly set state with current movie object for 0ms delay transition
-    setEnrichedMovie(movie);
+    // Preload logos for all candidate movies in the carousel so manual switching has 0ms logo delay
+    if (carouselMovies && carouselMovies.length > 0) {
+      carouselMovies.forEach((c) => {
+        if (!c.logoUrl && c.id && !logoCacheRef.current.has(c.id)) {
+          fetchMovieById(c.id)
+            .then((fetched) => {
+              if (fetched?.logoUrl) {
+                logoCacheRef.current.set(c.id, fetched.logoUrl);
+                if (isMounted && movie.id === c.id) {
+                  setEnrichedMovie((curr) => (curr?.id === c.id ? { ...curr, logoUrl: fetched.logoUrl } : curr));
+                }
+              }
+            })
+            .catch(() => {});
+        } else if (c.logoUrl && c.id) {
+          logoCacheRef.current.set(c.id, c.logoUrl);
+        }
+      });
+    }
+
+    // Check if we already cached the logoUrl for this movie
+    const cachedLogo = movie.logoUrl || logoCacheRef.current.get(movie.id);
+    const initialMovie = cachedLogo ? { ...movie, logoUrl: cachedLogo } : movie;
+
+    setEnrichedMovie(initialMovie);
     if (onHeroReady) onHeroReady();
 
     // Async background enrichment if logo is missing (non-blocking)
-    if (!movie.logoUrl) {
+    if (!initialMovie.logoUrl) {
       fetchMovieById(movie.id)
         .then((fetched) => {
           if (isMounted && fetched) {
-            setEnrichedMovie((curr) => (curr?.id === movie.id ? fetched : curr));
+            if (fetched.logoUrl) logoCacheRef.current.set(movie.id, fetched.logoUrl);
+            setEnrichedMovie((curr) => (curr?.id === movie.id ? { ...curr, ...fetched, logoUrl: fetched.logoUrl || curr.logoUrl } : curr));
           }
         })
         .catch(() => {});
     }
 
     return () => { isMounted = false; };
-  }, [movie, onHeroReady]);
+  }, [movie, carouselMovies, onHeroReady]);
 
   if (!enrichedMovie) return null;
 
@@ -130,7 +157,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
 
         {/* Title Logo */}
         {enrichedMovie.logoUrl ? (
-          <div style={{ marginBottom: '20px' }}>
+          <div style={{ marginBottom: '20px', minHeight: '80px', display: 'flex', alignItems: 'flex-end' }}>
             <img
               src={enrichedMovie.logoUrl}
               alt={enrichedMovie.title}
