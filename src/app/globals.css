@@ -570,8 +570,10 @@ input:focus-visible,
   div.xray-panel { width: 100% !important; left: 0 !important; right: 0 !important; top: auto !important; bottom: 0 !important; height: 55vh !important; border-radius: 16px 16px 0 0 !important; }
 }
 
-/* --- Tablet Breakpoint (768px - 1024px) --- */
+/* --- Tablet & Mobile Breakpoint (<=1024px) --- */
 @media (max-width: 1024px) {
+  nav.desktop-nav-items { display: none !important; }
+  nav.mobile-bottom-nav { display: flex !important; z-index: 2500 !important; }
   aside.hotstar-sidebar { display: none !important; }
   main.hotstar-main-content { margin-left: 0 !important; width: 100% !important; }
   header.hotstar-mobile-header { display: flex !important; }
