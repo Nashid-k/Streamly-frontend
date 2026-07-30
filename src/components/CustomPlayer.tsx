@@ -660,45 +660,33 @@ export const CustomPlayer = ({ streamUrl, movie, onBack, onNext, hasNext, onErro
       }}>
         
         {/* Platform Specific Floating Buttons */}
-        {platform === 'nflix' && currentTime > 10 && currentTime < 180 && (
+        {currentTime > 5 && currentTime < 180 && (
           <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: '10px' }}>
             <button 
-              onClick={() => { if(videoRef.current) videoRef.current.currentTime += 85; }}
+              onClick={() => { if(videoRef.current) videoRef.current.currentTime += 85; showToast('Skipped Intro'); }}
               style={{
-                background: 'rgba(20,20,20,0.7)', color: '#fff', border: '1px solid rgba(255,255,255,0.2)', 
-                padding: '10px 20px', borderRadius: '4px', fontSize: '1.1rem', fontWeight: 600, cursor: 'pointer',
-                transition: 'background 0.2s', backdropFilter: 'blur(10px)'
-              }} onMouseEnter={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#000'; }} onMouseLeave={e => { e.currentTarget.style.background = 'rgba(20,20,20,0.7)'; e.currentTarget.style.color = '#fff'; }}>
+                background: platform === 'nprime' ? 'rgba(0,168,225,0.85)' : platform === 'hotstar' ? 'rgba(31,128,224,0.85)' : 'rgba(20,20,20,0.85)',
+                color: '#fff', border: '1px solid rgba(255,255,255,0.3)', 
+                padding: '10px 22px', borderRadius: platform === 'hotstar' ? '8px' : '4px', fontSize: '1rem', fontWeight: 700, cursor: 'pointer',
+                transition: 'all 0.2s', backdropFilter: 'blur(10px)', boxShadow: '0 4px 14px rgba(0,0,0,0.6)'
+              }} onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.05)'; }} onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; }}>
               <span style={{ color: 'inherit' }}>Skip Intro</span>
             </button>
           </div>
         )}
-        
-        {platform === 'hotstar' && currentTime > 60 && currentTime < 120 && (
-          <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: '10px' }}>
-            <button 
-              onClick={() => { if(videoRef.current) videoRef.current.currentTime += 30; }}
-              style={{
-                background: 'rgba(255,255,255,0.1)', color: '#fff', border: '1px solid rgba(255,255,255,0.3)', 
-                padding: '8px 18px', borderRadius: '4px', fontSize: '1rem', fontWeight: 600, cursor: 'pointer',
-                transition: 'background 0.2s', backdropFilter: 'blur(10px)'
-              }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.3)'} onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}>
-              <span style={{ color: 'inherit' }}>Skip Recap</span>
-            </button>
-          </div>
-        )}
 
-        {/* Prime Video Next Episode Bubble */}
-        {platform === 'nprime' && hasNext && progressPercent > 90 && (
+        {/* Next Episode Floating Button */}
+        {hasNext && progressPercent > 85 && (
           <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: '10px' }}>
             <button 
               onClick={onNext}
               style={{
-                background: 'var(--primary-color)', color: '#fff', border: 'none', 
-                padding: '12px 24px', borderRadius: '6px', fontSize: '1.1rem', fontWeight: 700, cursor: 'pointer',
-                boxShadow: '0 4px 15px rgba(0,168,225,0.4)', transition: 'transform 0.2s'
+                background: platform === 'hotstar' ? 'linear-gradient(90deg, #1f80e0, #14599c)' : 'var(--primary-color)',
+                color: '#fff', border: 'none', 
+                padding: '12px 26px', borderRadius: platform === 'hotstar' ? '8px' : '6px', fontSize: '1.05rem', fontWeight: 700, cursor: 'pointer',
+                boxShadow: '0 4px 18px rgba(0,0,0,0.8)', transition: 'transform 0.2s', display: 'flex', alignItems: 'center', gap: '8px'
               }} onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}>
-              Next Episode ➔
+              <FastForward size={18} fill="#FFF" /> Next Episode
             </button>
           </div>
         )}
