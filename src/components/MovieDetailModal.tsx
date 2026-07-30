@@ -194,14 +194,20 @@ function NetflixModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
       backgroundColor: 'rgba(0,0,0,0.7)', overflowY: 'auto', padding: '32px 0'
     }}>
       <div className="detail-dialog" onClick={e => e.stopPropagation()} style={{
-        width: '92%', maxWidth: '850px', backgroundColor: '#181818', borderRadius: '10px',
+        width: '92%', maxWidth: '850px',
+        backgroundColor: platform === 'hotstar' ? '#0F1014' : platform === 'nprime' ? '#0F171E' : '#181818',
+        borderRadius: platform === 'hotstar' ? '12px' : platform === 'nprime' ? '8px' : '10px',
         overflow: 'hidden', boxShadow: '0 30px 80px rgba(0,0,0,0.98)', position: 'relative',
-        animation: 'scaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1)', color: '#FFF', display: 'flex', flexDirection: 'column'
+        animation: 'scaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1)', color: '#FFF', display: 'flex', flexDirection: 'column',
+        border: platform === 'hotstar' ? '1px solid rgba(31, 128, 224, 0.3)' : platform === 'nprime' ? '1px solid rgba(0, 168, 225, 0.3)' : '1px solid rgba(255,255,255,0.1)'
       }}>
         <button onClick={onClose} style={{
           position: 'absolute', top: '16px', right: '16px', width: '36px', height: '36px',
-          borderRadius: '50%', backgroundColor: '#181818', border: 'none', color: '#FFF',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 40, cursor: 'pointer'
+          borderRadius: '50%',
+          backgroundColor: platform === 'hotstar' ? 'rgba(15,16,20,0.8)' : platform === 'nprime' ? 'rgba(15,23,30,0.8)' : '#181818',
+          border: 'none', color: '#FFF',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 40, cursor: 'pointer',
+          backdropFilter: 'blur(8px)'
         }}>
           <X size={20} />
         </button>
@@ -220,10 +226,14 @@ function NetflixModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
 
               <div style={{ display: 'flex', gap: '10px', width: '100%' }}>
                 <button className="detail-play-btn" onClick={() => onPlay(movie)} style={{
-                  background: '#FFF', color: '#000', border: 'none', borderRadius: '4px', padding: '8px 24px',
-                  fontSize: '1.1rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer'
+                  background: platform === 'hotstar' ? '#1F80E0' : platform === 'nprime' ? '#00A8E1' : '#FFF',
+                  color: platform === 'nflix' ? '#000' : '#FFF',
+                  border: 'none', borderRadius: '4px', padding: '10px 28px',
+                  fontSize: '1.1rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer',
+                  boxShadow: platform === 'hotstar' ? '0 4px 18px rgba(31, 128, 224, 0.4)' : platform === 'nprime' ? '0 4px 18px rgba(0, 168, 225, 0.4)' : 'none',
+                  transition: 'transform 0.2s ease'
                 }}>
-                  <Play fill="#000" size={24} /> Play
+                  <Play fill={platform === 'nflix' ? '#000' : '#FFF'} size={24} /> {platform === 'hotstar' ? 'Watch Now' : 'Play'}
                 </button>
                 <button className="detail-action-btn" onClick={() => onToggleMyList(movie.id)} style={{
                   background: 'rgba(42,42,42,0.6)', border: '1px solid rgba(255,255,255,0.5)', borderRadius: '50%',
@@ -232,7 +242,8 @@ function NetflixModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
                   {isMyList ? <Check size={20} /> : <Plus size={20} />}
                 </button>
                 <button className="detail-action-btn" onClick={() => setIsLiked(!isLiked)} style={{
-                  background: isLiked ? '#E50914' : 'rgba(42,42,42,0.6)', border: '1px solid rgba(255,255,255,0.5)', borderRadius: '50%',
+                  background: isLiked ? (platform === 'hotstar' ? '#1F80E0' : platform === 'nprime' ? '#00A8E1' : '#E50914') : 'rgba(42,42,42,0.6)',
+                  border: '1px solid rgba(255,255,255,0.5)', borderRadius: '50%',
                   width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#FFF',
                   transition: 'background 0.2s'
                 }}>
@@ -276,9 +287,9 @@ function NetflixModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
           </div>
         </div>        <div className="detail-bottom-section" style={{ padding: '0 40px 40px 40px' }}>
           {(displayMovie?.isSeries || movie.isSeries || (displayMovie?.seasonsCount ?? 0) > 0) ? (
-            <div style={{ display: 'flex', gap: '30px', borderBottom: '2px solid #404040', marginBottom: '20px' }}>
-              <button onClick={() => setActiveTab('episodes')} style={{ background: 'none', border: 'none', color: activeTab === 'episodes' ? '#FFF' : '#808080', fontSize: '1.2rem', fontWeight: 700, paddingBottom: '16px', borderBottom: activeTab === 'episodes' ? '4px solid #E50914' : '4px solid transparent', cursor: 'pointer', transition: 'color 0.2s' }}>Episodes</button>
-              <button onClick={() => setActiveTab('similar')} style={{ background: 'none', border: 'none', color: activeTab === 'similar' ? '#FFF' : '#808080', fontSize: '1.2rem', fontWeight: 700, paddingBottom: '16px', borderBottom: activeTab === 'similar' ? '4px solid #E50914' : '4px solid transparent', cursor: 'pointer', transition: 'color 0.2s' }}>More Like This</button>
+            <div style={{ display: 'flex', gap: '30px', borderBottom: '2px solid rgba(255,255,255,0.1)', marginBottom: '20px' }}>
+              <button onClick={() => setActiveTab('episodes')} style={{ background: 'none', border: 'none', color: activeTab === 'episodes' ? '#FFF' : '#808080', fontSize: '1.2rem', fontWeight: 700, paddingBottom: '16px', borderBottom: activeTab === 'episodes' ? (platform === 'hotstar' ? '4px solid #1F80E0' : platform === 'nprime' ? '4px solid #00A8E1' : '4px solid #E50914') : '4px solid transparent', cursor: 'pointer', transition: 'color 0.2s' }}>Episodes</button>
+              <button onClick={() => setActiveTab('similar')} style={{ background: 'none', border: 'none', color: activeTab === 'similar' ? '#FFF' : '#808080', fontSize: '1.2rem', fontWeight: 700, paddingBottom: '16px', borderBottom: activeTab === 'similar' ? (platform === 'hotstar' ? '4px solid #1F80E0' : platform === 'nprime' ? '4px solid #00A8E1' : '4px solid #E50914') : '4px solid transparent', cursor: 'pointer', transition: 'color 0.2s' }}>More Like This</button>
             </div>
           ) : (
             <h3 style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '20px' }}>More Like This</h3>
