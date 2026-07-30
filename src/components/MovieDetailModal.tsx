@@ -168,11 +168,11 @@ function NetflixModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
           <X size={20} />
         </button>
 
-        <div style={{ position: 'relative', height: '480px', backgroundColor: '#000', flexShrink: 0 }}>
+        <div className="detail-hero" style={{ position: 'relative', height: '420px', backgroundColor: '#000', flexShrink: 0 }}>
           {renderTrailer()}
           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, #181818 0%, transparent 50%)', zIndex: 15 }} />
 
-          <div style={{ position: 'absolute', bottom: '20px', left: '40px', right: '40px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', zIndex: 20 }}>
+          <div className="detail-hero-content" style={{ position: 'absolute', bottom: '20px', left: '24px', right: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', zIndex: 20 }}>
             <div>
               {displayMovie?.logoUrl ? (
                 <img src={displayMovie.logoUrl} style={{ maxWidth: '350px', maxHeight: '120px', objectFit: 'contain', marginBottom: '20px' }} />
@@ -215,8 +215,8 @@ function NetflixModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
           </div>
         </div>
 
-        <div style={{ padding: '20px 40px', display: 'flex', gap: '40px' }}>
-          <div style={{ flex: '2' }}>
+        <div className="detail-body" style={{ padding: '20px 24px' }}>
+          <div className="detail-overview-grid" style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
             <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '16px', fontSize: '1rem', fontWeight: 500 }}>
               <span style={{ color: '#46d369', fontWeight: 700 }}>{matchScore}% Match</span>
               <span style={{ color: '#BCBCBC' }}>{(displayMovie?.releaseDate || movie?.releaseDate || '').split('-')[0]}</span>

@@ -490,7 +490,7 @@ export const CustomPlayer = ({ streamUrl, movie, onBack, onNext, hasNext, onErro
       )}
 
       {/* Top Bar Overlay */}
-      <div style={{
+      <div className="player-top-bar" style={{
         position: 'absolute', top: 0, left: 0, right: 0,
         background: 'linear-gradient(180deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 60%, transparent 100%)',
         padding: '24px 36px', transition: 'opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -528,7 +528,7 @@ export const CustomPlayer = ({ streamUrl, movie, onBack, onNext, hasNext, onErro
 
       {/* X-Ray Cast Overlay (Prime Only) */}
       {platform === 'nprime' && showXRay && (
-        <div className="menu-popup" style={{
+        <div className="menu-popup xray-panel" style={{
           position: 'absolute', top: '75px', left: '30px', bottom: '110px', width: '330px',
           background: 'rgba(15, 23, 30, 0.96)', backdropFilter: 'blur(20px)', borderRadius: '8px',
           padding: '20px', display: 'flex', flexDirection: 'column', gap: '14px', overflowY: 'auto',
@@ -651,7 +651,7 @@ export const CustomPlayer = ({ streamUrl, movie, onBack, onNext, hasNext, onErro
       )}
 
       {/* Controls Overlay */}
-      <div style={{
+      <div className="custom-player-controls" style={{
         position: 'absolute', bottom: 0, left: 0, right: 0,
         background: 'linear-gradient(0deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.65) 50%, transparent 100%)',
         padding: '40px 30px 24px', transition: 'opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
