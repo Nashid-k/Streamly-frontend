@@ -27,30 +27,47 @@ function formatCastNames(castList?: any[]): string {
 function useMovieDetails(movie: Movie | null, selectedSeason: number, platform: string) {
   const [detailedMovie, setDetailedMovie] = useState<Movie | null>(null);
   const [episodes, setEpisodes] = useState<Episode[]>([]);
+  const [isLoadingDetails, setIsLoadingDetails] = useState<boolean>(true);
+  const [isLoadingEpisodes, setIsLoadingEpisodes] = useState<boolean>(true);
 
   useEffect(() => {
     let isMounted = true;
     if (!movie) return;
-    setDetailedMovie(null);
+    setIsLoadingDetails(true);
+    setIsLoadingEpisodes(movie.isSeries);
 
     // Fetch full movie details
     fetchMovieById(movie.id)
       .then(data => { if (isMounted) setDetailedMovie(data); })
-      .catch(() => { if (isMounted) setDetailedMovie(movie); });
+      .catch(() => { if (isMounted) setDetailedMovie(movie); })
+      .finally(() => { if (isMounted) setIsLoadingDetails(false); });
 
     if (movie.isSeries) {
       fetchSeasonEpisodes(movie.id, selectedSeason)
         .then(data => { if (isMounted) setEpisodes(Array.isArray(data) ? data : []); })
-        .catch(() => { if (isMounted) setEpisodes([]); });
+        .catch(() => { if (isMounted) setEpisodes([]); })
+        .finally(() => { if (isMounted) setIsLoadingEpisodes(false); });
     } else {
       setEpisodes([]);
+      setIsLoadingEpisodes(false);
     }
 
     return () => { isMounted = false; };
   }, [movie, selectedSeason, platform]);
 
-  return { detailedMovie, episodes };
+  return { detailedMovie, episodes, isLoadingDetails, isLoadingEpisodes };
 }
+
+const EpisodeSkeleton = () => (
+  <div style={{ display: 'flex', gap: '20px', padding: '16px', borderRadius: '12px', backgroundColor: 'rgba(255,255,255,0.04)', alignItems: 'center' }}>
+    <div style={{ width: '160px', height: '90px', borderRadius: '8px', backgroundColor: 'rgba(255,255,255,0.08)', animation: 'pulse 1.5s ease-in-out infinite', flexShrink: 0 }} />
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '10px' }}>
+      <div style={{ width: '40%', height: '18px', borderRadius: '4px', backgroundColor: 'rgba(255,255,255,0.1)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+      <div style={{ width: '85%', height: '14px', borderRadius: '4px', backgroundColor: 'rgba(255,255,255,0.06)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+      <div style={{ width: '20%', height: '12px', borderRadius: '4px', backgroundColor: 'rgba(255,255,255,0.06)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+    </div>
+  </div>
+);
 
 const decodeTrailerUrl = (encodedUrl: string): string => {
   if (!encodedUrl) return '';
@@ -150,7 +167,7 @@ function useTrailerPlayer(encodedUrl: string, backdropUrl: string) {
 
 function NetflixModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, isMyList, similarMovies, platform }: MovieDetailModalProps & { platform: string }) {
   const [selectedSeason, setSelectedSeason] = useState(1);
-  const { detailedMovie, episodes } = useMovieDetails(movie, selectedSeason, platform);
+  const { detailedMovie, episodes, isLoadingEpisodes } = useMovieDetails(movie, selectedSeason, platform);
   const displayMovie = detailedMovie || movie;
   const [activeTab, setActiveTab] = useState<'episodes' | 'similar'>('episodes');
   const { isMuted, toggleMute, renderTrailer, hasTrailer } = useTrailerPlayer(displayMovie?.trailerUrl || '', movie?.backdropUrl || movie?.posterUrl || '');
@@ -283,30 +300,37 @@ function NetflixModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
                 <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
 
                   {displayMovie?.seasonsCount && displayMovie.seasonsCount > 1 && (
-                    <select value={selectedSeason} onChange={e => setSelectedSeason(Number(e.target.value))} style={{ background: '#242424', color: '#FFF', border: '1px solid #4D4D4D', padding: '8px 16px', borderRadius: '4px', fontSize: '1rem', cursor: 'pointer' }}>
-                      {Array.from({ length: displayMovie.seasonsCount }, (_, i) => i + 1).map(s => <option key={s} value={s}>Season {s}</option>)}
+                    <select value={selectedSeason} onChange={e => setSelectedSeason(Number(e.target.value))} style={{ background: '#242424', color: '#FFF', border: '1px solid #4D4D4D', padding: '8px 16px', borderRadius: '4px', fontSize: '1rem', cursor: 'pointer', outline: 'none' }}>
+                      {Array.from({ length: displayMovie.seasonsCount }, (_, i) => i + 1).map(s => <option key={s} value={s} style={{ background: '#181818', color: '#FFF' }}>Season {s}</option>)}
                     </select>
                   )}
                 </div>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                {episodes.map((ep, idx) => (
-                  <div key={ep.id} onClick={() => onPlay(movie, ep)} style={{ display: 'flex', gap: '16px', padding: '16px', borderRadius: '4px', backgroundColor: '#222', cursor: 'pointer', alignItems: 'center' }}>
-                    <div style={{ fontSize: '1.5rem', color: '#D2D2D2', width: '30px', textAlign: 'center' }}>{idx + 1}</div>
-                    <div style={{ position: 'relative', width: '130px', height: '73px', flexShrink: 0, borderRadius: '4px', overflow: 'hidden' }}>
-                      <img src={ep.thumbnailUrl || movie.backdropUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                      <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.3)' }}><Play size={30} fill="#FFF" color="#FFF" /></div>
-                    </div>
-                    <div style={{ flex: 1, paddingRight: '16px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                        <span style={{ fontWeight: 700 }}>{ep.title}</span>
-                        <span style={{ color: '#D2D2D2' }}>{ep.duration}</span>
+                {isLoadingEpisodes ? (
+                  <>
+                    <EpisodeSkeleton />
+                    <EpisodeSkeleton />
+                    <EpisodeSkeleton />
+                  </>
+                ) : (
+                  episodes.map((ep, idx) => (
+                    <div key={ep.id} onClick={() => onPlay(movie, ep)} style={{ display: 'flex', gap: '16px', padding: '16px', borderRadius: '4px', backgroundColor: '#222', cursor: 'pointer', alignItems: 'center' }}>
+                      <div style={{ fontSize: '1.5rem', color: '#D2D2D2', width: '30px', textAlign: 'center' }}>{idx + 1}</div>
+                      <div style={{ position: 'relative', width: '130px', height: '73px', flexShrink: 0, borderRadius: '4px', overflow: 'hidden' }}>
+                        <img src={ep.thumbnailUrl || movie.backdropUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.3)' }}><Play size={30} fill="#FFF" color="#FFF" /></div>
                       </div>
-                      <p style={{ fontSize: '0.85rem', color: '#D2D2D2', margin: 0, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{ep.description || 'No description available for this episode.'}</p>
+                      <div style={{ flex: 1, paddingRight: '16px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                          <span style={{ fontWeight: 700 }}>{ep.title}</span>
+                          <span style={{ color: '#D2D2D2' }}>{ep.duration}</span>
+                        </div>
+                        <p style={{ fontSize: '0.85rem', color: '#D2D2D2', margin: 0, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{ep.description || 'No description available for this episode.'}</p>
+                      </div>
                     </div>
-
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </div>
           )}
@@ -334,7 +358,7 @@ function NetflixModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
 
 function PrimeModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, isMyList, similarMovies, platform }: MovieDetailModalProps & { platform: string }) {
   const [selectedSeason, setSelectedSeason] = useState(1);
-  const { detailedMovie, episodes } = useMovieDetails(movie, selectedSeason, platform);
+  const { detailedMovie, episodes, isLoadingEpisodes } = useMovieDetails(movie, selectedSeason, platform);
   const displayMovie = detailedMovie || movie;
   const [activeTab, setActiveTab] = useState<'episodes' | 'related' | 'details'>('episodes');
   const { isMuted, toggleMute, renderTrailer, hasTrailer } = useTrailerPlayer(displayMovie?.trailerUrl || '', movie?.backdropUrl || movie?.posterUrl || '');
@@ -426,25 +450,31 @@ function PrimeModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, isM
           {activeTab === 'episodes' && movie.isSeries && (
              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '10px' }}>
-                <select value={selectedSeason} onChange={e => setSelectedSeason(Number(e.target.value))} style={{ background: 'rgba(255,255,255,0.1)', color: '#FFF', border: 'none', padding: '10px 16px', borderRadius: '4px', fontSize: '1rem', cursor: 'pointer', width: 'fit-content' }}>
-                  {Array.from({ length: displayMovie?.seasonsCount || 1 }, (_, i) => i + 1).map(s => <option key={s} value={s}>Season {s}</option>)}
+                <select value={selectedSeason} onChange={e => setSelectedSeason(Number(e.target.value))} style={{ background: '#19232d', color: '#FFF', border: '1px solid rgba(255,255,255,0.2)', padding: '10px 16px', borderRadius: '4px', fontSize: '1rem', cursor: 'pointer', width: 'fit-content', outline: 'none' }}>
+                  {Array.from({ length: displayMovie?.seasonsCount || 1 }, (_, i) => i + 1).map(s => <option key={s} value={s} style={{ background: '#0f171e', color: '#FFF' }}>Season {s}</option>)}
                 </select>
-
               </div>
-               {episodes.map((ep, idx) => (
-                 <div key={ep.id} onClick={() => onPlay(movie, ep)} style={{ display: 'flex', gap: '24px', padding: '16px', borderRadius: '8px', backgroundColor: 'rgba(255,255,255,0.05)', cursor: 'pointer', alignItems: 'center' }}>
-                   <div style={{ position: 'relative', width: '160px', height: '90px', flexShrink: 0, borderRadius: '4px', overflow: 'hidden' }}>
-                     <img src={ep.thumbnailUrl || movie.backdropUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                     <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.3)' }}><Play size={30} fill="#FFF" color="#FFF" /></div>
-                   </div>
-                   <div style={{ flex: 1, paddingRight: '16px' }}>
-                     <h4 style={{ margin: '0 0 8px 0', fontSize: '1.1rem' }}>{idx + 1}. {ep.title}</h4>
-                     <p style={{ fontSize: '0.9rem', color: '#8197a4', margin: '0 0 8px 0', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{ep.description || 'No description available for this episode.'}</p>
-                     <span style={{ fontSize: '0.8rem', color: '#8197a4' }}>{ep.duration}</span>
-                   </div>
-
-                 </div>
-               ))}
+              {isLoadingEpisodes ? (
+                <>
+                  <EpisodeSkeleton />
+                  <EpisodeSkeleton />
+                  <EpisodeSkeleton />
+                </>
+              ) : (
+                episodes.map((ep, idx) => (
+                  <div key={ep.id} onClick={() => onPlay(movie, ep)} style={{ display: 'flex', gap: '24px', padding: '16px', borderRadius: '8px', backgroundColor: 'rgba(255,255,255,0.05)', cursor: 'pointer', alignItems: 'center' }}>
+                    <div style={{ position: 'relative', width: '160px', height: '90px', flexShrink: 0, borderRadius: '4px', overflow: 'hidden' }}>
+                      <img src={ep.thumbnailUrl || movie.backdropUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.3)' }}><Play size={30} fill="#FFF" color="#FFF" /></div>
+                    </div>
+                    <div style={{ flex: 1, paddingRight: '16px' }}>
+                      <h4 style={{ margin: '0 0 8px 0', fontSize: '1.1rem' }}>{idx + 1}. {ep.title}</h4>
+                      <p style={{ fontSize: '0.9rem', color: '#8197a4', margin: '0 0 8px 0', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{ep.description || 'No description available for this episode.'}</p>
+                      <span style={{ fontSize: '0.8rem', color: '#8197a4' }}>{ep.duration}</span>
+                    </div>
+                  </div>
+                ))
+              )}
              </div>
           )}
 
@@ -482,7 +512,7 @@ function PrimeModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, isM
 
 function HotstarModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, isMyList, similarMovies, platform }: MovieDetailModalProps & { platform: string }) {
   const [selectedSeason, setSelectedSeason] = useState(1);
-  const { detailedMovie, episodes } = useMovieDetails(movie, selectedSeason, platform);
+  const { detailedMovie, episodes, isLoadingEpisodes } = useMovieDetails(movie, selectedSeason, platform);
   const displayMovie = detailedMovie || movie;
   const [activeTab, setActiveTab] = useState<'episodes' | 'more'>('episodes');
   const { isMuted, toggleMute, renderTrailer, hasTrailer } = useTrailerPlayer(displayMovie?.trailerUrl || '', movie?.backdropUrl || movie?.posterUrl || '');
@@ -592,25 +622,31 @@ function HotstarModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
           {activeTab === 'episodes' && movie.isSeries && (
              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '10px' }}>
-                <select value={selectedSeason} onChange={e => setSelectedSeason(Number(e.target.value))} style={{ background: 'rgba(255,255,255,0.1)', color: '#FFF', border: 'none', padding: '10px 16px', borderRadius: '4px', fontSize: '1rem', cursor: 'pointer', width: 'fit-content' }}>
-                  {Array.from({ length: displayMovie?.seasonsCount || 1 }, (_, i) => i + 1).map(s => <option key={s} value={s}>Season {s}</option>)}
+                <select value={selectedSeason} onChange={e => setSelectedSeason(Number(e.target.value))} style={{ background: '#191c24', color: '#FFF', border: '1px solid rgba(31,128,224,0.4)', padding: '10px 16px', borderRadius: '6px', fontSize: '1rem', cursor: 'pointer', width: 'fit-content', outline: 'none' }}>
+                  {Array.from({ length: displayMovie?.seasonsCount || 1 }, (_, i) => i + 1).map(s => <option key={s} value={s} style={{ background: '#0f1014', color: '#FFF' }}>Season {s}</option>)}
                 </select>
-
               </div>
-               {episodes.map((ep, idx) => (
-                 <div key={ep.id} onClick={() => onPlay(movie, ep)} style={{ display: 'flex', gap: '20px', padding: '16px', borderRadius: '12px', backgroundColor: 'rgba(255,255,255,0.03)', cursor: 'pointer', alignItems: 'center' }}>
-                   <div style={{ position: 'relative', width: '180px', height: '101px', flexShrink: 0, borderRadius: '8px', overflow: 'hidden' }}>
-                     <img src={ep.thumbnailUrl || movie.backdropUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                     <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.3)' }}><Play size={30} fill="#FFF" color="#FFF" /></div>
-                     <div style={{ position: 'absolute', bottom: '8px', right: '8px', backgroundColor: 'rgba(0,0,0,0.7)', padding: '2px 6px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600 }}>{ep.duration}</div>
-                   </div>
-                   <div style={{ flex: 1, paddingRight: '16px' }}>
-                     <h4 style={{ margin: '0 0 8px 0', fontSize: '1.1rem', fontWeight: 600 }}>E{idx + 1} - {ep.title}</h4>
-                     <p style={{ fontSize: '0.9rem', color: '#979CA6', margin: 0, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{ep.description || 'No description available for this episode.'}</p>
-                   </div>
-
-                 </div>
-               ))}
+              {isLoadingEpisodes ? (
+                <>
+                  <EpisodeSkeleton />
+                  <EpisodeSkeleton />
+                  <EpisodeSkeleton />
+                </>
+              ) : (
+                episodes.map((ep, idx) => (
+                  <div key={ep.id} onClick={() => onPlay(movie, ep)} style={{ display: 'flex', gap: '20px', padding: '16px', borderRadius: '12px', backgroundColor: 'rgba(255,255,255,0.03)', cursor: 'pointer', alignItems: 'center' }}>
+                    <div style={{ position: 'relative', width: '180px', height: '101px', flexShrink: 0, borderRadius: '8px', overflow: 'hidden' }}>
+                      <img src={ep.thumbnailUrl || movie.backdropUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.3)' }}><Play size={30} fill="#FFF" color="#FFF" /></div>
+                      <div style={{ position: 'absolute', bottom: '8px', right: '8px', backgroundColor: 'rgba(0,0,0,0.7)', padding: '2px 6px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600 }}>{ep.duration}</div>
+                    </div>
+                    <div style={{ flex: 1, paddingRight: '16px' }}>
+                      <h4 style={{ margin: '0 0 8px 0', fontSize: '1.1rem', fontWeight: 600 }}>E{idx + 1} - {ep.title}</h4>
+                      <p style={{ fontSize: '0.9rem', color: '#979CA6', margin: 0, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{ep.description || 'No description available for this episode.'}</p>
+                    </div>
+                  </div>
+                ))
+              )}
              </div>
           )}
 
