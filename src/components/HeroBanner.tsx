@@ -47,6 +47,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
   const [carouselScrollIndex, setCarouselScrollIndex] = useState(0);
   const [isMuted, setIsMuted] = useState(true);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const [isLogoLoading, setIsLogoLoading] = useState(false);
   const iframeRef = React.useRef<HTMLIFrameElement>(null);
 
   const getYouTubeId = (url?: string) => {
@@ -104,6 +105,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
 
     // Async background enrichment if logo is missing (non-blocking)
     if (!initialMovie.logoUrl) {
+      setIsLogoLoading(true);
       fetchMovieById(movie.id)
         .then((fetched) => {
           if (isMounted && fetched) {
@@ -111,7 +113,12 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
             setEnrichedMovie((curr) => (curr?.id === movie.id ? { ...curr, ...fetched, logoUrl: fetched.logoUrl || curr.logoUrl } : curr));
           }
         })
-        .catch(() => {});
+        .catch(() => {})
+        .finally(() => {
+          if (isMounted) setIsLogoLoading(false);
+        });
+    } else {
+      setIsLogoLoading(false);
     }
 
     // Reset video autoplay timer for new movie
@@ -200,6 +207,8 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
               }}
             />
           </div>
+        ) : isLogoLoading ? (
+          <div style={{ marginBottom: '20px', height: '60px', width: '280px', background: 'rgba(255,255,255,0.08)', borderRadius: '8px', animation: 'pulse 1.5s infinite ease-in-out' }} />
         ) : (
           <h1
             className="hero-title-text"
