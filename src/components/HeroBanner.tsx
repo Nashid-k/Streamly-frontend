@@ -46,6 +46,26 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
   const [enrichedMovie, setEnrichedMovie] = useState<Movie | null>(null);
   const [carouselScrollIndex, setCarouselScrollIndex] = useState(0);
   const [isMuted, setIsMuted] = useState(true);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const iframeRef = React.useRef<HTMLIFrameElement>(null);
+
+  const getYouTubeId = (url?: string) => {
+    if (!url) return '';
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    return match && match[2].length === 11 ? match[2] : '';
+  };
+
+  const toggleMute = () => {
+    const newMuted = !isMuted;
+    setIsMuted(newMuted);
+    if (iframeRef.current && iframeRef.current.contentWindow) {
+      iframeRef.current.contentWindow.postMessage(
+        JSON.stringify({ event: 'command', func: newMuted ? 'mute' : 'unMute', args: [] }),
+        '*'
+      );
+    }
+  };
 
   // Persistent logo cache across banner transitions to eliminate text title flicker
   const logoCacheRef = React.useRef<Map<string, string>>(new Map());
@@ -94,7 +114,16 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
         .catch(() => {});
     }
 
-    return () => { isMounted = false; };
+    // Reset video autoplay timer for new movie
+    setIsVideoPlaying(false);
+    const videoTimer = setTimeout(() => {
+      if (isMounted) setIsVideoPlaying(true);
+    }, 1500);
+
+    return () => { 
+      isMounted = false; 
+      clearTimeout(videoTimer);
+    };
   }, [movie, carouselMovies, onHeroReady]);
 
   if (!enrichedMovie) return null;
@@ -118,24 +147,47 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
     >
       {/* The backdrop and text use the same movie object, preventing a stale
           image from appearing behind a newly selected title. */}
-      <div
-        key={enrichedMovie.id}
-        
-        style={{
-          position: 'absolute',
-          inset: 0,
-          backgroundImage: backgroundUrl
-            ? platform === 'hotstar'
-              ? `linear-gradient(180deg, rgba(15,16,20,0) 0%, rgba(15,16,20,0.4) 60%, rgba(15,16,20,1) 100%), linear-gradient(90deg, rgba(15,16,20,1) 0%, rgba(15,16,20,0) 75%), url(${backgroundUrl})`
-              : platform === 'nprime'
-              ? `linear-gradient(180deg, rgba(15,23,30,0.5) 0%, rgba(15,23,30,0.2) 50%, rgba(15,23,30,1) 100%), linear-gradient(90deg, rgba(15,23,30,0.95) 0%, rgba(15,23,30,0) 65%), url(${backgroundUrl})`
-              : `linear-gradient(180deg, rgba(20,20,20,0.5) 0%, rgba(20,20,20,0.2) 50%, rgba(20,20,20,1) 100%), linear-gradient(90deg, rgba(20,20,20,0.85) 0%, rgba(20,20,20,0) 65%), url(${backgroundUrl})`
-            : 'linear-gradient(135deg, var(--bg-color) 0%, var(--bg-elevated) 100%)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center top',
-          zIndex: 0,
-        }}
-      />
+      {/* Background Trailer Video or Image Backdrop */}
+      {enrichedMovie.trailerUrl && isVideoPlaying ? (
+        <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', zIndex: 0, pointerEvents: 'none' }}>
+          <iframe
+            ref={iframeRef}
+            src={`https://www.youtube.com/embed/${getYouTubeId(enrichedMovie.trailerUrl)}?autoplay=1&mute=${isMuted ? 1 : 0}&controls=0&modestbranding=1&showinfo=0&rel=0&iv_load_policy=3&enablejsapi=1&playsinline=1&loop=1`}
+            style={{ width: '100vw', height: '56.25vw', minHeight: '100vh', minWidth: '177.77vh', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%) scale(1.15)', pointerEvents: 'none' }}
+            allow="autoplay; encrypted-media"
+          />
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              background: platform === 'hotstar'
+                ? 'linear-gradient(180deg, rgba(15,16,20,0.2) 0%, rgba(15,16,20,0.6) 60%, rgba(15,16,20,1) 100%), linear-gradient(90deg, rgba(15,16,20,0.95) 0%, rgba(15,16,20,0) 65%)'
+                : platform === 'nprime'
+                ? 'linear-gradient(180deg, rgba(15,23,30,0.3) 0%, rgba(15,23,30,0.5) 50%, rgba(15,23,30,1) 100%), linear-gradient(90deg, rgba(15,23,30,0.95) 0%, rgba(15,23,30,0) 65%)'
+                : 'linear-gradient(180deg, rgba(20,20,20,0.3) 0%, rgba(20,20,20,0.5) 50%, rgba(20,20,20,1) 100%), linear-gradient(90deg, rgba(20,20,20,0.85) 0%, rgba(20,20,20,0) 65%)',
+              zIndex: 1
+            }}
+          />
+        </div>
+      ) : (
+        <div
+          key={enrichedMovie.id}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            backgroundImage: backgroundUrl
+              ? platform === 'hotstar'
+                ? `linear-gradient(180deg, rgba(15,16,20,0) 0%, rgba(15,16,20,0.4) 60%, rgba(15,16,20,1) 100%), linear-gradient(90deg, rgba(15,16,20,1) 0%, rgba(15,16,20,0) 75%), url(${backgroundUrl})`
+                : platform === 'nprime'
+                ? `linear-gradient(180deg, rgba(15,23,30,0.5) 0%, rgba(15,23,30,0.2) 50%, rgba(15,23,30,1) 100%), linear-gradient(90deg, rgba(15,23,30,0.95) 0%, rgba(15,23,30,0) 65%), url(${backgroundUrl})`
+                : `linear-gradient(180deg, rgba(20,20,20,0.5) 0%, rgba(20,20,20,0.2) 50%, rgba(20,20,20,1) 100%), linear-gradient(90deg, rgba(20,20,20,0.85) 0%, rgba(20,20,20,0) 65%), url(${backgroundUrl})`
+              : 'linear-gradient(135deg, var(--bg-color) 0%, var(--bg-elevated) 100%)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center top',
+            zIndex: 0,
+          }}
+        />
+      )}
 
       {/* Left Column: Hero Content */}
       <div key={enrichedMovie.id} className="hero-content" style={{ maxWidth: '680px', zIndex: 10 }}>
@@ -310,27 +362,30 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
             </button>
           )}
 
-          {/* Authentic Hero Speaker Mute Toggle */}
-          <button
-            onClick={() => setIsMuted(!isMuted)}
-            style={{
-              width: '44px',
-              height: '44px',
-              borderRadius: '50%',
-              backgroundColor: 'rgba(0,0,0,0.5)',
-              border: '1px solid rgba(255,255,255,0.4)',
-              color: '#FFF',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              marginLeft: 'auto',
-              backdropFilter: 'blur(8px)',
-              transition: 'background 0.2s'
-            }}
-          >
-            {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
-          </button>
+          {/* Authentic Hero Speaker Mute Toggle (Only rendered when trailer is playing) */}
+          {enrichedMovie.trailerUrl && isVideoPlaying && (
+            <button
+              onClick={toggleMute}
+              style={{
+                width: '44px',
+                height: '44px',
+                borderRadius: '50%',
+                backgroundColor: 'rgba(0,0,0,0.5)',
+                border: '1px solid rgba(255,255,255,0.4)',
+                color: '#FFF',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                marginLeft: 'auto',
+                backdropFilter: 'blur(8px)',
+                transition: 'background 0.2s',
+                zIndex: 30
+              }}
+            >
+              {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+            </button>
+          )}
         </div>
       </div>
 
