@@ -510,8 +510,8 @@ input:focus-visible,
   header.hotstar-mobile-header { display: flex !important; }
   .desktop-nav-items { display: none !important; }
   .mobile-bottom-nav { display: flex !important; height: 58px !important; }
-  .hotstar-sidebar { display: none !important; }
-  .hotstar-main-content { margin-left: 0 !important; width: 100% !important; padding-bottom: 72px !important; }
+  aside.hotstar-sidebar { display: none !important; }
+  main.hotstar-main-content { margin-left: 0 !important; width: 100% !important; padding-bottom: 72px !important; }
   
   /* 2. Hero Banner Component */
   div.hero-container { min-height: 320px !important; height: 48vh !important; padding: 0 12px 40px 12px !important; }
@@ -571,6 +571,12 @@ input:focus-visible,
 }
 
 /* --- Tablet Breakpoint (768px - 1024px) --- */
+@media (max-width: 1024px) {
+  aside.hotstar-sidebar { display: none !important; }
+  main.hotstar-main-content { margin-left: 0 !important; width: 100% !important; }
+  header.hotstar-mobile-header { display: flex !important; }
+}
+
 @media (min-width: 769px) and (max-width: 1024px) {
   div.hero-container { height: 48vh !important; min-height: 360px !important; }
   div.hero-content { max-width: 75% !important; }
