@@ -70,22 +70,46 @@ export const MovieRow: React.FC<MovieRowProps> = ({
       onMouseEnter={() => setIsRowHovered(true)}
       onMouseLeave={() => setIsRowHovered(false)}
     >
-      {/* Category Row Header with Accent Bar */}
-      <div className="catalog-row-header" style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-        <div style={{ width: '4px', height: '22px', background: platform === 'nprime' ? 'var(--primary-color)' : 'linear-gradient(180deg, #E50914 0%, #FF5252 100%)', borderRadius: '2px' }} />
-        <h3
+      {/* Category Row Header with Accent Bar & Explore All Link */}
+      <div className="catalog-row-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{ width: '4px', height: '22px', background: platform === 'nprime' ? 'var(--primary-color)' : platform === 'hotstar' ? '#1F80E0' : 'linear-gradient(180deg, #E50914 0%, #FF5252 100%)', borderRadius: '2px' }} />
+          <h3
+            style={{
+              fontSize: '1.4rem',
+              fontWeight: 800,
+              color: '#F8FAFC',
+              letterSpacing: '-0.02em',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+            }}
+          >
+            {title}
+          </h3>
+        </div>
+
+        <button
+          onClick={() => handleScroll('right')}
+          className="row-explore-all"
           style={{
-            fontSize: '1.4rem',
-            fontWeight: 800,
-            color: '#F8FAFC',
-            letterSpacing: '-0.02em',
+            background: 'none',
+            border: 'none',
+            color: platform === 'nprime' ? '#00A8E1' : platform === 'hotstar' ? '#1F80E0' : '#564d4d',
+            fontSize: '0.88rem',
+            fontWeight: 700,
+            cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
-            gap: '8px',
+            gap: '4px',
+            transition: 'color 0.2s ease',
           }}
+          onMouseEnter={(e) => (e.currentTarget.style.color = '#FFF')}
+          onMouseLeave={(e) => (e.currentTarget.style.color = platform === 'nprime' ? '#00A8E1' : platform === 'hotstar' ? '#1F80E0' : '#564d4d')}
         >
-          {title}
-        </h3>
+          <span>Explore All</span>
+          <ChevronRight size={16} />
+        </button>
       </div>
 
       {/* Row Container with Glass Nav Controls */}
