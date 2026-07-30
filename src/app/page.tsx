@@ -284,6 +284,7 @@ export default function Home() {
 
   const [isLoadingPage, setIsLoadingPage] = useState(true);
   const [hasCompletedInitialLoad, setHasCompletedInitialLoad] = useState(false);
+  const [isSwitchingPlatform, setIsSwitchingPlatform] = useState(false);
 
   useEffect(() => {
     if (!isLoadingPage) {
@@ -295,8 +296,7 @@ export default function Home() {
   // Initial Data Fetching & Dynamic Platform Switching Sync
   useEffect(() => {
     let isMounted = true;
-    setIsLoadingPage(true);
-    setHasCompletedInitialLoad(false);
+    setIsSwitchingPlatform(true);
     
     async function loadData() {
       try {
@@ -412,17 +412,23 @@ export default function Home() {
         if (isMounted) setCatalogError(error instanceof Error ? error.message : 'The catalog could not be loaded.');
       } finally {
         if (isMounted) {
+          setIsLoadingPage(false);
+          setHasCompletedInitialLoad(true);
           setTimeout(() => {
-            if (isMounted) setIsLoadingPage(false);
-          }, 300);
+            if (isMounted) setIsSwitchingPlatform(false);
+          }, 500);
         }
       }
     }
 
-    // Safety fallback timer to guarantee loader unmasks even on network stalls
+    // Safety fallback timer (max 2s) to guarantee loader unmasks under any condition
     const safetyTimer = setTimeout(() => {
-      if (isMounted) setIsLoadingPage(false);
-    }, 3500);
+      if (isMounted) {
+        setIsLoadingPage(false);
+        setHasCompletedInitialLoad(true);
+        setIsSwitchingPlatform(false);
+      }
+    }, 2000);
 
     loadData();
     return () => {
@@ -664,8 +670,8 @@ export default function Home() {
         onOpenOnboardingModal={() => setShowOnboardingModal(true)}
       />
 
-      {/* Platform-Authentic Full-Page Initial Loader */}
-      {!hasCompletedInitialLoad && <PlatformInitialLoader />}
+      {/* Platform-Authentic Full-Page Initial & Switching Loader */}
+      {(!hasCompletedInitialLoad || isSwitchingPlatform) && <PlatformInitialLoader />}
 
       {/* Main Page Content Router */}
       <div style={{ opacity: hasCompletedInitialLoad ? 1 : 0, transition: 'opacity 0.3s' }}>
