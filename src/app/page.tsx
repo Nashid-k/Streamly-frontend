@@ -414,21 +414,23 @@ export default function Home() {
         if (isMounted) {
           setIsLoadingPage(false);
           setHasCompletedInitialLoad(true);
+          // Dynamic loader duration between 3.0s and 5.0s for an authentic streaming platform launch experience
+          const dynamicLoaderTime = Math.floor(Math.random() * 2000) + 3000;
           setTimeout(() => {
             if (isMounted) setIsSwitchingPlatform(false);
-          }, 500);
+          }, dynamicLoaderTime);
         }
       }
     }
 
-    // Safety fallback timer (max 2s) to guarantee loader unmasks under any condition
+    // Safety fallback timer (max 5.5s) to guarantee loader unmasks under any condition
     const safetyTimer = setTimeout(() => {
       if (isMounted) {
         setIsLoadingPage(false);
         setHasCompletedInitialLoad(true);
         setIsSwitchingPlatform(false);
       }
-    }, 2000);
+    }, 5500);
 
     loadData();
     return () => {
