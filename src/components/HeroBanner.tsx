@@ -148,7 +148,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
       {/* The backdrop and text use the same movie object, preventing a stale
           image from appearing behind a newly selected title. */}
       {/* Background Trailer Video or Image Backdrop */}
-      {enrichedMovie.trailerUrl && isVideoPlaying ? (
+      {platform !== 'nflix' && enrichedMovie.trailerUrl && isVideoPlaying ? (
         <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', zIndex: 0, pointerEvents: 'none' }}>
           <iframe
             ref={iframeRef}
@@ -363,7 +363,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
           )}
 
           {/* Authentic Hero Speaker Mute Toggle (Only rendered when trailer is playing) */}
-          {enrichedMovie.trailerUrl && isVideoPlaying && (
+          {platform !== 'nflix' && enrichedMovie.trailerUrl && isVideoPlaying && (
             <button
               onClick={toggleMute}
               style={{
