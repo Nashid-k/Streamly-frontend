@@ -272,7 +272,6 @@ export default function Home() {
   };
 
   const [isLoadingPage, setIsLoadingPage] = useState(true);
-
   const [hasCompletedInitialLoad, setHasCompletedInitialLoad] = useState(false);
 
   useEffect(() => {

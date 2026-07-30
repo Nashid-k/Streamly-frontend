@@ -35,16 +35,14 @@ export const PlatformProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     const saved = localStorage.getItem('app_platform') as Platform;
     if (saved === 'nprime' || saved === 'nflix' || saved === 'hotstar') {
       setPlatformState(saved);
+      document.documentElement.setAttribute('data-theme', saved);
       if (saved === 'nprime') {
-        document.documentElement.setAttribute('data-theme', 'nprime');
         document.title = 'Prime Video';
         setFavicon('nprime');
       } else if (saved === 'hotstar') {
-        document.documentElement.setAttribute('data-theme', 'hotstar');
         document.title = 'Disney+ Hotstar';
         setFavicon('hotstar');
       } else {
-        document.documentElement.setAttribute('data-theme', 'nflix');
         document.title = 'Netflix';
         setFavicon('nflix');
       }
@@ -56,10 +54,10 @@ export const PlatformProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   }, []);
 
   const setPlatform = (p: Platform) => {
-    setPlatformState(p);
     localStorage.setItem('app_platform', p);
     sessionStorage.setItem('is_switching', 'true');
     document.documentElement.setAttribute('data-theme', p);
+    setPlatformState(p);
     // Reload the page to reset all data and re-fetch with new platform
     window.location.reload();
   };
