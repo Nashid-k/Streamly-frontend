@@ -412,10 +412,10 @@ export default function Home() {
         if (isMounted) setCatalogError(error instanceof Error ? error.message : 'The catalog could not be loaded.');
       } finally {
         if (isMounted) {
-          // Guaranteed minimum 400ms loader screen for smooth platform transition feel
+          // Authentic platform transition experience — keep loader active for 3 seconds
           setTimeout(() => {
             if (isMounted) setIsLoadingPage(false);
-          }, 400);
+          }, 3000);
         }
       }
     }
