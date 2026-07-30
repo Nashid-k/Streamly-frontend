@@ -258,7 +258,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               </div>
             )}
             
-            <nav style={{ display: 'flex', alignItems: 'center', gap: platform === 'nprime' ? '28px' : '20px', fontFamily: platform === 'nprime' ? '"Amazon Ember", Arial, sans-serif' : 'Helvetica, Arial, sans-serif' }}>
+            <nav className="desktop-nav-items" style={{ display: 'flex', alignItems: 'center', gap: platform === 'nprime' ? '28px' : '20px', fontFamily: platform === 'nprime' ? '"Amazon Ember", Arial, sans-serif' : 'Helvetica, Arial, sans-serif' }}>
               {navItems.map((item) => (
                 <button key={item.id} onClick={() => setActiveTab(item.id as any)} style={{ background: 'none', border: 'none', color: activeTab === item.id ? '#FFF' : (platform === 'nprime' ? '#8197a4' : '#E5E5E5'), fontWeight: activeTab === item.id ? 700 : (platform === 'nprime' ? 600 : 400), fontSize: platform === 'nprime' ? '0.95rem' : '0.85rem', cursor: 'pointer', transition: 'color 0.2s', letterSpacing: platform === 'nprime' ? '0.02em' : 'normal' }} onMouseEnter={(e) => e.currentTarget.style.color = '#FFF'} onMouseLeave={(e) => e.currentTarget.style.color = activeTab === item.id ? '#FFF' : (platform === 'nprime' ? '#8197a4' : '#E5E5E5')}>
                   {item.label}
@@ -319,6 +319,26 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
         </div>
       </header>
+
+      {/* Mobile Bottom Navigation Bar (<768px) */}
+      <nav className="mobile-bottom-nav" style={{ display: 'none', position: 'fixed', bottom: 0, left: 0, right: 0, height: '56px', background: 'rgba(15, 16, 20, 0.96)', backdropFilter: 'blur(12px)', borderTop: '1px solid rgba(255,255,255,0.1)', zIndex: 200, alignItems: 'center', justifyContent: 'space-around', padding: '0 8px' }}>
+        <button onClick={() => setActiveTab('home')} style={{ background: 'none', border: 'none', color: activeTab === 'home' ? 'var(--primary-color)' : '#8F98B2', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', fontSize: '0.65rem', fontWeight: 700, cursor: 'pointer' }}>
+          <Home size={18} />
+          Home
+        </button>
+        <button onClick={() => setActiveTab('movies')} style={{ background: 'none', border: 'none', color: activeTab === 'movies' ? 'var(--primary-color)' : '#8F98B2', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', fontSize: '0.65rem', fontWeight: 700, cursor: 'pointer' }}>
+          <Film size={18} />
+          Movies
+        </button>
+        <button onClick={() => setActiveTab('series')} style={{ background: 'none', border: 'none', color: activeTab === 'series' ? 'var(--primary-color)' : '#8F98B2', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', fontSize: '0.65rem', fontWeight: 700, cursor: 'pointer' }}>
+          <Tv size={18} />
+          TV
+        </button>
+        <button onClick={() => setActiveTab('mylist')} style={{ background: 'none', border: 'none', color: activeTab === 'mylist' ? 'var(--primary-color)' : '#8F98B2', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', fontSize: '0.65rem', fontWeight: 700, cursor: 'pointer' }}>
+          <Plus size={18} />
+          My List
+        </button>
+      </nav>
     </>
   );
 };
