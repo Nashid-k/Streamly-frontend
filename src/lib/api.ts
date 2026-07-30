@@ -1,6 +1,6 @@
 import { Category, Movie, Episode, User, SearchResponse } from '../types';
 
-const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://streamly-backend-9q7i.onrender.com/api';
 const cache = new Map<string, { expiresAt: number; value: unknown }>();
 
 const getPlatform = () => typeof window !== 'undefined' ? (localStorage.getItem('app_platform') || 'nflix') : 'nflix';
