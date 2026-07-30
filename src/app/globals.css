@@ -500,60 +500,73 @@ input:focus-visible,
 .eyebrow { color: var(--primary-color) !important; font-size: .78rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
 
 
-/* ── COMPLETE RESPONSIVE BREAKPOINTS (Mobile & Tablet) ── */
+/* ───────────── COMPLETE RESPONSIVE DESIGN SYSTEM (Mobile & Tablet) ───────────── */
 
+/* --- Mobile Breakpoint (<768px) --- */
 @media (max-width: 768px) {
-  /* 1. Header & Top Navbar */
+  /* 1. Header & Brand Navigation */
   header div.navbar { padding: 0 12px !important; height: 56px !important; }
-  header div.navbar > div:first-child { gap: 12px !important; }
+  header div.navbar > div:first-child { gap: 10px !important; }
   .desktop-nav-items { display: none !important; }
-  .mobile-bottom-nav { display: flex !important; }
+  .mobile-bottom-nav { display: flex !important; height: 60px !important; }
   .hotstar-sidebar { display: none !important; }
-  .hotstar-main-content { margin-left: 0 !important; width: 100% !important; padding-bottom: 70px !important; }
+  .hotstar-main-content { margin-left: 0 !important; width: 100% !important; padding-bottom: 72px !important; }
+  
+  /* 2. Hero Banner Component */
+  div.hero-container { min-height: 340px !important; height: 52vh !important; padding: 0 12px 48px 12px !important; }
+  div.hero-content { max-width: 100% !important; left: 0 !important; right: 0 !important; bottom: 12px !important; }
+  .hero-title-text { font-size: 1.45rem !important; line-height: 1.15 !important; margin-bottom: 6px !important; }
+  .hero-meta-row { flex-wrap: wrap !important; gap: 6px !important; font-size: 0.72rem !important; margin-bottom: 6px !important; }
+  .hero-description { font-size: 0.76rem !important; -webkit-line-clamp: 2 !important; margin-bottom: 10px !important; line-height: 1.35 !important; }
+  .hero-actions-row { flex-wrap: wrap !important; gap: 6px !important; width: 100% !important; }
+  .hero-actions-row button { padding: 8px 12px !important; font-size: 0.8rem !important; flex: 1; min-width: 120px; justify-content: center; }
 
-  /* 2. Hero Banner Mobile Scaling */
-  div.hero-container { min-height: 360px !important; height: 55vh !important; padding-bottom: 50px !important; padding-left: 14px !important; padding-right: 14px !important; }
-  div.hero-content { max-width: 100% !important; left: 0 !important; right: 0 !important; bottom: 10px !important; }
-  .hero-title-text { font-size: 1.5rem !important; line-height: 1.15 !important; margin-bottom: 8px !important; }
-  .hero-meta-row { flex-wrap: wrap !important; gap: 6px !important; font-size: 0.75rem !important; margin-bottom: 8px !important; }
-  .hero-description { font-size: 0.78rem !important; -webkit-line-clamp: 2 !important; margin-bottom: 12px !important; }
-  .hero-actions-row { flex-wrap: wrap !important; gap: 8px !important; }
-  .hero-actions-row button { padding: 8px 14px !important; font-size: 0.82rem !important; flex: 1; justify-content: center; }
+  /* 3. Movie Cards & Platform Domain Grid */
+  div.catalog-row { margin-bottom: 18px !important; padding: 0 10px !important; }
+  div.catalog-row-header { margin-bottom: 6px !important; }
+  div.catalog-row-header h3 { font-size: 1rem !important; }
+  
+  div.movie-card { margin-right: 8px !important; }
+  div.movie-card.netflix-card { width: 130px !important; height: 75px !important; }
+  div.movie-card.netflix-card > div:first-child { width: 130px !important; }
+  div.movie-card.netflix-card img { height: 75px !important; }
+  div.movie-card.nprime-card { width: 130px !important; height: 75px !important; }
+  div.movie-card.hotstar-card { width: 110px !important; height: 165px !important; }
+  
+  /* Disable Desktop Hover Scaling on Mobile Touch Screens */
+  div.movie-card:hover { transform: none !important; }
+  div.movie-card.netflix-card > div:first-child:hover { transform: none !important; }
 
-  /* 3. Catalog Rows & Movie Cards Grid */
-  .catalog-row { margin-bottom: 20px !important; padding: 0 10px !important; }
-  .catalog-row-header { margin-bottom: 8px !important; }
-  .catalog-row-header h3 { font-size: 1.05rem !important; }
-  .movie-card.netflix-card { width: 140px !important; height: 80px !important; }
-  .movie-card.nprime-card { width: 140px !important; height: 80px !important; }
-  .movie-card.hotstar-card { width: 120px !important; height: 180px !important; }
-
-  /* 4. Full-Screen Detail Sheet Modal */
+  /* 4. Movie Detail Sheet & Action Buttons */
   div.modal-overlay { padding: 0 !important; align-items: flex-end !important; }
-  div.detail-dialog { width: 100% !important; max-height: 92vh !important; border-radius: 20px 20px 0 0 !important; overflow-y: auto !important; }
-  div.detail-hero { height: 180px !important; }
-  div.detail-hero-content { left: 14px !important; right: 14px !important; bottom: 10px !important; }
-  div.detail-hero-content h2 { font-size: 1.25rem !important; margin-bottom: 10px !important; }
-  div.detail-body { padding: 14px !important; }
-  div.detail-overview-grid { grid-template-columns: 1fr !important; gap: 12px !important; flex-direction: column !important; }
-  div.detail-bottom-section { padding: 0 14px 24px 14px !important; }
-  .episode-item { flex-direction: column !important; align-items: flex-start !important; gap: 8px !important; }
-  .episode-thumb { width: 100% !important; height: 140px !important; }
+  div.detail-dialog { width: 100% !important; max-height: 94vh !important; border-radius: 18px 18px 0 0 !important; overflow-y: auto !important; }
+  div.detail-hero { height: 175px !important; }
+  div.detail-hero-content { left: 12px !important; right: 12px !important; bottom: 8px !important; flex-direction: column !important; align-items: flex-start !important; gap: 8px !important; }
+  div.detail-hero-content h2 { font-size: 1.2rem !important; margin-bottom: 6px !important; }
+  div.detail-body { padding: 12px !important; }
+  div.detail-overview-grid { grid-template-columns: 1fr !important; gap: 10px !important; flex-direction: column !important; }
+  div.detail-bottom-section { padding: 0 12px 24px 12px !important; }
+  .episode-item { flex-direction: column !important; align-items: flex-start !important; gap: 6px !important; }
+  .episode-thumb { width: 100% !important; height: 130px !important; }
 
-  /* 5. Custom Video Player Mobile HUD */
-  div.player-top-bar { padding: 12px 14px !important; }
-  div.custom-player-controls { padding: 10px 12px !important; gap: 10px !important; }
-  div.xray-panel { width: 100% !important; left: 0 !important; right: 0 !important; top: auto !important; bottom: 0 !important; height: 55vh !important; border-radius: 18px 18px 0 0 !important; }
+  /* 5. Fullscreen Video Player & X-Ray Drawer */
+  div.player-top-bar { padding: 10px 12px !important; }
+  div.custom-player-controls { padding: 8px 10px !important; gap: 8px !important; }
+  div.xray-panel { width: 100% !important; left: 0 !important; right: 0 !important; top: auto !important; bottom: 0 !important; height: 55vh !important; border-radius: 16px 16px 0 0 !important; }
 }
 
+/* --- Tablet Breakpoint (768px - 1024px) --- */
 @media (min-width: 769px) and (max-width: 1024px) {
-  /* Tablet Breakpoints (iPads / Android Tablets) */
-  div.hero-container { height: 52vh !important; min-height: 400px !important; }
-  div.hero-content { max-width: 80% !important; }
-  .hero-title-text { font-size: 2rem !important; }
-  .movie-card.netflix-card { width: 200px !important; height: 112px !important; }
-  .movie-card.nprime-card { width: 200px !important; height: 112px !important; }
-  .movie-card.hotstar-card { width: 150px !important; height: 225px !important; }
+  div.hero-container { height: 50vh !important; min-height: 380px !important; }
+  div.hero-content { max-width: 75% !important; }
+  .hero-title-text { font-size: 1.85rem !important; }
+  
+  div.movie-card.netflix-card { width: 180px !important; height: 102px !important; }
+  div.movie-card.netflix-card > div:first-child { width: 180px !important; }
+  div.movie-card.netflix-card img { height: 102px !important; }
+  div.movie-card.nprime-card { width: 180px !important; height: 102px !important; }
+  div.movie-card.hotstar-card { width: 140px !important; height: 210px !important; }
+  
   div.detail-dialog { width: 88% !important; max-height: 88vh !important; }
 }
 
