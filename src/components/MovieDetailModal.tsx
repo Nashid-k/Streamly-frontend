@@ -182,6 +182,7 @@ function NetflixModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
   const displayMovie = detailedMovie || movie;
   const isTvShow = Boolean(displayMovie?.isSeries || movie?.isSeries || (displayMovie?.seasonsCount ?? 0) > 0);
   const [activeTab, setActiveTab] = useState<'episodes' | 'similar'>(isTvShow ? 'episodes' : 'similar');
+  const [isLiked, setIsLiked] = useState(false);
   const { isMuted, toggleMute, renderTrailer, hasTrailer } = useTrailerPlayer(displayMovie?.trailerUrl || '', movie?.backdropUrl || movie?.posterUrl || '');
 
   if (!movie) return null;
@@ -230,13 +231,13 @@ function NetflixModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
                 }}>
                   {isMyList ? <Check size={20} /> : <Plus size={20} />}
                 </button>
-                <button className="detail-action-btn" style={{
-                  background: 'rgba(42,42,42,0.6)', border: '1px solid rgba(255,255,255,0.5)', borderRadius: '50%',
-                  width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#FFF'
+                <button className="detail-action-btn" onClick={() => setIsLiked(!isLiked)} style={{
+                  background: isLiked ? '#E50914' : 'rgba(42,42,42,0.6)', border: '1px solid rgba(255,255,255,0.5)', borderRadius: '50%',
+                  width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#FFF',
+                  transition: 'background 0.2s'
                 }}>
-                  <ThumbsUp size={20} />
+                  <ThumbsUp size={20} fill={isLiked ? '#FFF' : 'none'} />
                 </button>
-
               </div>
             </div>
 
@@ -372,6 +373,7 @@ function PrimeModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, isM
   const displayMovie = detailedMovie || movie;
   const isTvShow = Boolean(displayMovie?.isSeries || movie?.isSeries || (displayMovie?.seasonsCount ?? 0) > 0);
   const [activeTab, setActiveTab] = useState<'episodes' | 'related' | 'details'>(isTvShow ? 'episodes' : 'related');
+  const [isLiked, setIsLiked] = useState(false);
   const { isMuted, toggleMute, renderTrailer, hasTrailer } = useTrailerPlayer(displayMovie?.trailerUrl || '', movie?.backdropUrl || movie?.posterUrl || '');
 
   if (!movie) return null;
@@ -423,7 +425,13 @@ function PrimeModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, isM
                 }}>
                   {isMyList ? <Check size={22} /> : <Plus size={22} />}
                 </button>
-
+                <button onClick={() => setIsLiked(!isLiked)} style={{
+                  background: isLiked ? '#00A8E1' : 'rgba(255,255,255,0.2)', border: 'none', borderRadius: '50%',
+                  width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#FFF',
+                  transition: 'background 0.2s'
+                }}>
+                  <ThumbsUp size={22} fill={isLiked ? '#FFF' : 'none'} />
+                </button>
               </div>
             </div>
 
