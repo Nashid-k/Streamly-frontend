@@ -53,7 +53,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   }, []);
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
       if (appSwitcherRef.current && !appSwitcherRef.current.contains(event.target as Node)) {
         setShowAppSwitcher(false);
       }
@@ -62,7 +62,11 @@ export const Navbar: React.FC<NavbarProps> = ({
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
   }, []);
 
   const copy: Record<string, any> = {
@@ -133,10 +137,11 @@ export const Navbar: React.FC<NavbarProps> = ({
       `}</style>
       {platform !== 'nflix' && (
         <button
-          onClick={() => { setPlatform('nflix'); setShowAppSwitcher(false); }}
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); setPlatform('nflix'); setShowAppSwitcher(false); }}
+          onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); setPlatform('nflix'); setShowAppSwitcher(false); }}
           onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(229,9,20,0.12)')}
           onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
-          style={{ background: 'transparent', border: 'none', padding: '12px 14px', borderRadius: '8px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px', transition: 'all 0.2s ease' }}
+          style={{ background: 'transparent', border: 'none', padding: '12px 14px', borderRadius: '8px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px', transition: 'all 0.2s ease', touchAction: 'manipulation' }}
         >
           <span style={{ fontSize: '1.25rem', fontWeight: 900, color: '#E50914', letterSpacing: '-0.02em', fontFamily: 'Arial, sans-serif', textShadow: '0 2px 10px rgba(229,9,20,0.35)' }}>NETFLIX</span>
           <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#888', letterSpacing: '0.04em' }}>netflix.com</span>
@@ -144,10 +149,11 @@ export const Navbar: React.FC<NavbarProps> = ({
       )}
       {platform !== 'nprime' && (
         <button
-          onClick={() => { setPlatform('nprime'); setShowAppSwitcher(false); }}
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); setPlatform('nprime'); setShowAppSwitcher(false); }}
+          onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); setPlatform('nprime'); setShowAppSwitcher(false); }}
           onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(0,168,225,0.12)')}
           onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
-          style={{ background: 'transparent', border: 'none', padding: '12px 14px', borderRadius: '8px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px', transition: 'all 0.2s ease' }}
+          style={{ background: 'transparent', border: 'none', padding: '12px 14px', borderRadius: '8px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px', transition: 'all 0.2s ease', touchAction: 'manipulation' }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
             <span style={{ fontSize: '1.2rem', fontWeight: 900, color: '#FFF', letterSpacing: '-0.02em' }}>prime</span>
@@ -158,10 +164,11 @@ export const Navbar: React.FC<NavbarProps> = ({
       )}
       {platform !== 'hotstar' && (
         <button
-          onClick={() => { setPlatform('hotstar'); setShowAppSwitcher(false); }}
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); setPlatform('hotstar'); setShowAppSwitcher(false); }}
+          onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); setPlatform('hotstar'); setShowAppSwitcher(false); }}
           onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(15,112,224,0.12)')}
           onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
-          style={{ background: 'transparent', border: 'none', padding: '12px 14px', borderRadius: '8px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px', transition: 'all 0.2s ease' }}
+          style={{ background: 'transparent', border: 'none', padding: '12px 14px', borderRadius: '8px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px', transition: 'all 0.2s ease', touchAction: 'manipulation' }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
             <span style={{ fontSize: '1.15rem', fontWeight: 700, color: '#FFF', letterSpacing: '-0.02em' }}>Disney+</span>
