@@ -32,8 +32,18 @@ import { Movie, Category, User, UserProfile, UserPreferences, Actor } from '../t
 const HERO_ROTATION_MS = 10_000;
 
 const normalizeGenre = (value: string) => value.trim().toLocaleLowerCase();
-const hasGenre = (movie: Movie, selected: string) => selected === 'All' ||
-  movie.genres.some((genre) => normalizeGenre(genre) === normalizeGenre(selected));
+const hasGenre = (movie: Movie, selected: string) => {
+  if (selected === 'All') return true;
+  const normSelected = normalizeGenre(selected);
+  if (normSelected === 'popular') return movie.matchScore >= 80 || (movie.seasonsCount ?? 0) > 1;
+  if (normSelected === 'hotstar specials' || normSelected === 'star plus') return Boolean(movie.isSeries) || Boolean(movie.logoUrl);
+  if (['hindi', 'english', 'tamil', 'telugu', 'malayalam', 'kannada', 'marathi', 'bengali'].includes(normSelected)) {
+    const audioMatch = (movie.audioLanguages || []).some(l => normalizeGenre(l) === normSelected);
+    const subMatch = (movie.subtitleLanguages || []).some(l => normalizeGenre(l) === normSelected);
+    return audioMatch || subMatch;
+  }
+  return movie.genres.some((genre) => normalizeGenre(genre) === normSelected);
+};
 
 function shuffleForDiscovery<T>(items: T[], seedText: string): T[] {
   let seed = 2166136261;
@@ -524,9 +534,6 @@ export default function Home() {
         ...category,
         movies: category.movies.filter((movie) => {
           if (!hasGenre(movie, selectedGenreFilter)) return false;
-          if (selectedGenreFilter === 'All') return true;
-          if (usedGenreTitles.has(movie.id)) return false;
-          usedGenreTitles.add(movie.id);
           return true;
         }),
       }))
