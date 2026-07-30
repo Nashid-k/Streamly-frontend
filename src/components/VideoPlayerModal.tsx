@@ -316,14 +316,18 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({ movie, onClo
             display: 'flex', alignItems: 'center', gap: '10px', ...floatingTransition,
           }}>
             <div style={{
-              width: '30px', height: '30px',
-              background: 'linear-gradient(135deg, var(--primary-color), var(--primary-glow-strong))',
-              borderRadius: '6px', display: 'flex', alignItems: 'center',
+              width: '32px', height: '32px',
+              background: platform === 'hotstar' ? '#1F80E0' : platform === 'nprime' ? '#00A8E1' : '#E50914',
+              borderRadius: '8px', display: 'flex', alignItems: 'center',
               justifyContent: 'center', fontWeight: 900, fontSize: '0.85rem', color: '#fff',
-            }}>{platform === 'hotstar' ? 'H' : platform === 'nprime' ? 'P' : 'N'}</div>
+              boxShadow: platform === 'hotstar' ? '0 0 12px rgba(31, 128, 224, 0.5)' : platform === 'nprime' ? '0 0 12px rgba(0, 168, 225, 0.5)' : '0 0 12px rgba(229, 9, 20, 0.5)'
+            }}>
+              {platform === 'hotstar' ? 'H+' : platform === 'nprime' ? 'P' : 'N'}
+            </div>
             <div style={{
               background: 'rgba(0,0,0,0.72)', backdropFilter: 'blur(12px)',
-              border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px',
+              border: platform === 'hotstar' ? '1px solid rgba(31, 128, 224, 0.3)' : platform === 'nprime' ? '1px solid rgba(0, 168, 225, 0.3)' : '1px solid rgba(255,255,255,0.1)',
+              borderRadius: '8px',
               padding: '5px 12px', fontSize: '0.8rem', fontWeight: 700, color: '#fff', maxWidth: '320px',
             }}>
               {activeMovie.title}
