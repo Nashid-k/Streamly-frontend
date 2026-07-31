@@ -11,7 +11,6 @@ export const metadata: Metadata = {
     icon: '/favicon.ico',
     apple: 'https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg',
   },
-  themeColor: '#141414',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
@@ -20,6 +19,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport = {
+  themeColor: '#141414',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
