@@ -251,8 +251,6 @@ function NetflixModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
                 </button>
               </div>
             </div>
-
-            </div>
           </div>
           
           {/* Mute button absolutely positioned to avoid mobile flex conflicts */}
