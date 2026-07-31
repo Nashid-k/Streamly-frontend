@@ -304,11 +304,14 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({ movie, onClo
             border: 'none', display: 'block', zIndex: 1,
           }}
           /* 
-            CRITICAL FIX FOR ADS (UPDATED):
-            The strict sandbox attribute broke the video player on many servers. 
-            We removed it and are now relying entirely on the JS interceptor defined 
-            in the useEffect above (which nullifies window.open and intercepts clicks) to block ads.
+            OPTIMIZED SANDBOX:
+            - allow-scripts: needed for the player to function.
+            - allow-same-origin: prevents "Sandbox disabled" errors because it allows the player to access its own localStorage/cookies.
+            - allow-presentation: allows casting and fullscreen.
+            - allow-forms: needed by some players to fetch stream tokens.
+            CRITICAL: We omit 'allow-popups' and 'allow-top-navigation' to aggressively block ads and redirects.
           */
+          sandbox="allow-scripts allow-same-origin allow-forms allow-presentation"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
           allowFullScreen
           onLoad={() => { setSourceLoading(false); setSourceFailed(false); setSourceError(''); }}
