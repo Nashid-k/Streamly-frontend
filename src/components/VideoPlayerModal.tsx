@@ -134,10 +134,11 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({ movie, onClo
     };
   }, []);
 
-  // ── Lock scroll + Esc key ─────────────────────────────────────────────────
+  // ── Lock scroll + Esc key & Hardware Back Button ───────────────────────
   useEffect(() => {
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
+    
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         if (showServerList) setShowServerList(false);
@@ -145,9 +146,27 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({ movie, onClo
       }
     };
     window.addEventListener('keydown', onKey);
+
+    // Hardware Back Button Intercept (Mobile gesture support)
+    const handlePopState = () => {
+      if (showServerList) {
+        setShowServerList(false);
+        // Push state again so the next back press closes the modal
+        window.history.pushState({ isModal: true }, '');
+      } else {
+        onClose();
+      }
+    };
+    window.history.pushState({ isModal: true }, '');
+    window.addEventListener('popstate', handlePopState);
+
     return () => {
       document.body.style.overflow = prev;
       window.removeEventListener('keydown', onKey);
+      window.removeEventListener('popstate', handlePopState);
+      if (window.history.state?.isModal) {
+        window.history.back();
+      }
     };
   }, [onClose, showServerList]);
 
@@ -155,13 +174,21 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({ movie, onClo
     setShowUI(true);
     if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
     if (showServerList) return;
-    hideTimerRef.current = setTimeout(() => setShowUI(false), 3000);
+    hideTimerRef.current = setTimeout(() => setShowUI(false), 4000); // Increased timeout for mobile
   }, [showServerList]);
 
   useEffect(() => {
     resetHide();
-    return () => { if (hideTimerRef.current) clearTimeout(hideTimerRef.current); };
-  }, []);
+    
+    // Detect clicks inside the iframe (which steals window focus) to wake up the UI
+    const handleBlur = () => resetHide();
+    window.addEventListener('blur', handleBlur);
+
+    return () => {
+      if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
+      window.removeEventListener('blur', handleBlur);
+    };
+  }, [resetHide]);
 
   useEffect(() => {
     if (showServerList) {
@@ -215,8 +242,10 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({ movie, onClo
       aria-modal="true"
       aria-label={`${activeMovie.title} playback`}
       onMouseMove={resetHide}
+      onTouchStart={resetHide}
       // Don't close server list on bare clicks inside the modal
       onClick={(e) => {
+        resetHide();
         if (e.target === overlayRef.current) setShowServerList(false);
       }}
       style={{
