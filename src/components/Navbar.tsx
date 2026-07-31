@@ -383,7 +383,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         position: 'fixed', 
         bottom: 0, left: 0, right: 0, 
         height: '60px', 
-        background: platform === 'nflix' ? 'rgba(18, 18, 18, 0.98)' : platform === 'nprime' ? 'rgba(15, 23, 30, 0.98)' : 'rgba(15, 16, 20, 0.98)', 
+        background: platform === 'nflix' ? 'rgba(18, 18, 18, 0.98)' : 'rgba(15, 23, 30, 0.98)', 
         backdropFilter: 'blur(20px)', 
         borderTop: platform === 'nflix' ? 'none' : '1px solid rgba(255,255,255,0.05)', 
         zIndex: 2000, 
@@ -394,7 +394,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       }}>
         <button onClick={() => setActiveTab('home')} style={{ background: 'none', border: 'none', color: activeTab === 'home' ? (platform === 'nflix' ? '#FFF' : 'var(--primary-color)') : '#808080', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', fontSize: '0.65rem', fontWeight: activeTab === 'home' ? 700 : 500, cursor: 'pointer', transition: 'color 0.2s', width: '20%' }}>
           <Home size={22} strokeWidth={activeTab === 'home' ? 2.5 : 1.5} />
-          {platform === 'nflix' ? 'Home' : 'Home'}
+          Home
         </button>
         <button onClick={() => setActiveTab('movies')} style={{ background: 'none', border: 'none', color: activeTab === 'movies' ? (platform === 'nflix' ? '#FFF' : 'var(--primary-color)') : '#808080', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', fontSize: '0.65rem', fontWeight: activeTab === 'movies' ? 700 : 500, cursor: 'pointer', transition: 'color 0.2s', width: '20%' }}>
           <Film size={22} strokeWidth={activeTab === 'movies' ? 2.5 : 1.5} />
@@ -402,7 +402,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         </button>
         <button onClick={() => setActiveTab('series')} style={{ background: 'none', border: 'none', color: activeTab === 'series' ? (platform === 'nflix' ? '#FFF' : 'var(--primary-color)') : '#808080', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', fontSize: '0.65rem', fontWeight: activeTab === 'series' ? 700 : 500, cursor: 'pointer', transition: 'color 0.2s', width: '20%' }}>
           <Tv size={22} strokeWidth={activeTab === 'series' ? 2.5 : 1.5} />
-          {platform === 'hotstar' ? 'TV' : 'TV Shows'}
+          TV Shows
         </button>
         
         {/* Search icon added to bottom bar for mobile! */}
