@@ -20,7 +20,7 @@ interface HeroBannerProps {
 
 const getFallbackTitleStyle = () => {
   return {
-    fontSize: 'clamp(2.5rem, 5vw, 4rem)',
+    fontSize: 'clamp(1.8rem, 6vw, 4rem)',
     fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
     fontWeight: 800,
     color: '#FFFFFF',

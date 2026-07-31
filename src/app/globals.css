@@ -723,3 +723,176 @@ main.hotstar-main-content { padding-left: 96px; }
   50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 10px #1F80E0; }
 }
 
+/* --- Enhanced Mobile & Tablet Responsiveness --- */
+@media (max-width: 768px) {
+  /* Hero Banner Responsiveness */
+  div.hero-container {
+    height: 60vh !important;
+    min-height: 400px !important;
+    padding-bottom: 40px !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    align-items: flex-end !important;
+  }
+  
+  div.hero-content {
+    max-width: 100% !important;
+    text-align: left !important;
+  }
+  
+  .hero-title-text {
+    font-size: 2rem !important;
+    line-height: 1.1 !important;
+    margin-bottom: 12px !important;
+  }
+  
+  .hero-description {
+    font-size: 0.9rem !important;
+    -webkit-line-clamp: 2 !important;
+    margin-bottom: 16px !important;
+  }
+  
+  .hero-meta-row {
+    gap: 6px !important;
+    font-size: 0.8rem !important;
+    margin-bottom: 12px !important;
+  }
+
+  .hero-actions-row {
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+  }
+  
+  .hero-actions-row button {
+    font-size: 0.9rem !important;
+    padding: 8px 16px !important;
+    height: 40px !important;
+  }
+  
+  .hero-carousel-bar {
+    display: none !important;
+  }
+
+  /* Modal Responsiveness */
+  div.detail-dialog {
+    width: 95% !important;
+    max-width: 100% !important;
+    max-height: 85vh !important;
+    margin: 10px auto !important;
+    border-radius: 8px !important;
+  }
+  
+  div.detail-hero {
+    height: 240px !important;
+  }
+  
+  div.detail-hero-content {
+    left: 16px !important;
+    right: 16px !important;
+    bottom: 16px !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+  }
+  
+  div.detail-hero-content > div:first-child {
+    width: 100% !important;
+  }
+  
+  img.detail-logo-img {
+    max-height: 60px !important;
+    max-width: 200px !important;
+    margin-bottom: 10px !important;
+  }
+  
+  .detail-title-text {
+    font-size: 1.8rem !important;
+    margin-bottom: 10px !important;
+  }
+  
+  .detail-play-btn {
+    padding: 8px 20px !important;
+    font-size: 1rem !important;
+    width: auto !important;
+    flex: 1 !important;
+    justify-content: center !important;
+  }
+  
+  .detail-action-btn {
+    width: 38px !important;
+    height: 38px !important;
+  }
+  
+  div.detail-body {
+    padding: 16px !important;
+  }
+  
+  div.detail-overview-grid {
+    flex-direction: column !important;
+    gap: 16px !important;
+  }
+  
+  div.detail-overview-grid p {
+    font-size: 0.95rem !important;
+  }
+  
+  div.detail-bottom-section {
+    padding: 0 16px 24px 16px !important;
+  }
+  
+  .modal-overlay {
+    padding: 16px !important;
+    align-items: center !important;
+  }
+
+  /* Catalog rows and grids */
+  .catalog-row {
+    margin-bottom: 24px !important;
+    padding: 0 16px !important;
+  }
+  
+  .catalog-row-header {
+    margin-bottom: 12px !important;
+  }
+  
+  .catalog-row-header h3 {
+    font-size: 1.1rem !important;
+  }
+  
+  .catalog-row-track {
+    padding: 16px 16px 16px 16px !important;
+    margin-top: -8px !important;
+    margin-bottom: -8px !important;
+    gap: 10px !important;
+  }
+  
+  .row-nav-btn {
+    display: none !important; /* Touch devices use swipe */
+  }
+
+  /* Movie Cards for Mobile */
+  div.movie-card.netflix-card { width: 140px !important; height: 80px !important; }
+  div.netflix-card-inner { width: 140px !important; }
+  img.netflix-card-img { height: 80px !important; }
+  
+  div.movie-card.nprime-card { width: 140px !important; height: 80px !important; }
+  div.movie-card.hotstar-card { width: 110px !important; height: 165px !important; }
+
+  .classic-grid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)) !important;
+    gap: 12px !important;
+    padding: 0 16px !important;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .hero-actions-row button {
+    font-size: 0.95rem !important;
+    padding: 10px 20px !important;
+  }
+  
+  div.detail-hero {
+    height: 300px !important;
+  }
+}
+
