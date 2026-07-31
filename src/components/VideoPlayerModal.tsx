@@ -134,6 +134,13 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({ movie, onClo
     };
   }, []);
 
+  // refs to avoid stale closures in event listeners without re-triggering effects
+  const showServerListRef = useRef(showServerList);
+  useEffect(() => { showServerListRef.current = showServerList; }, [showServerList]);
+  
+  const onCloseRef = useRef(onClose);
+  useEffect(() => { onCloseRef.current = onClose; }, [onClose]);
+
   // ── Lock scroll + Esc key & Hardware Back Button ───────────────────────
   useEffect(() => {
     const prev = document.body.style.overflow;
@@ -141,22 +148,23 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({ movie, onClo
     
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        if (showServerList) setShowServerList(false);
-        else onClose();
+        if (showServerListRef.current) setShowServerList(false);
+        else onCloseRef.current();
       }
     };
     window.addEventListener('keydown', onKey);
 
     // Hardware Back Button Intercept (Mobile gesture support)
     const handlePopState = () => {
-      if (showServerList) {
+      if (showServerListRef.current) {
         setShowServerList(false);
         // Push state again so the next back press closes the modal
         window.history.pushState({ isModal: true }, '');
       } else {
-        onClose();
+        onCloseRef.current();
       }
     };
+    
     window.history.pushState({ isModal: true }, '');
     window.addEventListener('popstate', handlePopState);
 
@@ -168,7 +176,7 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({ movie, onClo
         window.history.back();
       }
     };
-  }, [onClose, showServerList]);
+  }, []);
 
   const resetHide = useCallback(() => {
     setShowUI(true);
