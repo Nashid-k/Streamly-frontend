@@ -183,7 +183,11 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
           position: 'absolute',
           inset: 0,
           backgroundImage: enrichedMovie.posterUrl 
-            ? `linear-gradient(180deg, rgba(0,0,0,0) 50%, rgba(0,0,0,0.8) 80%, rgba(0,0,0,1) 100%), url(${enrichedMovie.posterUrl})`
+            ? platform === 'hotstar'
+              ? `linear-gradient(180deg, rgba(15,16,20,0) 50%, rgba(15,16,20,0.8) 80%, rgba(15,16,20,1) 100%), url(${enrichedMovie.posterUrl})`
+              : platform === 'nprime'
+              ? `linear-gradient(180deg, rgba(15,23,30,0) 50%, rgba(15,23,30,0.8) 80%, rgba(15,23,30,1) 100%), url(${enrichedMovie.posterUrl})`
+              : `linear-gradient(180deg, rgba(20,20,20,0) 50%, rgba(20,20,20,0.8) 80%, rgba(20,20,20,1) 100%), url(${enrichedMovie.posterUrl})`
             : 'none',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
