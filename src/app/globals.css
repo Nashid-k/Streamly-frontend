@@ -856,11 +856,11 @@ main.hotstar-main-content { padding-left: 96px; }
     gap: 16px !important;
   }
   
-  .hero-actions-row button {
+  .hero-actions-row button.primary-play-btn {
     font-size: 1rem !important;
     padding: 12px 24px !important;
     height: 48px !important;
-    flex: 1 !important; /* Stretch buttons evenly */
+    flex: 1 !important; /* Stretch play button fully */
     justify-content: center !important;
   }
   
