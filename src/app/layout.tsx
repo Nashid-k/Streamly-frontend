@@ -4,11 +4,27 @@ import { SecurityLayer } from '../components/SecurityLayer';
 import { PlatformProvider } from '../components/PlatformContext';
 
 export const metadata: Metadata = {
-  title: 'Nflix — Movie & TV Discovery',
-  description: 'Browse movie and TV metadata powered by TMDB.',
+  title: 'Streamly — All-in-One Streaming',
+  description: 'The ultimate movie and TV streaming experience.',
+  manifest: '/manifest.json',
   icons: {
     icon: '/favicon.ico',
+    apple: 'https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg',
   },
+  themeColor: '#141414',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'Streamly',
+  },
+};
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
 };
 
 export default function RootLayout({
@@ -28,7 +44,6 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://image.tmdb.org" />
         <link rel="preconnect" href="https://api.dicebear.com" crossOrigin="anonymous" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body>
         <PlatformProvider>

@@ -252,16 +252,20 @@ function NetflixModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
               </div>
             </div>
 
-            {hasTrailer && (
-              <button onClick={toggleMute} style={{
-                background: 'rgba(42,42,42,0.6)', border: '1px solid rgba(255,255,255,0.5)', borderRadius: '50%',
-                width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#FFF',
-                zIndex: 50
-              }}>
-                {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
-              </button>
-            )}
+            </div>
           </div>
+          
+          {/* Mute button absolutely positioned to avoid mobile flex conflicts */}
+          {hasTrailer && (
+            <button onClick={toggleMute} style={{
+              position: 'absolute', bottom: '20px', right: '24px',
+              background: 'rgba(42,42,42,0.6)', border: '1px solid rgba(255,255,255,0.5)', borderRadius: '50%',
+              width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#FFF',
+              zIndex: 50
+            }}>
+              {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+            </button>
+          )}
         </div>
 
         <div className="detail-body" style={{ padding: '20px 24px' }}>
