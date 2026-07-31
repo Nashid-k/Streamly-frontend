@@ -359,10 +359,32 @@ input:focus-visible,
 /* Classic Edge-to-Edge Grid */
 .classic-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 24px;
+  /* Authentic Desktop Base Grid Sizes */
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
   width: 100%;
   padding: 0 4%;
+}
+
+/* Authentic Desktop Base Card Styles */
+div.movie-card.netflix-card, div.movie-card.nprime-card { 
+  width: 100%; 
+  height: auto; 
+  aspect-ratio: 16/9; 
+}
+div.movie-card.hotstar-card { 
+  width: 100%; 
+  height: auto; 
+  aspect-ratio: 2/3; 
+}
+div.netflix-card-inner, div.nprime-card-inner, div.hotstar-card-inner {
+  width: 100%;
+  height: 100%;
+}
+img.netflix-card-img, img.nprime-card-img, img.hotstar-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* Animations */
@@ -520,8 +542,8 @@ main.hotstar-main-content { padding-left: 96px; }
   .hero-title-text { font-size: 1.25rem !important; line-height: 1.15 !important; margin-bottom: 4px !important; }
   .hero-meta-row { flex-wrap: wrap !important; gap: 4px !important; font-size: 0.68rem !important; margin-bottom: 4px !important; }
   .hero-description { font-size: 0.72rem !important; -webkit-line-clamp: 2 !important; margin-bottom: 8px !important; line-height: 1.25 !important; }
-  .hero-actions-row { flex-wrap: wrap !important; gap: 6px !important; width: 100% !important; }
-  .hero-actions-row button { padding: 6px 10px !important; font-size: 0.76rem !important; flex: 1; min-width: 90px; justify-content: center; height: 36px !important; }
+  .hero-actions-row { flex-wrap: wrap !important; gap: 8px !important; width: 100% !important; }
+  .hero-actions-row button.primary-play-btn { padding: 6px 10px !important; font-size: 0.8rem !important; flex: 1; min-width: 90px; justify-content: center; height: 40px !important; }
   div.hero-carousel-bar { display: none !important; } /* Hide heavy carousel bar on mobile touch screens to prevent text overlap */
 
   /* 3. Movie Cards & Row Navigation */
