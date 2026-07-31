@@ -324,7 +324,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </nav>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          <div className="navbar-right-actions" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
             <div style={{ position: 'relative' }} ref={appSwitcherRef}>
               <button onClick={() => setShowAppSwitcher(!showAppSwitcher)} style={{ background: 'none', border: 'none', color: '#FFF', cursor: 'pointer', display: 'flex', alignItems: 'center' }} title="Switch App">
                 <Grip size={20} />

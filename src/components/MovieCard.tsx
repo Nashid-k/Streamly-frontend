@@ -58,7 +58,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
   if (platform === 'hotstar') {
     return (
       <div
-        className="movie-card hotstar-card"
+        className={`movie-card hotstar-card ${top10Rank !== undefined ? 'top10' : ''}`}
         role="button"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={() => setIsHovered(false)}
@@ -119,7 +119,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
           </div>
         )}
         {/* Hotstar Gradient Hover Sheet */}
-        <div style={{
+        <div className="expanding-meta" style={{
           position: 'absolute', inset: 0,
           background: 'linear-gradient(180deg, transparent 40%, rgba(15,16,20,0.8) 70%, rgba(15,16,20,0.98) 100%)',
           display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
@@ -147,7 +147,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
   if (platform === 'nprime') {
     return (
       <div
-        className="movie-card nprime-card"
+        className={`movie-card nprime-card ${top10Rank !== undefined ? 'top10' : ''}`}
         role="button"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={() => setIsHovered(false)}
@@ -211,7 +211,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
           </div>
         )}
         {/* Prime Hover Overlay */}
-        <div style={{
+        <div className="expanding-meta" style={{
           position: 'absolute', inset: 0,
           background: 'linear-gradient(180deg, transparent 30%, rgba(15,23,30,0.85) 65%, rgba(15,23,30,0.98) 100%)',
           display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
@@ -242,7 +242,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
   
   return (
     <div
-      className="movie-card netflix-card"
+      className={`movie-card netflix-card ${top10Rank !== undefined ? 'top10' : ''}`}
       role="button"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={() => setIsHovered(false)}
@@ -336,7 +336,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
         )}
         
         {/* Expanding Metadata Box (Below Image) */}
-        <div style={{
+        <div className="expanding-meta" style={{
           padding: '12px',
           display: isHovered ? 'block' : 'none',
           backgroundColor: '#141414',

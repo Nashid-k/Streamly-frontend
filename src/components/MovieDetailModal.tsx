@@ -407,12 +407,12 @@ function PrimeModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, isM
           <X size={24} />
         </button>
 
-        <div style={{ position: 'relative', width: '100%', height: '400px', flexShrink: 0 }}>
+        <div className="detail-hero" style={{ position: 'relative', width: '100%', height: '400px', flexShrink: 0 }}>
           {renderTrailer()}
           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, #0f171e 30%, rgba(15,23,30,0) 80%), linear-gradient(to top, #0f171e 0%, transparent 40%)', zIndex: 15 }} />
 
-          <div style={{ position: 'absolute', bottom: '30px', left: '40px', right: '40px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', zIndex: 20 }}>
-            <div style={{ maxWidth: '50%' }}>
+          <div className="detail-hero-content" style={{ position: 'absolute', bottom: '30px', left: '40px', right: '40px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', zIndex: 20 }}>
+            <div className="detail-hero-info" style={{ maxWidth: '50%' }}>
               {displayMovie?.logoUrl ? (
                 <img src={displayMovie.logoUrl} style={{ maxWidth: '300px', maxHeight: '100px', objectFit: 'contain', marginBottom: '10px' }} />
               ) : (
@@ -458,7 +458,7 @@ function PrimeModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, isM
           </div>
         </div>
 
-        <div style={{ padding: '0 40px 40px 40px', overflowY: 'auto' }}>
+        <div className="detail-body" style={{ padding: '0 40px 40px 40px', overflowY: 'auto' }}>
           <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '16px', fontSize: '0.95rem', color: '#8197a4', fontWeight: 600 }}>
             <span style={{ color: '#FFF' }}>IMDb {((parseInt(movie.id.replace(/\D/g, ''))%40)/10 + 6.0).toFixed(1)}</span>
             <span>{(displayMovie?.releaseDate || movie?.releaseDate || '').split('-')[0]}</span>
@@ -568,12 +568,12 @@ function HotstarModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
           <X size={20} />
         </button>
 
-        <div style={{ position: 'relative', width: '100%', height: '420px', flexShrink: 0 }}>
+        <div className="detail-hero" style={{ position: 'relative', width: '100%', height: '420px', flexShrink: 0 }}>
           {renderTrailer()}
           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, #0f1014 0%, rgba(15,16,20,0.6) 50%, transparent 100%), linear-gradient(to right, #0f1014 0%, transparent 50%)', zIndex: 15 }} />
 
-          <div style={{ position: 'absolute', bottom: '30px', left: '40px', right: '40px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', zIndex: 20 }}>
-            <div>
+          <div className="detail-hero-content" style={{ position: 'absolute', bottom: '30px', left: '40px', right: '40px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', zIndex: 20 }}>
+            <div className="detail-hero-info">
               {displayMovie?.logoUrl ? (
                 <img src={displayMovie.logoUrl} style={{ maxWidth: '320px', maxHeight: '110px', objectFit: 'contain', marginBottom: '16px' }} />
               ) : (
@@ -626,7 +626,7 @@ function HotstarModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
           </div>
         </div>
 
-        <div style={{ padding: '20px 40px 40px 40px', color: '#E1E6F0', overflowY: 'auto' }}>
+        <div className="detail-body" style={{ padding: '20px 40px 40px 40px', color: '#E1E6F0', overflowY: 'auto' }}>
           <p style={{ fontSize: '1.05rem', lineHeight: 1.6, fontWeight: 400, maxWidth: '90%', marginBottom: '24px' }}>
             {displayMovie?.longDescription || movie.description}
           </p>

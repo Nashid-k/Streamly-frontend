@@ -528,21 +528,35 @@ main.hotstar-main-content { padding-left: 96px; }
   button.row-nav-btn { display: none !important; } /* Hide arrow buttons on mobile touch screens */
   div.catalog-row { margin-bottom: 14px !important; padding: 0 8px !important; }
   div.catalog-row-header { margin-bottom: 4px !important; }
-  div.catalog-row-header h3 { font-size: 0.95rem !important; }
+  div.catalog-row-header h3 { font-size: 1rem !important; }
   div.catalog-row-track { padding: 10px 4px !important; margin-top: 0 !important; margin-bottom: 0 !important; gap: 8px !important; }
   
   div.movie-card { margin-right: 6px !important; }
-  div.movie-card.netflix-card { width: 120px !important; height: 68px !important; }
-  div.netflix-card-inner { width: 120px !important; }
-  img.netflix-card-img { height: 68px !important; }
-  div.movie-card.nprime-card { width: 120px !important; height: 68px !important; }
-  div.movie-card.hotstar-card { width: 100px !important; height: 150px !important; }
+  
+  /* OVERRIDE INLINE STYLES FOR CARDS ON MOBILE */
+  div.movie-card.netflix-card { width: 140px !important; height: 80px !important; }
+  div.movie-card.netflix-card.top10 { width: 120px !important; height: 180px !important; }
+  div.netflix-card-inner { width: 100% !important; height: 100% !important; }
+  img.netflix-card-img { height: 100% !important; width: 100% !important; }
+  
+  div.movie-card.nprime-card { width: 150px !important; height: 85px !important; }
+  div.movie-card.nprime-card.top10 { width: 120px !important; height: 180px !important; }
+  
+  div.movie-card.hotstar-card { width: 120px !important; height: 180px !important; }
+  
+  /* Navbar adjustments */
+  .navbar-right-actions { gap: 8px !important; }
+  .navbar-right-actions select { display: none !important; }
+  .navbar-right-actions input[type="text"] { width: 130px !important; }
   
   /* Disable Desktop Hover Scale & Overflow Traps on Touch Screens */
-  div.movie-card:hover { transform: none !important; }
-  div.netflix-card-inner { transform: none !important; position: relative !important; }
-  div.netflix-card-inner:hover { transform: none !important; }
-
+  div.movie-card:hover { transform: none !important; box-shadow: none !important; z-index: 1 !important; }
+  div.netflix-card-inner { transform: none !important; position: relative !important; box-shadow: none !important; }
+  div.netflix-card-inner:hover { transform: none !important; box-shadow: none !important; }
+  .netflix-card .expanding-meta { display: none !important; }
+  .nprime-card .expanding-meta { display: none !important; }
+  .hotstar-card .expanding-meta { display: none !important; }
+  
   /* 4. Profile & Onboarding Modals */
   div.profile-dialog { min-height: 60vh !important; width: 96% !important; padding: 16px !important; }
   h1.profile-title { font-size: 1.8rem !important; margin-bottom: 6px !important; }
@@ -552,19 +566,20 @@ main.hotstar-main-content { padding-left: 96px; }
   div.onboarding-dialog { width: 92% !important; padding: 20px !important; }
 
   /* 5. Movie Detail Bottom Sheet */
-  div.modal-overlay { padding: 0 !important; align-items: flex-end !important; }
+  div.modal-overlay { padding: 0 !important; align-items: flex-end !important; justify-content: flex-end !important; }
   div.detail-dialog { width: 100% !important; max-height: 94vh !important; border-radius: 18px 18px 0 0 !important; overflow-y: auto !important; }
-  div.detail-hero { height: 160px !important; }
-  div.detail-hero-content { left: 10px !important; right: 10px !important; bottom: 6px !important; flex-direction: column !important; align-items: flex-start !important; gap: 6px !important; width: calc(100% - 20px) !important; }
-  img.detail-logo-img { max-height: 50px !important; max-width: 180px !important; margin-bottom: 8px !important; }
-  h2.detail-title-text { font-size: 1.25rem !important; margin-bottom: 6px !important; }
-  button.detail-play-btn { flex: 1 !important; justify-content: center !important; padding: 6px 12px !important; font-size: 0.88rem !important; height: 38px !important; }
-  button.detail-action-btn { width: 38px !important; height: 38px !important; flex-shrink: 0 !important; }
-  div.detail-body { padding: 10px !important; }
-  div.detail-overview-grid { grid-template-columns: 1fr !important; gap: 8px !important; flex-direction: column !important; }
-  div.detail-bottom-section { padding: 0 10px 20px 10px !important; }
-  .episode-item { flex-direction: column !important; align-items: flex-start !important; gap: 6px !important; }
-  .episode-thumb { width: 100% !important; height: 120px !important; }
+  div.detail-hero { height: 260px !important; }
+  div.detail-hero-content { left: 16px !important; right: 16px !important; bottom: 12px !important; flex-direction: column !important; align-items: flex-start !important; gap: 12px !important; width: calc(100% - 32px) !important; }
+  div.detail-hero-info { max-width: 100% !important; }
+  img.detail-logo-img { max-height: 60px !important; max-width: 220px !important; margin-bottom: 8px !important; }
+  h2.detail-title-text { font-size: 1.5rem !important; margin-bottom: 8px !important; }
+  button.detail-play-btn { flex: 1 !important; justify-content: center !important; padding: 8px 16px !important; font-size: 0.95rem !important; height: 44px !important; }
+  button.detail-action-btn { width: 44px !important; height: 44px !important; flex-shrink: 0 !important; }
+  div.detail-body { padding: 16px !important; }
+  div.detail-overview-grid { grid-template-columns: 1fr !important; gap: 12px !important; flex-direction: column !important; }
+  div.detail-bottom-section { padding: 0 16px 24px 16px !important; }
+  .episode-item { flex-direction: column !important; align-items: flex-start !important; gap: 8px !important; }
+  .episode-thumb { width: 100% !important; height: 160px !important; }
 
   /* 6. Fullscreen Video Player & X-Ray Drawer */
   div.player-top-bar { padding: 8px 10px !important; }
@@ -572,8 +587,31 @@ main.hotstar-main-content { padding-left: 96px; }
   div.xray-panel { width: 100% !important; left: 0 !important; right: 0 !important; top: auto !important; bottom: 0 !important; height: 55vh !important; border-radius: 16px 16px 0 0 !important; }
 }
 
-/* --- Tablet & Mobile Breakpoint (<=1024px) --- */
-@media (max-width: 1024px) {
+@media (max-width: 1024px) and (min-width: 769px) {
+  /* Tablet / Small Desktop Adjustments */
+  .desktop-nav-items { gap: 12px !important; }
+  .desktop-nav-items button { font-size: 0.8rem !important; padding: 4px !important; }
+  header div.navbar > div:first-child { gap: 24px !important; }
+  .navbar-right-actions { gap: 12px !important; }
+  .navbar-right-actions input[type="text"] { width: 160px !important; }
+  
+  /* Cards */
+  div.movie-card.netflix-card { width: 200px !important; height: 112px !important; }
+  div.netflix-card-inner { width: 200px !important; }
+  img.netflix-card-img { height: 112px !important; }
+  
+  div.movie-card.nprime-card { width: 200px !important; height: 112px !important; }
+  div.movie-card.hotstar-card { width: 140px !important; height: 210px !important; }
+  
+  /* Modal */
+  div.detail-dialog { width: 92% !important; max-width: 720px !important; }
+  div.detail-hero { height: 320px !important; }
+  div.detail-hero-content { left: 24px !important; right: 24px !important; bottom: 20px !important; }
+  img.detail-logo-img { max-height: 80px !important; max-width: 250px !important; margin-bottom: 12px !important; }
+}
+
+/* --- Mobile Breakpoint (<=768px) --- */
+@media (max-width: 768px) {
   nav.desktop-nav-items { display: none !important; }
   nav.mobile-bottom-nav { display: flex !important; z-index: 2500 !important; }
   aside.hotstar-sidebar { display: none !important; }
