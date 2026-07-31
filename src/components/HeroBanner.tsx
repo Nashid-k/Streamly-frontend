@@ -154,23 +154,39 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
         overflow: 'hidden',
       }}
     >
-      {/* The backdrop and text use the same movie object, preventing a stale
-          image from appearing behind a newly selected title. */}
-      {/* High-Resolution Backdrop Image */}
+      {/* High-Resolution Backdrop Image (Desktop/Tablet) */}
       <div
-        key={enrichedMovie.id}
+        key={`backdrop-${enrichedMovie.id}`}
+        className="hero-backdrop"
         style={{
           position: 'absolute',
           inset: 0,
-          backgroundImage: backgroundUrl
+          backgroundImage: enrichedMovie.backdropUrl
             ? platform === 'hotstar'
-              ? `linear-gradient(180deg, rgba(15,16,20,0) 0%, rgba(15,16,20,0.4) 60%, rgba(15,16,20,1) 100%), linear-gradient(90deg, rgba(15,16,20,1) 0%, rgba(15,16,20,0) 75%), url(${backgroundUrl})`
+              ? `linear-gradient(180deg, rgba(15,16,20,0) 0%, rgba(15,16,20,0.4) 60%, rgba(15,16,20,1) 100%), linear-gradient(90deg, rgba(15,16,20,1) 0%, rgba(15,16,20,0) 75%), url(${enrichedMovie.backdropUrl})`
               : platform === 'nprime'
-              ? `linear-gradient(180deg, rgba(15,23,30,0.5) 0%, rgba(15,23,30,0.2) 50%, rgba(15,23,30,1) 100%), linear-gradient(90deg, rgba(15,23,30,0.95) 0%, rgba(15,23,30,0) 65%), url(${backgroundUrl})`
-              : `linear-gradient(180deg, rgba(20,20,20,0.5) 0%, rgba(20,20,20,0.2) 50%, rgba(20,20,20,1) 100%), linear-gradient(90deg, rgba(20,20,20,0.85) 0%, rgba(20,20,20,0) 65%), url(${backgroundUrl})`
+              ? `linear-gradient(180deg, rgba(15,23,30,0.5) 0%, rgba(15,23,30,0.2) 50%, rgba(15,23,30,1) 100%), linear-gradient(90deg, rgba(15,23,30,0.95) 0%, rgba(15,23,30,0) 65%), url(${enrichedMovie.backdropUrl})`
+              : `linear-gradient(180deg, rgba(20,20,20,0.5) 0%, rgba(20,20,20,0.2) 50%, rgba(20,20,20,1) 100%), linear-gradient(90deg, rgba(20,20,20,0.85) 0%, rgba(20,20,20,0) 65%), url(${enrichedMovie.backdropUrl})`
             : 'linear-gradient(135deg, var(--bg-color) 0%, var(--bg-elevated) 100%)',
           backgroundSize: 'cover',
           backgroundPosition: 'center top',
+          zIndex: 0,
+        }}
+      />
+      
+      {/* Portrait Poster Image (Mobile Native View) */}
+      <div
+        key={`poster-${enrichedMovie.id}`}
+        className="hero-portrait-poster"
+        style={{
+          display: 'none', // Shown via CSS on mobile
+          position: 'absolute',
+          inset: 0,
+          backgroundImage: enrichedMovie.posterUrl 
+            ? `linear-gradient(180deg, rgba(0,0,0,0) 50%, rgba(0,0,0,0.8) 80%, rgba(0,0,0,1) 100%), url(${enrichedMovie.posterUrl})`
+            : 'none',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
           zIndex: 0,
         }}
       />

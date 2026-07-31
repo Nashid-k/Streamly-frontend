@@ -378,21 +378,41 @@ export const Navbar: React.FC<NavbarProps> = ({
       </header>
 
       {/* Mobile Bottom Navigation Bar (<768px) */}
-      <nav className="mobile-bottom-nav" style={{ display: 'none', position: 'fixed', bottom: 0, left: 0, right: 0, height: '56px', background: 'rgba(15, 16, 20, 0.96)', backdropFilter: 'blur(12px)', borderTop: '1px solid rgba(255,255,255,0.1)', zIndex: 200, alignItems: 'center', justifyContent: 'space-around', padding: '0 8px' }}>
-        <button onClick={() => setActiveTab('home')} style={{ background: 'none', border: 'none', color: activeTab === 'home' ? 'var(--primary-color)' : '#8F98B2', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', fontSize: '0.65rem', fontWeight: 700, cursor: 'pointer' }}>
-          <Home size={18} />
-          Home
+      <nav className="mobile-bottom-nav" style={{ 
+        display: 'none', 
+        position: 'fixed', 
+        bottom: 0, left: 0, right: 0, 
+        height: '60px', 
+        background: platform === 'nflix' ? 'rgba(18, 18, 18, 0.98)' : platform === 'nprime' ? 'rgba(15, 23, 30, 0.98)' : 'rgba(15, 16, 20, 0.98)', 
+        backdropFilter: 'blur(20px)', 
+        borderTop: platform === 'nflix' ? 'none' : '1px solid rgba(255,255,255,0.05)', 
+        zIndex: 2000, 
+        alignItems: 'center', 
+        justifyContent: 'space-around', 
+        padding: '0 4px',
+        paddingBottom: 'env(safe-area-inset-bottom)'
+      }}>
+        <button onClick={() => setActiveTab('home')} style={{ background: 'none', border: 'none', color: activeTab === 'home' ? (platform === 'nflix' ? '#FFF' : 'var(--primary-color)') : '#808080', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', fontSize: '0.65rem', fontWeight: activeTab === 'home' ? 700 : 500, cursor: 'pointer', transition: 'color 0.2s', width: '20%' }}>
+          <Home size={22} strokeWidth={activeTab === 'home' ? 2.5 : 1.5} />
+          {platform === 'nflix' ? 'Home' : 'Home'}
         </button>
-        <button onClick={() => setActiveTab('movies')} style={{ background: 'none', border: 'none', color: activeTab === 'movies' ? 'var(--primary-color)' : '#8F98B2', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', fontSize: '0.65rem', fontWeight: 700, cursor: 'pointer' }}>
-          <Film size={18} />
+        <button onClick={() => setActiveTab('movies')} style={{ background: 'none', border: 'none', color: activeTab === 'movies' ? (platform === 'nflix' ? '#FFF' : 'var(--primary-color)') : '#808080', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', fontSize: '0.65rem', fontWeight: activeTab === 'movies' ? 700 : 500, cursor: 'pointer', transition: 'color 0.2s', width: '20%' }}>
+          <Film size={22} strokeWidth={activeTab === 'movies' ? 2.5 : 1.5} />
           Movies
         </button>
-        <button onClick={() => setActiveTab('series')} style={{ background: 'none', border: 'none', color: activeTab === 'series' ? 'var(--primary-color)' : '#8F98B2', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', fontSize: '0.65rem', fontWeight: 700, cursor: 'pointer' }}>
-          <Tv size={18} />
-          TV
+        <button onClick={() => setActiveTab('series')} style={{ background: 'none', border: 'none', color: activeTab === 'series' ? (platform === 'nflix' ? '#FFF' : 'var(--primary-color)') : '#808080', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', fontSize: '0.65rem', fontWeight: activeTab === 'series' ? 700 : 500, cursor: 'pointer', transition: 'color 0.2s', width: '20%' }}>
+          <Tv size={22} strokeWidth={activeTab === 'series' ? 2.5 : 1.5} />
+          {platform === 'hotstar' ? 'TV' : 'TV Shows'}
         </button>
-        <button onClick={() => setActiveTab('mylist')} style={{ background: 'none', border: 'none', color: activeTab === 'mylist' ? 'var(--primary-color)' : '#8F98B2', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', fontSize: '0.65rem', fontWeight: 700, cursor: 'pointer' }}>
-          <Plus size={18} />
+        
+        {/* Search icon added to bottom bar for mobile! */}
+        <button onClick={() => { setActiveTab('home'); setIsSearchOpen(true); }} style={{ background: 'none', border: 'none', color: isSearchOpen ? (platform === 'nflix' ? '#FFF' : 'var(--primary-color)') : '#808080', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', fontSize: '0.65rem', fontWeight: isSearchOpen ? 700 : 500, cursor: 'pointer', transition: 'color 0.2s', width: '20%' }}>
+          <Search size={22} strokeWidth={isSearchOpen ? 2.5 : 1.5} />
+          Search
+        </button>
+
+        <button onClick={() => setActiveTab('mylist')} style={{ background: 'none', border: 'none', color: activeTab === 'mylist' ? (platform === 'nflix' ? '#FFF' : 'var(--primary-color)') : '#808080', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', fontSize: '0.65rem', fontWeight: activeTab === 'mylist' ? 700 : 500, cursor: 'pointer', transition: 'color 0.2s', width: '20%' }}>
+          <Plus size={22} strokeWidth={activeTab === 'mylist' ? 2.5 : 1.5} />
           My List
         </button>
       </nav>
