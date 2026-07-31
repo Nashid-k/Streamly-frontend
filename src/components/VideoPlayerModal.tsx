@@ -304,14 +304,12 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({ movie, onClo
             border: 'none', display: 'block', zIndex: 1,
           }}
           /* 
-            OPTIMIZED SANDBOX:
-            - allow-scripts: needed for the player to function.
-            - allow-same-origin: prevents "Sandbox disabled" errors because it allows the player to access its own localStorage/cookies.
-            - allow-presentation: allows casting and fullscreen.
-            - allow-forms: needed by some players to fetch stream tokens.
-            CRITICAL: We omit 'allow-popups' and 'allow-top-navigation' to aggressively block ads and redirects.
+            REVERTED SANDBOX:
+            Some aggressive providers have strict JS checks that explicitly require 
+            allow-popups or block playback entirely when they detect a sandbox.
+            To fix the "playback blocked/sandbox not allowed" errors, we must remove 
+            the sandbox attribute and rely on the scraper or the JS click interceptor.
           */
-          sandbox="allow-scripts allow-same-origin allow-forms allow-presentation"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
           allowFullScreen
           onLoad={() => { setSourceLoading(false); setSourceFailed(false); setSourceError(''); }}
