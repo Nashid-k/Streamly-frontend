@@ -726,9 +726,23 @@ main.hotstar-main-content { padding-left: 96px; }
 /* --- Enhanced Mobile & Tablet Responsiveness (NATIVE APP FEEL) --- */
 @media (max-width: 768px) {
   
-  /* Hide Desktop Top Navbar completely, we use Bottom Tabs now */
+  /* Make Top Navbar minimal on mobile */
   header .navbar {
+    height: 56px !important;
+    padding: 0 16px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+  }
+  
+  /* Hide Desktop text links, keep only Icons (App Switcher, Profile) */
+  .desktop-nav-items {
     display: none !important;
+  }
+  
+  /* Hide Search from top nav since it is now in the bottom tab bar */
+  .navbar-right-actions > div:nth-child(3) {
+    display: none !important; 
   }
   
   /* Show Mobile Bottom Navigation */
