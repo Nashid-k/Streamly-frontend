@@ -617,13 +617,38 @@ main.hotstar-main-content { padding-left: 96px; }
   .navbar-right-actions { gap: 12px !important; }
   .navbar-right-actions input[type="text"] { width: 160px !important; }
   
-  /* Cards */
-  div.movie-card.netflix-card { width: 200px !important; height: 112px !important; }
-  div.netflix-card-inner { width: 200px !important; }
-  img.netflix-card-img { height: 112px !important; }
+  /* Cards - Authentic Responsive Tablet Sizing */
+  .catalog-row-track div.movie-card.netflix-card, 
+  .catalog-row-track div.movie-card.nprime-card { 
+    width: 24vw !important; 
+    height: auto !important; 
+    aspect-ratio: 16/9 !important; 
+    flex: 0 0 24vw !important;
+  }
   
-  div.movie-card.nprime-card { width: 200px !important; height: 112px !important; }
-  div.movie-card.hotstar-card { width: 140px !important; height: 210px !important; }
+  .catalog-row-track div.movie-card.hotstar-card { 
+    width: 18vw !important; 
+    height: auto !important; 
+    aspect-ratio: 2/3 !important; 
+    flex: 0 0 18vw !important;
+  }
+  
+  /* Grid Layouts for Tablet */
+  .classic-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)) !important;
+    gap: 16px !important;
+  }
+  
+  .classic-grid div.movie-card {
+    width: 100% !important;
+    flex: none !important;
+    height: auto !important;
+  }
+  
+  div.netflix-card-inner, img.netflix-card-img { 
+    width: 100% !important; 
+    height: 100% !important; 
+  }
   
   /* Modal */
   div.detail-dialog { width: 92% !important; max-width: 720px !important; }
@@ -950,20 +975,32 @@ main.hotstar-main-content { padding-left: 96px; }
   }
 
   /* Movie Cards for Mobile (Responsive Aspect Ratios instead of fixed pixels) */
-  div.movie-card.netflix-card, div.movie-card.nprime-card { 
-    width: 100% !important; 
+  
+  /* 1. Horizontal Scrolling Rows */
+  .catalog-row-track div.movie-card.netflix-card, 
+  .catalog-row-track div.movie-card.nprime-card { 
+    width: 38vw !important; 
     height: auto !important; 
     aspect-ratio: 16/9 !important; 
+    flex: 0 0 38vw !important;
   }
+  .catalog-row-track div.movie-card.hotstar-card { 
+    width: 28vw !important; 
+    height: auto !important; 
+    aspect-ratio: 2/3 !important; 
+    flex: 0 0 28vw !important;
+  }
+
+  /* 2. Grid Layouts (Search Page) */
+  .classic-grid div.movie-card {
+    width: 100% !important;
+    flex: none !important;
+    height: auto !important;
+  }
+  
   div.netflix-card-inner, img.netflix-card-img { 
     width: 100% !important; 
     height: 100% !important; 
-  }
-  
-  div.movie-card.hotstar-card { 
-    width: 100% !important; 
-    height: auto !important; 
-    aspect-ratio: 2/3 !important; 
   }
   
   .classic-grid {
