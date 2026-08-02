@@ -44,13 +44,16 @@ html, body {
   height: 100%;
   background-color: var(--bg-color);
   color: var(--text-color);
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   overflow-x: hidden;
   scroll-behavior: smooth;
+  letter-spacing: -0.01em;
 }
 
-body { overflow-y: auto; }
+body { overflow-y: overlay; }
 
 button, select, input {
   font: inherit;
@@ -71,17 +74,18 @@ input:focus-visible,
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--bg-color);
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #333333;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--primary-color);
+  background: rgba(255, 255, 255, 0.4);
 }
 
 .hide-scrollbar::-webkit-scrollbar {
@@ -177,12 +181,12 @@ input:focus-visible,
     box-shadow: 0 0 15px var(--primary-glow);
   }
   50% {
-    box-shadow: 0 0 25px var(--primary-glow-strong);
+    box-shadow: 0 0 35px var(--primary-glow-strong);
   }
 }
 
 .hero-text-animate {
-  animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: slideUpFade 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 
 .hero-backdrop-animate {
@@ -238,7 +242,7 @@ input:focus-visible,
 
 .movie-card:hover::after {
   opacity: 1;
-  animation: cardSheen 0.8s ease forwards;
+  animation: cardSheen 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 }
 
 @keyframes cardSheen {

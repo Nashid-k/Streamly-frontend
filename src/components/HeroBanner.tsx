@@ -128,7 +128,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
       {/* High-Resolution Backdrop Image (Desktop/Tablet) */}
       <div
         key={`backdrop-${enrichedMovie.id}`}
-        className="hero-backdrop"
+        className="hero-backdrop hero-backdrop-animate"
         style={{
           position: 'absolute',
           inset: 0,
@@ -167,7 +167,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
       />
 
       {/* Left Column: Hero Content */}
-      <div key={enrichedMovie.id} className="hero-content" style={{ maxWidth: '680px', zIndex: 10 }}>
+      <div key={enrichedMovie.id} className="hero-content hero-text-animate" style={{ maxWidth: '680px', zIndex: 10 }}>
         {/* Upcoming Eyebrow Badge */}
         {enrichedMovie.isUpcoming && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--primary-color)', fontSize: '0.85rem', fontWeight: 900, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '12px' }}>
