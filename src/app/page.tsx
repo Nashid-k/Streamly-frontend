@@ -129,6 +129,7 @@ export default function Home() {
 
   // Continue Watching List
   const [continueWatching, setContinueWatching] = useState<Movie[]>([]);
+  const [themeColor, setThemeColor] = useState<string | null>(null);
 
   // Ref holding the full movie lookup including search results and top10
   const allMoviesMapRef = useRef<Map<string, Movie>>(new Map());
@@ -705,7 +706,7 @@ export default function Home() {
       .map(({ candidate }) => candidate);
   }, [activeDetailMovie, allMovies]);
   return (
-    <main className={platform === 'hotstar' ? 'hotstar-main-content' : ''} style={{ minHeight: '100vh', backgroundColor: 'var(--bg-color)', color: '#FFF', width: '100%', position: 'relative' }}>
+    <main className={platform === 'hotstar' ? 'hotstar-main-content' : ''} style={{ minHeight: '100vh', backgroundColor: 'var(--bg-color)', background: themeColor ? `radial-gradient(circle at 50% 0%, ${themeColor}, var(--bg-color) 70%)` : 'var(--bg-color)', color: '#FFF', width: '100%', position: 'relative', transition: 'background 1.5s ease' }}>
       {/* Top Navigation Bar with Status Bar Genre & Language Dropdowns */}
       <Navbar
         activeTab={activeTab}
@@ -841,6 +842,7 @@ export default function Home() {
           onToggleMyList={handleToggleMyListWithToast}
           isMyList={heroMovie ? myList.includes(heroMovie.id) : false}
           onHeroReady={handleHeroReady}
+          onThemeColorChange={setThemeColor}
         />
 
           )}
