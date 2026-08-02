@@ -449,7 +449,7 @@ export default function Home() {
             const active = userData.profiles.find((p) => p.id === userData.currentProfileId) || userData.profiles[0];
             setCurrentProfile(active);
             
-            if (!sessionStorage.getItem('profileSelected')) {
+            if (!localStorage.getItem('profileSelected')) {
               setShowProfileModal(true);
             }
 
@@ -1280,7 +1280,7 @@ export default function Home() {
             setSelectedDubFilter(profilePrefs.dubOption);
             const languages = Array.from(new Set([...profilePrefs.preferredAudioLanguages, ...profilePrefs.preferredSubtitleLanguages]));
             setSelectedLangFilter(languages.length ? languages : ['All']);
-            sessionStorage.setItem('profileSelected', 'true');
+            localStorage.setItem('profileSelected', 'true');
             setShowProfileModal(false);
           }}
           onClose={() => setShowProfileModal(false)}

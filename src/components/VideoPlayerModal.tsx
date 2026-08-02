@@ -407,39 +407,7 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({ movie, onClo
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <div style={{ position: 'relative' }}>
-              <button
-                onClick={() => { setShowAudioMenu(!showAudioMenu); setShowServerList(false); }}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: '7px',
-                  padding: '7px 13px', borderRadius: '8px',
-                  background: 'rgba(0,0,0,0.75)', border: '1px solid rgba(255,255,255,0.18)',
-                  color: '#fff', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer',
-                }}
-              >
-                <MessageSquare size={14} /> Audio & Subtitles
-              </button>
-              {showAudioMenu && (
-                <div style={{
-                  position: 'absolute', top: 'calc(100% + 8px)', right: 0,
-                  background: 'rgba(10,10,10,0.97)', border: '1px solid rgba(255,255,255,0.1)',
-                  borderRadius: '12px', padding: '16px', minWidth: '220px', zIndex: 400,
-                  display: 'flex', flexDirection: 'column'
-                }}>
-                  <div style={{ color: '#fff', fontSize: '1rem', fontWeight: 700, marginBottom: '12px' }}>Audio Tracks</div>
-                  {allSources.map((s, i) => (
-                    <div key={s.name} onClick={() => chooseSource(i)} style={{ 
-                      color: i === sourceIndex ? '#fff' : 'rgba(255,255,255,0.6)', 
-                      fontSize: '0.85rem', marginBottom: '8px', cursor: 'pointer',
-                      display: 'flex', alignItems: 'center', gap: '8px' 
-                    }}>
-                      {i === sourceIndex ? <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--primary-color)' }}></span> : <span style={{ width: '6px', height: '6px' }}></span>}
-                      {s.name}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+ 
             
             <div style={{ position: 'relative' }}>
               <button
@@ -465,7 +433,7 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({ movie, onClo
                       color: i === sourceIndex ? '#fff' : 'rgba(255,255,255,0.6)',
                       background: i === sourceIndex ? 'rgba(229,9,20,0.18)' : 'transparent',
                     }}>
-                      {s.name}
+                      {`Server ${i + 1}`}
                     </div>
                   ))}
                 </div>

@@ -868,43 +868,7 @@ export const CustomPlayer = ({ streamUrl, movie, onBack, onNext, hasNext, onErro
               </button>
             )}
 
-            {(audioTracks.length > 1 || subtitleTracks.length > 0) && (
-              <div style={{ position: 'relative' }}>
-                <button onClick={() => { setShowAudioMenu(!showAudioMenu); setShowQualityMenu(false); setShowSpeedMenu(false); }} className="player-btn" title="Audio & Subtitles">
-                  <Mic size={22} />
-                </button>
-                {showAudioMenu && (
-                  <div className="menu-popup" style={{ position: 'absolute', bottom: '100%', right: 0, marginBottom: '20px', background: 'rgba(20,20,20,0.96)', borderRadius: '6px', padding: '18px', minWidth: '320px', boxShadow: '0 8px 32px rgba(0,0,0,0.85)', border: '1px solid rgba(255,255,255,0.12)', backdropFilter: 'blur(16px)', display: 'flex', gap: '30px' }}>
-                    {/* Audio Column */}
-                    {audioTracks.length > 1 && (
-                      <div style={{ flex: 1 }}>
-                        <h4 style={{ color: '#888', margin: '0 0 10px 0', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '6px' }}>Audio</h4>
-                        {audioTracks.map(track => (
-                          <div key={track.id} onClick={() => handleAudioTrackChange(track.id)} style={{ padding: '7px 12px', margin: '3px 0', cursor: 'pointer', backgroundColor: currentAudioTrack === track.id ? 'rgba(255,255,255,0.12)' : 'transparent', color: currentAudioTrack === track.id ? (platform === 'nflix' ? '#E50914' : platform === 'nprime' ? '#00A8E1' : '#1F80E0') : '#FFF', borderRadius: '4px', transition: 'background 0.15s' }}>
-                            <span style={{ fontSize: '0.9rem', fontWeight: currentAudioTrack === track.id ? 700 : 400 }}>{track.name}</span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    
-                    {/* Subtitles Column */}
-                    {subtitleTracks.length > 0 && (
-                      <div style={{ flex: 1 }}>
-                        <h4 style={{ color: '#888', margin: '0 0 10px 0', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '6px' }}>Subtitles</h4>
-                        <div onClick={() => handleSubtitleTrackChange(-1)} style={{ padding: '7px 12px', margin: '3px 0', cursor: 'pointer', backgroundColor: currentSubtitleTrack === -1 ? 'rgba(255,255,255,0.12)' : 'transparent', color: currentSubtitleTrack === -1 ? (platform === 'nflix' ? '#E50914' : platform === 'nprime' ? '#00A8E1' : '#1F80E0') : '#FFF', borderRadius: '4px', transition: 'background 0.15s' }}>
-                          <span style={{ fontSize: '0.9rem', fontWeight: currentSubtitleTrack === -1 ? 700 : 400 }}>Off</span>
-                        </div>
-                        {subtitleTracks.map(track => (
-                          <div key={track.id} onClick={() => handleSubtitleTrackChange(track.id)} style={{ padding: '7px 12px', margin: '3px 0', cursor: 'pointer', backgroundColor: currentSubtitleTrack === track.id ? 'rgba(255,255,255,0.12)' : 'transparent', color: currentSubtitleTrack === track.id ? (platform === 'nflix' ? '#E50914' : platform === 'nprime' ? '#00A8E1' : '#1F80E0') : '#FFF', borderRadius: '4px', transition: 'background 0.15s' }}>
-                            <span style={{ fontSize: '0.9rem', fontWeight: currentSubtitleTrack === track.id ? 700 : 400 }}>{track.name}</span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
+ 
 
             {/* Picture in Picture */}
             <button onClick={togglePiP} className="player-btn" title="Picture in Picture">
