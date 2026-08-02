@@ -66,6 +66,7 @@ export interface Movie {
   platform?: string;
   /** Populated by search — which platforms carry this title (e.g. ['Netflix', 'Prime Video']) */
   availablePlatforms?: string[];
+  watchProgress?: number;
 }
 
 export interface Category {

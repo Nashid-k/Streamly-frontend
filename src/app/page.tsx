@@ -133,6 +133,23 @@ export default function Home() {
   // Ref holding the full movie lookup including search results and top10
   const allMoviesMapRef = useRef<Map<string, Movie>>(new Map());
 
+  useEffect(() => {
+    if (typeof window !== 'undefined' && allMoviesMapRef.current.size > 0) {
+      const cwList: Movie[] = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('watch_pos_')) {
+          const movieId = key.replace('watch_pos_', '');
+          const movie = allMoviesMapRef.current.get(movieId);
+          if (movie) {
+             cwList.push(movie);
+          }
+        }
+      }
+      setContinueWatching(cwList);
+    }
+  }, [activeVideoMovie]);
+
   const handlePlayMovie = (movie: Movie) => {
     // Both Play and Info from the card now open the unified detail modal
     handleOpenDetails(movie);
@@ -430,6 +447,11 @@ export default function Home() {
           if (userData.profiles && userData.profiles.length > 0) {
             const active = userData.profiles.find((p) => p.id === userData.currentProfileId) || userData.profiles[0];
             setCurrentProfile(active);
+            
+            if (!sessionStorage.getItem('profileSelected')) {
+              setShowProfileModal(true);
+            }
+
             const profilePrefs = userData.preferencesByProfile?.[active.id];
             if (profilePrefs) {
               setPreferences(profilePrefs);
@@ -682,7 +704,6 @@ export default function Home() {
       .slice(0, 6)
       .map(({ candidate }) => candidate);
   }, [activeDetailMovie, allMovies]);
-
   return (
     <main className={platform === 'hotstar' ? 'hotstar-main-content' : ''} style={{ minHeight: '100vh', backgroundColor: 'var(--bg-color)', color: '#FFF', width: '100%', position: 'relative' }}>
       {/* Top Navigation Bar with Status Bar Genre & Language Dropdowns */}
@@ -701,6 +722,8 @@ export default function Home() {
         currentProfile={currentProfile}
         onOpenProfileModal={() => setShowProfileModal(true)}
         onOpenOnboardingModal={() => setShowOnboardingModal(true)}
+        searchResults={searchResults}
+        onSearchResultSelect={handleSearchResultPlay}
       />
 
       {/* Platform-Authentic Full-Page Initial & Switching Loader */}
@@ -1255,6 +1278,7 @@ export default function Home() {
             setSelectedDubFilter(profilePrefs.dubOption);
             const languages = Array.from(new Set([...profilePrefs.preferredAudioLanguages, ...profilePrefs.preferredSubtitleLanguages]));
             setSelectedLangFilter(languages.length ? languages : ['All']);
+            sessionStorage.setItem('profileSelected', 'true');
             setShowProfileModal(false);
           }}
           onClose={() => setShowProfileModal(false)}

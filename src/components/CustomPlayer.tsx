@@ -25,6 +25,7 @@ export const CustomPlayer = ({ streamUrl, movie, onBack, onNext, hasNext, onErro
   const [xRayTab, setXRayTab] = useState<'cast' | 'music' | 'trivia'>('cast');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [showNextEpisodePrompt, setShowNextEpisodePrompt] = useState(false);
   
   const toastTimeoutRef = useRef<NodeJS.Timeout>();
 
@@ -169,11 +170,19 @@ export const CustomPlayer = ({ streamUrl, movie, onBack, onNext, hasNext, onErro
 
     // Load saved playback position
     if (movie?.id) {
-      const savedTime = localStorage.getItem(`watch_pos_${movie.id}`);
-      if (savedTime && videoRef.current) {
-        const parsed = parseFloat(savedTime);
-        if (!isNaN(parsed) && parsed > 5) {
-          videoRef.current.currentTime = parsed;
+      const saved = localStorage.getItem(`watch_pos_${movie.id}`);
+      if (saved && videoRef.current) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (parsed && typeof parsed.cur === 'number' && parsed.cur > 5) {
+            videoRef.current.currentTime = parsed.cur;
+          }
+        } catch {
+          // Fallback to legacy old format (just number)
+          const parsed = parseFloat(saved);
+          if (!isNaN(parsed) && parsed > 5) {
+            videoRef.current.currentTime = parsed;
+          }
         }
       }
     }
@@ -359,7 +368,19 @@ export const CustomPlayer = ({ streamUrl, movie, onBack, onNext, hasNext, onErro
     // Save position to localStorage every ~3 seconds
     if (movie?.id && cur > 5 && Math.abs(cur - (videoRef.current as any)._lastSavedPos || 0) > 3) {
       (videoRef.current as any)._lastSavedPos = cur;
-      localStorage.setItem(`watch_pos_${movie.id}`, cur.toString());
+      const progressData = { cur, duration: videoRef.current.duration };
+      localStorage.setItem(`watch_pos_${movie.id}`, JSON.stringify(progressData));
+    }
+
+    if (hasNext && videoRef.current.duration > 0) {
+      if (videoRef.current.duration - cur <= 15) {
+        setShowNextEpisodePrompt(true);
+      } else {
+        setShowNextEpisodePrompt(false);
+      }
+      if (videoRef.current.duration - cur <= 0.5) {
+        if (onNext) onNext();
+      }
     }
 
     if (videoRef.current.buffered.length > 0) {
@@ -394,6 +415,13 @@ export const CustomPlayer = ({ streamUrl, movie, onBack, onNext, hasNext, onErro
         onPause={() => setIsPlaying(false)}
         onWaiting={() => setIsWaiting(true)}
         onPlaying={() => setIsWaiting(false)}
+        onEnded={() => {
+          if (onNext && hasNext) {
+            onNext();
+          } else {
+            setIsPlaying(false);
+          }
+        }}
         onClick={togglePlay}
         onDoubleClick={handleVideoDoubleClick}
       />
@@ -525,6 +553,15 @@ export const CustomPlayer = ({ streamUrl, movie, onBack, onNext, hasNext, onErro
           </button>
         )}
       </div>
+
+      {showNextEpisodePrompt && hasNext && (
+        <div style={{ position: 'absolute', bottom: '120px', right: '40px', zIndex: 40, background: 'rgba(0,0,0,0.85)', padding: '16px 24px', borderRadius: '8px', border: '1px solid #1F80E0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)' }}>
+          <span style={{ color: '#FFF', fontWeight: 600 }}>Next Episode playing in {Math.max(0, Math.ceil(duration - currentTime))}...</span>
+          <button onClick={() => { setShowNextEpisodePrompt(false); if (onNext) onNext(); }} style={{ background: '#1F80E0', color: '#FFF', border: 'none', padding: '8px 24px', borderRadius: '4px', fontWeight: 700, cursor: 'pointer' }}>
+            Play Now
+          </button>
+        </div>
+      )}
 
       {/* X-Ray Cast Overlay (Prime Only) */}
       {platform === 'nprime' && showXRay && (
