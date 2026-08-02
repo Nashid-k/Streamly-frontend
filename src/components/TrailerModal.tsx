@@ -26,6 +26,7 @@ export const TrailerModal: React.FC<TrailerModalProps> = ({
   const [movie, setMovie] = useState<Movie>(initialMovie);
   const [loading, setLoading] = useState(!initialMovie.trailerUrl);
   const [trailerError, setTrailerError] = useState(false);
+  const [trailerIndex, setTrailerIndex] = useState(0);
 
   // Reset all local state whenever a different title opens, then fetch its
   // enriched metadata. Without this reset a quick title change can briefly
@@ -74,11 +75,25 @@ export const TrailerModal: React.FC<TrailerModalProps> = ({
   };
 
   let decodedTrailerUrl = '';
-  if (typeof window !== 'undefined' && movie.trailerUrl) {
+  let allTrailers = movie.sources?.filter(s => s.name.toLowerCase().includes('trailer') || s.type === 'trailer') || [];
+
+  if (allTrailers.length > trailerIndex) {
+    const encodedUrl = allTrailers[trailerIndex].url;
+    if (encodedUrl && typeof window !== 'undefined') {
+      try {
+        const decodedBase64 = atob(encodedUrl);
+        const xorKey = 42;
+        decodedTrailerUrl = decodedBase64.split('').map(char => String.fromCharCode(char.charCodeAt(0) ^ xorKey)).join('');
+      } catch {
+        decodedTrailerUrl = '';
+      }
+    }
+  } else if (typeof window !== 'undefined' && movie.trailerUrl) {
     try {
       const decodedBase64 = atob(movie.trailerUrl);
       const xorKey = 42;
       decodedTrailerUrl = decodedBase64.split('').map(char => String.fromCharCode(char.charCodeAt(0) ^ xorKey)).join('');
+      allTrailers = [{ name: 'Trailer 1', url: movie.trailerUrl, type: 'trailer' }];
     } catch {
       decodedTrailerUrl = '';
     }
@@ -186,6 +201,28 @@ export const TrailerModal: React.FC<TrailerModalProps> = ({
             </div>
           )}
         </div>
+        
+        {/* Trailer Switcher */}
+        {allTrailers.length > 1 && (
+          <div style={{ display: 'flex', gap: '8px', padding: '12px 0', overflowX: 'auto' }}>
+            {allTrailers.map((t, idx) => (
+              <button
+                key={t.url}
+                onClick={() => { setTrailerIndex(idx); setLoading(true); setTrailerError(false); }}
+                style={{
+                  padding: '6px 12px',
+                  borderRadius: '16px',
+                  border: trailerIndex === idx ? '1px solid var(--primary-color)' : '1px solid rgba(255,255,255,0.2)',
+                  background: trailerIndex === idx ? 'rgba(229,9,20,0.2)' : 'rgba(255,255,255,0.05)',
+                  color: trailerIndex === idx ? '#fff' : 'rgba(255,255,255,0.7)',
+                  fontSize: '0.8rem', cursor: 'pointer', whiteSpace: 'nowrap'
+                }}
+              >
+                {t.name || `Trailer ${idx + 1}`}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Info row */}
         <div

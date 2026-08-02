@@ -423,26 +423,20 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({ movie, onClo
                 <div style={{
                   position: 'absolute', top: 'calc(100% + 8px)', right: 0,
                   background: 'rgba(10,10,10,0.97)', border: '1px solid rgba(255,255,255,0.1)',
-                  borderRadius: '12px', padding: '16px', minWidth: '320px', zIndex: 400,
-                  display: 'flex', gap: '32px'
+                  borderRadius: '12px', padding: '16px', minWidth: '220px', zIndex: 400,
+                  display: 'flex', flexDirection: 'column'
                 }}>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ color: '#fff', fontSize: '1rem', fontWeight: 700, marginBottom: '12px' }}>Audio</div>
-                    <div style={{ color: '#fff', fontSize: '0.85rem', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--primary-color)' }}></span> English [Original]
+                  <div style={{ color: '#fff', fontSize: '1rem', fontWeight: 700, marginBottom: '12px' }}>Audio Tracks</div>
+                  {allSources.map((s, i) => (
+                    <div key={s.name} onClick={() => chooseSource(i)} style={{ 
+                      color: i === sourceIndex ? '#fff' : 'rgba(255,255,255,0.6)', 
+                      fontSize: '0.85rem', marginBottom: '8px', cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', gap: '8px' 
+                    }}>
+                      {i === sourceIndex ? <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--primary-color)' }}></span> : <span style={{ width: '6px', height: '6px' }}></span>}
+                      {s.name}
                     </div>
-                    <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.85rem', marginBottom: '8px', cursor: 'pointer' }}>Hindi</div>
-                    <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.85rem', marginBottom: '8px', cursor: 'pointer' }}>Telugu</div>
-                    <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.85rem', cursor: 'pointer' }}>Tamil</div>
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ color: '#fff', fontSize: '1rem', fontWeight: 700, marginBottom: '12px' }}>Subtitles</div>
-                    <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.85rem', marginBottom: '8px', cursor: 'pointer' }}>Off</div>
-                    <div style={{ color: '#fff', fontSize: '0.85rem', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--primary-color)' }}></span> English [CC]
-                    </div>
-                    <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.85rem', cursor: 'pointer' }}>Hindi</div>
-                  </div>
+                  ))}
                 </div>
               )}
             </div>
@@ -471,7 +465,7 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({ movie, onClo
                       color: i === sourceIndex ? '#fff' : 'rgba(255,255,255,0.6)',
                       background: i === sourceIndex ? 'rgba(229,9,20,0.18)' : 'transparent',
                     }}>
-                      Server {i + 1}
+                      {s.name}
                     </div>
                   ))}
                 </div>
