@@ -64,6 +64,8 @@ export interface Movie {
   audioLanguages: string[];
   subtitleLanguages: string[];
   platform?: string;
+  /** Populated by search — which platforms carry this title (e.g. ['Netflix', 'Prime Video']) */
+  availablePlatforms?: string[];
 }
 
 export interface Category {

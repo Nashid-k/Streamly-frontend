@@ -45,28 +45,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
   const { platform } = usePlatform();
   const [enrichedMovie, setEnrichedMovie] = useState<Movie | null>(null);
   const [carouselScrollIndex, setCarouselScrollIndex] = useState(0);
-  const [isMuted, setIsMuted] = useState(true);
-  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [isLogoLoading, setIsLogoLoading] = useState(false);
-  const iframeRef = React.useRef<HTMLIFrameElement>(null);
-
-  const getYouTubeId = (url?: string) => {
-    if (!url) return '';
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-    const match = url.match(regExp);
-    return match && match[2].length === 11 ? match[2] : '';
-  };
-
-  const toggleMute = () => {
-    const newMuted = !isMuted;
-    setIsMuted(newMuted);
-    if (iframeRef.current && iframeRef.current.contentWindow) {
-      iframeRef.current.contentWindow.postMessage(
-        JSON.stringify({ event: 'command', func: newMuted ? 'mute' : 'unMute', args: [] }),
-        '*'
-      );
-    }
-  };
 
   // Persistent logo cache across banner transitions to eliminate text title flicker
   const logoCacheRef = React.useRef<Map<string, string>>(new Map());
@@ -122,16 +101,8 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
     } else {
       setIsLogoLoading(false);
     }
-
-    // Reset video autoplay timer for new movie
-    setIsVideoPlaying(false);
-    const videoTimer = setTimeout(() => {
-      if (isMounted) setIsVideoPlaying(true);
-    }, 1500);
-
     return () => { 
       isMounted = false; 
-      clearTimeout(videoTimer);
     };
   }, [movie, carouselMovies, onHeroReady]);
 

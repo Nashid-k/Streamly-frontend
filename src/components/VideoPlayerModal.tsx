@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { X, AlertTriangle, SkipForward, ChevronDown, ChevronUp } from 'lucide-react';
+import { X, AlertTriangle, SkipForward, ChevronDown, ChevronUp, MessageSquare } from 'lucide-react';
 import { usePlatform } from './PlatformContext';
 import { Movie } from '../types';
 import { CustomPlayer } from './CustomPlayer';
@@ -19,6 +19,7 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({ movie, onClo
   const [sourceError, setSourceError] = useState('');
   const [showUI, setShowUI] = useState(true);
   const [showServerList, setShowServerList] = useState(false);
+  const [showAudioMenu, setShowAudioMenu] = useState(false);
   const { platform } = usePlatform();
   const overlayRef = useRef<HTMLDivElement>(null);
   const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -138,6 +139,9 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({ movie, onClo
   const showServerListRef = useRef(showServerList);
   useEffect(() => { showServerListRef.current = showServerList; }, [showServerList]);
   
+  const showAudioMenuRef = useRef(showAudioMenu);
+  useEffect(() => { showAudioMenuRef.current = showAudioMenu; }, [showAudioMenu]);
+  
   const onCloseRef = useRef(onClose);
   useEffect(() => { onCloseRef.current = onClose; }, [onClose]);
 
@@ -156,8 +160,9 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({ movie, onClo
 
     // Hardware Back Button Intercept (Mobile gesture support)
     const handlePopState = () => {
-      if (showServerListRef.current) {
+      if (showServerListRef.current || showAudioMenuRef.current) {
         setShowServerList(false);
+        setShowAudioMenu(false);
         // Push state again so the next back press closes the modal
         window.history.pushState({ isModal: true }, '');
       } else {
@@ -181,9 +186,9 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({ movie, onClo
   const resetHide = useCallback(() => {
     setShowUI(true);
     if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
-    if (showServerList) return;
+    if (showServerList || showAudioMenu) return;
     hideTimerRef.current = setTimeout(() => setShowUI(false), 4000); // Increased timeout for mobile
-  }, [showServerList]);
+  }, [showServerList, showAudioMenu]);
 
   useEffect(() => {
     resetHide();
@@ -199,11 +204,11 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({ movie, onClo
   }, [resetHide]);
 
   useEffect(() => {
-    if (showServerList) {
+    if (showServerList || showAudioMenu) {
       setShowUI(true);
       if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
     }
-  }, [showServerList]);
+  }, [showServerList, showAudioMenu]);
 
   if (!activeMovie) return null;
 
@@ -254,7 +259,10 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({ movie, onClo
       // Don't close server list on bare clicks inside the modal
       onClick={(e) => {
         resetHide();
-        if (e.target === overlayRef.current) setShowServerList(false);
+        if (e.target === overlayRef.current) {
+          setShowServerList(false);
+          setShowAudioMenu(false);
+        }
       }}
       style={{
         position: 'fixed',
@@ -401,7 +409,47 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({ movie, onClo
           >
             <div style={{ position: 'relative' }}>
               <button
-                onClick={() => setShowServerList((p) => !p)}
+                onClick={() => { setShowAudioMenu(!showAudioMenu); setShowServerList(false); }}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '7px',
+                  padding: '7px 13px', borderRadius: '8px',
+                  background: 'rgba(0,0,0,0.75)', border: '1px solid rgba(255,255,255,0.18)',
+                  color: '#fff', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer',
+                }}
+              >
+                <MessageSquare size={14} /> Audio & Subtitles
+              </button>
+              {showAudioMenu && (
+                <div style={{
+                  position: 'absolute', top: 'calc(100% + 8px)', right: 0,
+                  background: 'rgba(10,10,10,0.97)', border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '12px', padding: '16px', minWidth: '320px', zIndex: 400,
+                  display: 'flex', gap: '32px'
+                }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ color: '#fff', fontSize: '1rem', fontWeight: 700, marginBottom: '12px' }}>Audio</div>
+                    <div style={{ color: '#fff', fontSize: '0.85rem', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--primary-color)' }}></span> English [Original]
+                    </div>
+                    <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.85rem', marginBottom: '8px', cursor: 'pointer' }}>Hindi</div>
+                    <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.85rem', marginBottom: '8px', cursor: 'pointer' }}>Telugu</div>
+                    <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.85rem', cursor: 'pointer' }}>Tamil</div>
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ color: '#fff', fontSize: '1rem', fontWeight: 700, marginBottom: '12px' }}>Subtitles</div>
+                    <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.85rem', marginBottom: '8px', cursor: 'pointer' }}>Off</div>
+                    <div style={{ color: '#fff', fontSize: '0.85rem', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--primary-color)' }}></span> English [CC]
+                    </div>
+                    <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.85rem', cursor: 'pointer' }}>Hindi</div>
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            <div style={{ position: 'relative' }}>
+              <button
+                onClick={() => { setShowServerList((p) => !p); setShowAudioMenu(false); }}
                 style={{
                   display: 'flex', alignItems: 'center', gap: '7px',
                   padding: '7px 13px', borderRadius: '8px',

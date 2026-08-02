@@ -14,6 +14,8 @@ interface MovieCardProps {
   onToggleMyList: (movieId: string) => void;
   isMyList: boolean;
   top10Rank?: number;
+  /** When true the card is inside search results — click goes straight to playback */
+  isSearchResult?: boolean;
 }
 
 export const MovieCard: React.FC<MovieCardProps> = ({
@@ -23,6 +25,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
   onToggleMyList,
   isMyList,
   top10Rank,
+  isSearchResult = false,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [imgFailed, setImgFailed] = useState(false);
@@ -40,12 +43,48 @@ export const MovieCard: React.FC<MovieCardProps> = ({
   }
 
   const handleCardClick = () => {
+    if (isSearchResult) {
+      // Search results: always direct-play, no modal
+      onPlay(movie);
+      return;
+    }
     if (typeof window !== 'undefined' && window.innerWidth <= 768) {
       onOpenDetails(movie);
     } else {
       onPlay(movie);
     }
   };
+
+  // Platform badge colours
+  const platformBadgeStyle = (label: string): React.CSSProperties => {
+    if (label === 'Netflix') return { background: '#E50914', color: '#FFF' };
+    if (label === 'Prime Video') return { background: '#00A8E1', color: '#FFF' };
+    if (label === 'Hotstar') return { background: '#1F80E0', color: '#FFF' };
+    return { background: '#555', color: '#FFF' };
+  };
+
+  const platformBadges = movie.availablePlatforms && movie.availablePlatforms.length > 0 ? (
+    <div style={{
+      position: 'absolute', bottom: 0, left: 0, right: 0,
+      display: 'flex', gap: '4px', padding: '8px',
+      background: 'linear-gradient(to top, rgba(0,0,0,0.92) 0%, transparent 100%)',
+      zIndex: 20, flexWrap: 'wrap',
+      opacity: isHovered ? 1 : 0.85,
+      transition: 'opacity 0.2s',
+    }}>
+      {movie.availablePlatforms.map((label) => (
+        <span
+          key={label}
+          style={{
+            ...platformBadgeStyle(label),
+            fontSize: '0.58rem', fontWeight: 900, borderRadius: '3px',
+            padding: '2px 6px', letterSpacing: '0.03em', textTransform: 'uppercase',
+            boxShadow: '0 1px 4px rgba(0,0,0,0.7)',
+          }}
+        >{label}</span>
+      ))}
+    </div>
+  ) : null;
 
   const handleMouseEnter = () => {
     setIsHovered(true);
@@ -139,6 +178,8 @@ export const MovieCard: React.FC<MovieCardProps> = ({
             <Play size={13} fill="#FFF" /> Watch Now
           </button>
         </div>
+        {/* Platform Availability Badges */}
+        {platformBadges}
       </div>
     );
   }
@@ -232,6 +273,8 @@ export const MovieCard: React.FC<MovieCardProps> = ({
             </button>
           </div>
         </div>
+        {/* Platform Availability Badges */}
+        {platformBadges}
       </div>
     );
   }
@@ -372,6 +415,8 @@ export const MovieCard: React.FC<MovieCardProps> = ({
             {movie.genres.slice(0, 3).join(' • ')}
           </div>
         </div>
+        {/* Platform Availability Badges */}
+        {platformBadges}
       </div>
     </div>
   );

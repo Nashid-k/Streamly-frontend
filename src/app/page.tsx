@@ -78,7 +78,7 @@ function shuffleForDiscovery<T>(items: T[], seedText: string): T[] {
 }
 
 export default function Home() {
-  const { platform } = usePlatform();
+  const { platform, setPlatform } = usePlatform();
   const [featuredMovie, setFeaturedMovie] = useState<Movie | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const [top10Movies, setTop10Movies] = useState<Movie[]>([]);
@@ -137,6 +137,37 @@ export default function Home() {
     // Both Play and Info from the card now open the unified detail modal
     handleOpenDetails(movie);
   };
+
+  // ── Search Direct Play ────────────────────────────────────────────────────
+  // Called from search result cards — skips the detail modal entirely and
+  // auto-switches the active platform if the title lives on a different one.
+  const platformKeyMap: Record<string, 'nflix' | 'nprime' | 'hotstar'> = {
+    'Netflix': 'nflix',
+    'Prime Video': 'nprime',
+    'Hotstar': 'hotstar',
+  };
+  const handleSearchResultPlay = (movie: Movie) => {
+    // Determine the best platform for this title
+    if (movie.availablePlatforms && movie.availablePlatforms.length > 0) {
+      // If current platform has the title, keep it; otherwise switch to first available
+      const platformLabel: Record<string, string> = { nflix: 'Netflix', nprime: 'Prime Video', hotstar: 'Hotstar' };
+      const currentLabel = platformLabel[platform];
+      if (!movie.availablePlatforms.includes(currentLabel)) {
+        const firstAvailable = platformKeyMap[movie.availablePlatforms[0]];
+        if (firstAvailable && firstAvailable !== platform) {
+          setPlatform(firstAvailable);
+          showToast(`Switched to ${movie.availablePlatforms[0]} to play "${movie.title}"`);
+        }
+      }
+    }
+    // Directly open the video player (skip detail modal)
+    setActiveVideoMovie(movie);
+    setContinueWatching((prev) => {
+      const filtered = prev.filter((m) => m.id !== movie.id);
+      return [movie, ...filtered].slice(0, 10);
+    });
+  };
+  // ─────────────────────────────────────────────────────────────────────────
 
   // Called from detail modal "Play" button — goes straight to player
   const handleStreamNow = (movie: Movie, episode?: any) => {
@@ -753,10 +784,11 @@ export default function Home() {
               <MovieCard
                 key={movie.id}
                 movie={movie}
-                onPlay={(m) => setActiveVideoMovie(m)}
-                onOpenDetails={handleOpenDetails}
+                onPlay={handleSearchResultPlay}
+                onOpenDetails={handleSearchResultPlay}
                 onToggleMyList={handleToggleMyList}
                 isMyList={myList.includes(movie.id)}
+                isSearchResult={true}
               />
             ))}</div>
             </>
