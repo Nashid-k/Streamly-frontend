@@ -1,7 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import Hls from 'hls.js';
 import { Play, Pause, Volume2, VolumeX, Maximize, Settings, FastForward, Rewind, Mic, ArrowLeft, HelpCircle, Layers, Gauge, MonitorPlay, PictureInPicture } from 'lucide-react';
 import { usePlatform } from './PlatformContext';
+import { fetchIntroTimingsApi, updateContinueWatchingApi } from '../lib/api';
+
 
 export const CustomPlayer = ({ streamUrl, movie, onBack, onNext, hasNext, onError }: { streamUrl: string, movie: any, onBack?: () => void, onNext?: () => void, hasNext?: boolean, onError?: () => void }) => {
   const { platform } = usePlatform();
@@ -26,7 +28,12 @@ export const CustomPlayer = ({ streamUrl, movie, onBack, onNext, hasNext, onErro
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [showNextEpisodePrompt, setShowNextEpisodePrompt] = useState(false);
-  
+  const [autoPlayCountdown, setAutoPlayCountdown] = useState(10);
+
+  // Intro skip state (populated from backend API)
+  const [introTimings, setIntroTimings] = useState<{ hasIntro: boolean; startSeconds: number; endSeconds: number }>({ hasIntro: false, startSeconds: 0, endSeconds: 0 });
+  const [showSkipIntro, setShowSkipIntro] = useState(false);
+
   const toastTimeoutRef = useRef<NodeJS.Timeout>();
 
   const showToast = (msg: string) => {
@@ -84,7 +91,62 @@ export const CustomPlayer = ({ streamUrl, movie, onBack, onNext, hasNext, onErro
     }
   }, [isWaiting, onError]);
 
+  // ─── Fetch intro timings from backend ─────────────────────────────────────
+  useEffect(() => {
+    if (!movie?.id) return;
+    const season = (movie as any).seasonNumber || (movie as any).currentSeason;
+    const episode = (movie as any).episodeNumber || (movie as any).currentEpisode;
+    fetchIntroTimingsApi(movie.tmdbId || movie.id, season, episode)
+      .then(setIntroTimings)
+      .catch(() => setIntroTimings({ hasIntro: false, startSeconds: 0, endSeconds: 0 }));
+  }, [movie?.id, (movie as any)?.seasonNumber, (movie as any)?.episodeNumber]);
+
+  // ─── Auto-play countdown when next episode prompt is shown ────────────────
+  useEffect(() => {
+    if (!showNextEpisodePrompt || !hasNext) return;
+    setAutoPlayCountdown(10);
+    const interval = setInterval(() => {
+      setAutoPlayCountdown((c) => {
+        if (c <= 1) {
+          clearInterval(interval);
+          if (onNext) onNext();
+          return 0;
+        }
+        return c - 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [showNextEpisodePrompt, hasNext]);
+
+  // ─── Continue Watching Backend Sync ───────────────────────────────────────
+  const syncContinueWatching = useCallback(() => {
+    if (!movie?.id || !videoRef.current) return;
+    const cur = videoRef.current.currentTime;
+    const dur = videoRef.current.duration;
+    if (cur < 5) return;
+    updateContinueWatchingApi({
+      movieId: movie.id,
+      title: movie.title || 'Unknown',
+      posterUrl: movie.posterUrl || '',
+      progressSeconds: Math.floor(cur),
+      durationSeconds: Math.floor(dur) || 0,
+      platform: platform,
+      updatedAt: Date.now(),
+    }).catch(() => {});
+  }, [movie?.id, movie?.title, movie?.posterUrl, platform]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (isPlaying) syncContinueWatching();
+    }, 15_000);
+    return () => {
+      clearInterval(interval);
+      syncContinueWatching(); // sync on unmount
+    };
+  }, [isPlaying, syncContinueWatching]);
+
   const controlsTimeoutRef = useRef<NodeJS.Timeout>();
+
 
   const handleAudioTrackChange = (id: number) => {
     if (hlsRef.current) {
@@ -372,15 +434,18 @@ export const CustomPlayer = ({ streamUrl, movie, onBack, onNext, hasNext, onErro
       localStorage.setItem(`watch_pos_${movie.id}`, JSON.stringify(progressData));
     }
 
-    if (hasNext && videoRef.current.duration > 0) {
-      if (videoRef.current.duration - cur <= 15) {
+    if (hasNext && videoRef.current.duration > 0 && videoRef.current.duration > 60) {
+      if (videoRef.current.duration - cur <= 30) {
         setShowNextEpisodePrompt(true);
       } else {
         setShowNextEpisodePrompt(false);
       }
-      if (videoRef.current.duration - cur <= 0.5) {
-        if (onNext) onNext();
-      }
+    }
+
+    // Intro skip visibility from backend timings
+    if (introTimings.hasIntro) {
+      const inIntro = cur >= introTimings.startSeconds && cur <= introTimings.endSeconds + 10;
+      setShowSkipIntro(inIntro);
     }
 
     if (videoRef.current.buffered.length > 0) {
@@ -554,14 +619,71 @@ export const CustomPlayer = ({ streamUrl, movie, onBack, onNext, hasNext, onErro
         )}
       </div>
 
+      {/* ─── Auto-Play Next Episode Card ─────────────────────────────────── */}
       {showNextEpisodePrompt && hasNext && (
-        <div style={{ position: 'absolute', bottom: '120px', right: '40px', zIndex: 40, background: 'rgba(0,0,0,0.85)', padding: '16px 24px', borderRadius: '8px', border: '1px solid #1F80E0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)' }}>
-          <span style={{ color: '#FFF', fontWeight: 600 }}>Next Episode playing in {Math.max(0, Math.ceil(duration - currentTime))}...</span>
-          <button onClick={() => { setShowNextEpisodePrompt(false); if (onNext) onNext(); }} style={{ background: '#1F80E0', color: '#FFF', border: 'none', padding: '8px 24px', borderRadius: '4px', fontWeight: 700, cursor: 'pointer' }}>
-            Play Now
-          </button>
+        <div style={{
+          position: 'absolute', bottom: '130px', right: '30px', zIndex: 40,
+          background: 'rgba(20,20,20,0.92)', backdropFilter: 'blur(16px)',
+          border: '1px solid rgba(255,255,255,0.12)', borderRadius: '14px',
+          padding: '18px 20px', width: '270px',
+          boxShadow: '0 12px 40px rgba(0,0,0,0.7)',
+          display: 'flex', flexDirection: 'column', gap: '12px',
+        }}>
+          <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            Up Next
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            {/* SVG countdown ring */}
+            <div style={{ position: 'relative', width: '44px', height: '44px', flexShrink: 0 }}>
+              <svg width="44" height="44" style={{ transform: 'rotate(-90deg)' }}>
+                <circle cx="22" cy="22" r="19" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="3" />
+                <circle
+                  cx="22" cy="22" r="19"
+                  fill="none" stroke="var(--primary-color)" strokeWidth="3"
+                  strokeDasharray={`${2 * Math.PI * 19}`}
+                  strokeDashoffset={`${2 * Math.PI * 19 * (1 - autoPlayCountdown / 10)}`}
+                  strokeLinecap="round"
+                  style={{ transition: 'stroke-dashoffset 1s linear' }}
+                />
+              </svg>
+              <span style={{
+                position: 'absolute', inset: 0, display: 'flex', alignItems: 'center',
+                justifyContent: 'center', color: '#fff', fontWeight: 800, fontSize: '0.95rem',
+              }}>
+                {autoPlayCountdown}
+              </span>
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ color: '#fff', fontWeight: 700, fontSize: '0.88rem', marginBottom: '3px' }}>Next Episode</div>
+              <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.75rem' }}>Playing automatically</div>
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <button
+              onClick={() => { setShowNextEpisodePrompt(false); if (onNext) onNext(); }}
+              style={{
+                flex: 1, padding: '9px', borderRadius: '8px',
+                background: 'var(--primary-color)', border: 'none',
+                color: '#fff', fontWeight: 700, fontSize: '0.82rem', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px',
+              }}
+            >
+              <FastForward size={13} fill="#fff" /> Play Now
+            </button>
+            <button
+              onClick={() => setShowNextEpisodePrompt(false)}
+              style={{
+                padding: '9px 14px', borderRadius: '8px',
+                background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)',
+                color: 'rgba(255,255,255,0.6)', fontSize: '0.82rem', cursor: 'pointer',
+              }}
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       )}
+
 
       {/* X-Ray Cast Overlay (Prime Only) */}
       {platform === 'nprime' && showXRay && (
@@ -697,20 +819,30 @@ export const CustomPlayer = ({ streamUrl, movie, onBack, onNext, hasNext, onErro
       }}>
         
         {/* Platform Specific Floating Buttons */}
-        {currentTime > 5 && currentTime < 180 && (
+        {/* Skip Intro Button (API-driven) */}
+        {showSkipIntro && (
           <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: '10px' }}>
-            <button 
-              onClick={() => { if(videoRef.current) videoRef.current.currentTime += 85; showToast('Skipped Intro'); }}
+            <button
+              onClick={() => {
+                if (videoRef.current) videoRef.current.currentTime = introTimings.endSeconds;
+                setShowSkipIntro(false);
+                showToast('Intro skipped');
+              }}
               style={{
-                background: platform === 'nprime' ? 'rgba(0,168,225,0.85)' : platform === 'hotstar' ? 'rgba(31,128,224,0.85)' : 'rgba(20,20,20,0.85)',
-                color: '#fff', border: '1px solid rgba(255,255,255,0.3)', 
-                padding: '10px 22px', borderRadius: platform === 'hotstar' ? '8px' : '4px', fontSize: '1rem', fontWeight: 700, cursor: 'pointer',
-                transition: 'all 0.2s', backdropFilter: 'blur(10px)', boxShadow: '0 4px 14px rgba(0,0,0,0.6)'
-              }} onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.05)'; }} onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; }}>
-              <span style={{ color: 'inherit' }}>Skip Intro</span>
+                background: platform === 'nprime' ? 'rgba(0,168,225,0.85)' : platform === 'hotstar' ? 'rgba(31,128,224,0.85)' : 'rgba(20,20,20,0.92)',
+                color: '#fff', border: '2px solid rgba(255,255,255,0.8)',
+                padding: '10px 22px', borderRadius: platform === 'hotstar' ? '8px' : '4px',
+                fontSize: '1rem', fontWeight: 700, cursor: 'pointer',
+                transition: 'all 0.2s', backdropFilter: 'blur(10px)', boxShadow: '0 4px 14px rgba(0,0,0,0.6)',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.05)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
+            >
+              Skip Intro
             </button>
           </div>
         )}
+
 
         {/* Next Episode Floating Button */}
         {hasNext && progressPercent > 85 && (

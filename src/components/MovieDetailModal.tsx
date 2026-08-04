@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
-import { X, Play, Plus, Check, ThumbsUp, ChevronDown, Volume2, VolumeX, Download } from 'lucide-react';
+import { X, Play, Plus, Check, ThumbsUp, ChevronDown, Volume2, VolumeX, Download, Sparkles } from 'lucide-react';
 import { usePlatform } from './PlatformContext';
 import { Movie, Episode } from '../types';
-import { fetchMovieById, fetchSeasonEpisodes } from '../lib/api';
+import { fetchMovieById, fetchSeasonEpisodes, fetchRecommendationsApi } from '../lib/api';
 
 interface MovieDetailModalProps {
   movie: Movie | null;
@@ -693,6 +693,9 @@ function HotstarModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
             </div>
           )}
 
+          {/* ─── Recommended For You (Backend AI Recommendations) ────────────── */}
+          <RecommendationsSection movie={movie} onOpenDetails={onOpenDetails} />
+
         </div>
       </div>
     </div>
@@ -705,3 +708,64 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = (props) => {
   if (platform === 'nprime') return <PrimeModal {...props} platform={platform} />;
   return <HotstarModal {...props} platform={platform} />;
 };
+
+function RecommendationsSection({ movie, onOpenDetails }: { movie: Movie; onOpenDetails: (m: Movie) => void }) {
+  const { platform } = usePlatform();
+  const [recs, setRecs] = useState<Movie[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [fetched, setFetched] = useState(false);
+
+  useEffect(() => {
+    if (!movie?.id || fetched) return;
+    const timer = setTimeout(async () => {
+      setLoading(true);
+      try {
+        const results = await fetchRecommendationsApi(movie.id, platform);
+        setRecs(results.slice(0, 12));
+      } catch {}
+      setLoading(false);
+      setFetched(true);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, [movie?.id, platform]);
+
+  if (!loading && recs.length === 0) return null;
+
+  return (
+    <div style={{ marginTop: '32px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+        <Sparkles size={16} style={{ color: 'var(--primary-color)' }} />
+        <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800, color: '#fff' }}>Recommended For You</h3>
+      </div>
+      {loading ? (
+        <div style={{ display: 'flex', gap: '12px' }}>
+          {[...Array(4)].map((_, i) => (
+            <div key={i} style={{ width: '140px', aspectRatio: '2/3', borderRadius: '8px', background: 'rgba(255,255,255,0.07)', flexShrink: 0, animation: 'pulse 1.5s infinite ease-in-out' }} />
+          ))}
+        </div>
+      ) : (
+        <div style={{ display: 'flex', gap: '12px', overflowX: 'auto', paddingBottom: '8px', scrollbarWidth: 'none' }}>
+          {recs.map((rec) => (
+            <div
+              key={rec.id}
+              onClick={() => onOpenDetails(rec)}
+              style={{ flexShrink: 0, width: '130px', cursor: 'pointer', borderRadius: '8px', overflow: 'hidden', transition: 'transform 0.2s' }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.transform = 'scale(1.04)'; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = 'scale(1)'; }}
+            >
+              <img
+                src={rec.posterUrl || rec.backdropUrl}
+                alt={rec.title}
+                style={{ width: '100%', aspectRatio: '2/3', objectFit: 'cover', display: 'block', borderRadius: '8px' }}
+              />
+              <div style={{ padding: '6px 4px 0', fontSize: '0.75rem', color: 'rgba(255,255,255,0.7)', fontWeight: 600, lineHeight: 1.3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {rec.title}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+

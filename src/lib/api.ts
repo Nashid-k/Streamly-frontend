@@ -6,13 +6,26 @@ const cache = new Map<string, { expiresAt: number; value: unknown }>();
 
 const getPlatform = () => typeof window !== 'undefined' ? (localStorage.getItem('app_platform') || 'nflix') : 'nflix';
 
+/** Returns stored auth token or null */
+export const getAuthToken = (): string | null =>
+  typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
+
 async function request<T>(path: string, ttlMs: number, init?: RequestInit): Promise<T> {
   if (!apiBaseUrl) throw new Error('NEXT_PUBLIC_API_URL is not configured.');
   const key = `${init?.method || 'GET'}:${path}`;
   const cached = cache.get(key);
   if (cached && cached.expiresAt > Date.now()) return cached.value as T;
 
-  const response = await fetch(`${apiBaseUrl}${path}`, init);
+  // Inject auth token if available
+  const token = getAuthToken();
+  const headers: Record<string, string> = {
+    ...(init?.headers as Record<string, string> || {}),
+  };
+  if (token && !headers['authorization']) {
+    headers['authorization'] = `Bearer ${token}`;
+  }
+
+  const response = await fetch(`${apiBaseUrl}${path}`, { ...init, headers });
   if (!response.ok) {
     const body = await response.json().catch(() => null) as { message?: unknown } | null;
     const message = typeof body?.message === 'string' ? body.message : `Request failed: ${response.status}`;
@@ -64,7 +77,7 @@ export const fetchUser = () => request<User>('/user', 300_000);
 /** Clears only user-related cache entries (mylist, preferences, profile) */
 function invalidateUserCache() {
   for (const key of Array.from(cache.keys())) {
-    if (key.includes('/user')) cache.delete(key);
+    if (key.includes('/user') || key.includes('/auth')) cache.delete(key);
   }
 }
 
@@ -92,4 +105,112 @@ export async function switchProfileApi(profileId: string): Promise<import('../ty
   const result = await request<import('../types').UserProfile>(`/user/profile/${profileId}`, 0, { method: 'POST' });
   invalidateUserCache();
   return result;
+}
+
+// ─── Authentication ────────────────────────────────────────────────────────────
+
+export async function loginApi(email: string, password: string) {
+  return request<{ token: string; user: any }>('/auth/login', 0, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password }),
+  });
+}
+
+export async function registerApi(email: string, password: string, name: string) {
+  return request<{ token: string; user: any }>('/auth/register', 0, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password, name }),
+  });
+}
+
+export async function fetchAuthProfile() {
+  return request<any>('/auth/me', 0);
+}
+
+// ─── Continue Watching (backend sync) ─────────────────────────────────────────
+
+export interface ContinueWatchingItem {
+  movieId: string;
+  title: string;
+  posterUrl: string;
+  progressSeconds: number;
+  durationSeconds: number;
+  platform: string;
+  updatedAt: number;
+}
+
+export async function fetchContinueWatchingApi(): Promise<ContinueWatchingItem[]> {
+  try {
+    const token = getAuthToken();
+    if (token) {
+      // Auth user: fetch from /auth/continue-watching
+      return await request<ContinueWatchingItem[]>('/auth/continue-watching', 0);
+    }
+    // Guest: fetch from /user/continue-watching
+    return await request<ContinueWatchingItem[]>('/user/continue-watching', 0);
+  } catch {
+    return [];
+  }
+}
+
+export async function updateContinueWatchingApi(item: ContinueWatchingItem): Promise<void> {
+  try {
+    const token = getAuthToken();
+    const endpoint = token ? '/auth/continue-watching' : '/user/continue-watching';
+    await request<any>(endpoint, 0, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(item),
+    });
+  } catch {
+    // Silently fail — localStorage is the fallback
+  }
+}
+
+export async function removeContinueWatchingApi(movieId: string): Promise<void> {
+  try {
+    const token = getAuthToken();
+    const endpoint = token ? `/auth/continue-watching/${movieId}` : `/user/continue-watching/${movieId}`;
+    await fetch(`${apiBaseUrl}${endpoint}`, {
+      method: 'DELETE',
+      headers: token ? { authorization: `Bearer ${token}` } : {},
+    });
+  } catch {
+    // Silently fail
+  }
+}
+
+// ─── Recommendations ───────────────────────────────────────────────────────────
+
+export async function fetchRecommendationsApi(movieId: string, platform?: string): Promise<Movie[]> {
+  const p = platform || getPlatform();
+  try {
+    return await request<Movie[]>(`/movies/${movieId}/recommendations?platform=${p}`, 300_000);
+  } catch {
+    return [];
+  }
+}
+
+// ─── Intro Timings ─────────────────────────────────────────────────────────────
+
+export async function fetchIntroTimingsApi(
+  movieId: string,
+  season?: number,
+  episode?: number,
+  platform?: string,
+): Promise<{ hasIntro: boolean; startSeconds: number; endSeconds: number }> {
+  const p = platform || getPlatform();
+  const params = new URLSearchParams({ platform: p });
+  if (season) params.set('season', String(season));
+  if (episode) params.set('episode', String(episode));
+  try {
+    return await request<{ hasIntro: boolean; startSeconds: number; endSeconds: number }>(
+      `/movies/${movieId}/intro?${params}`,
+      86_400_000, // 24hr cache
+    );
+  } catch {
+    return { hasIntro: false, startSeconds: 0, endSeconds: 0 };
+  }
 }

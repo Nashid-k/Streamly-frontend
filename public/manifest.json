@@ -1,12 +1,13 @@
 {
-  "name": "Streamly",
+  "name": "Streamly — All-in-One Streaming",
   "short_name": "Streamly",
-  "description": "The ultimate all-in-one streaming app.",
+  "description": "Watch Netflix, Prime Video & Hotstar titles all in one beautiful app.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#141414",
-  "theme_color": "#141414",
-  "orientation": "portrait-primary",
+  "theme_color": "#E50914",
+  "orientation": "any",
+  "categories": ["entertainment"],
   "icons": [
     {
       "src": "/favicon.ico",
@@ -19,5 +20,30 @@
       "sizes": "any",
       "purpose": "any maskable"
     }
-  ]
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Browse Netflix",
+      "short_name": "Netflix",
+      "description": "Browse Netflix titles",
+      "url": "/?tab=home",
+      "icons": [{ "src": "/favicon.ico", "sizes": "any" }]
+    },
+    {
+      "name": "Browse Prime Video",
+      "short_name": "Prime",
+      "description": "Browse Prime Video titles",
+      "url": "/?platform=nprime",
+      "icons": [{ "src": "/favicon.ico", "sizes": "any" }]
+    },
+    {
+      "name": "Browse Hotstar",
+      "short_name": "Hotstar",
+      "description": "Browse Disney+ Hotstar titles",
+      "url": "/?platform=hotstar",
+      "icons": [{ "src": "/favicon.ico", "sizes": "any" }]
+    }
+  ],
+  "prefer_related_applications": false
 }

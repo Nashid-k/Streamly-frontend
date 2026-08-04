@@ -12,6 +12,9 @@ import { OnboardingModal } from '../components/OnboardingModal';
 import { MovieCard } from '../components/MovieCard';
 import { usePlatform } from '../components/PlatformContext';
 import { HeroSkeleton, MovieRowSkeleton, PlatformInitialLoader } from '../components/SkeletonLoaders';
+import { AuthModal } from '../components/AuthModal';
+import { SearchFilters, SearchFiltersState, DEFAULT_SEARCH_FILTERS, applySearchFilters } from '../components/SearchFilters';
+import { PWAInstallPrompt } from '../components/PWAInstallPrompt';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import {
@@ -25,10 +28,13 @@ import {
   updateUserPreferencesApi,
   switchProfileApi,
   prewarmPlatformCatalogs,
+  fetchContinueWatchingApi,
+  getAuthToken,
 } from '../lib/api';
 
-import { Film, ArrowUp, Filter } from 'lucide-react';
+import { Film, ArrowUp, Filter, LogIn } from 'lucide-react';
 import { Movie, Category, User, UserProfile, UserPreferences, Actor } from '../types';
+
 
 const HERO_ROTATION_MS = 10_000;
 
@@ -130,6 +136,15 @@ export default function Home() {
   // Continue Watching List
   const [continueWatching, setContinueWatching] = useState<Movie[]>([]);
   const [themeColor, setThemeColor] = useState<string | null>(null);
+
+  // Auth state
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authToken, setAuthToken] = useState<string | null>(null);
+  const [authUser, setAuthUser] = useState<any>(null);
+
+  // Search Filters state
+  const [searchFilters, setSearchFilters] = useState<SearchFiltersState>(DEFAULT_SEARCH_FILTERS);
+
 
   // Ref holding the full movie lookup including search results and top10
   const allMoviesMapRef = useRef<Map<string, Movie>>(new Map());
@@ -274,6 +289,36 @@ export default function Home() {
       return () => clearTimeout(timer);
     }
   }, []);
+
+  // Auth initialization from localStorage
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const token = localStorage.getItem('auth_token');
+    const userStr = localStorage.getItem('auth_user');
+    if (token) setAuthToken(token);
+    if (userStr) {
+      try { setAuthUser(JSON.parse(userStr)); } catch {}
+    }
+  }, []);
+
+  // Fetch Continue Watching from backend on mount
+  useEffect(() => {
+    fetchContinueWatchingApi().then((items) => {
+      if (!items || items.length === 0) return;
+      // Merge with local allMoviesMap to get full Movie objects for continue watching row
+      setContinueWatching((prev) => {
+        const merged = [...prev];
+        items.forEach((item) => {
+          const found = allMoviesMapRef.current.get(item.movieId);
+          if (found && !merged.find((m) => m.id === item.movieId)) {
+            merged.push({ ...found, watchProgress: item.progressSeconds });
+          }
+        });
+        return merged.slice(0, 10);
+      });
+    }).catch(() => {});
+  }, []);
+
 
   const handleSavePreferences = async (newPrefs: UserPreferences) => {
     const discoveryLanguages = Array.from(new Set([...newPrefs.preferredAudioLanguages, ...newPrefs.preferredSubtitleLanguages]));
@@ -764,7 +809,7 @@ export default function Home() {
           </div>
 
           {/* Search Genre Suggestion Chips */}
-          <div style={{ padding: '0 4%', marginBottom: '32px', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+          <div style={{ padding: '0 4%', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
             <span style={{ fontSize: '0.82rem', color: '#777', fontWeight: 600 }}>Quick Genres:</span>
             {availableGenres.slice(0, 12).map((g) => (
               <button
@@ -786,6 +831,17 @@ export default function Home() {
             ))}
           </div>
 
+          {/* Advanced Search Filters */}
+          <div style={{ padding: '0 4%' }}>
+            <SearchFilters
+              filters={searchFilters}
+              onChange={setSearchFilters}
+              resultCount={applySearchFilters(languageFilteredSearchResults, searchFilters).length}
+              visible={true}
+            />
+          </div>
+
+
           {isSearching && languageFilteredSearchResults.length === 0 && !searchActor ? (
             <div className="classic-grid">
               {[...Array(12)].map((_, i) => (
@@ -804,7 +860,7 @@ export default function Home() {
                 </div>
               )}
               <div className="classic-grid">
-                {languageFilteredSearchResults.map((movie) => (
+                {applySearchFilters(languageFilteredSearchResults, searchFilters).map((movie) => (
               <MovieCard
                 key={movie.id}
                 movie={movie}
@@ -1322,6 +1378,88 @@ export default function Home() {
         >
           <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--primary-color)', display: 'inline-block', boxShadow: '0 0 8px var(--primary-color)' }} />
           {toastMessage}
+        </div>
+      )}
+      {/* ─── Auth Modal ──────────────────────────────────────────────────── */}
+      {showAuthModal && (
+        <AuthModal
+          onClose={() => setShowAuthModal(false)}
+          onAuthSuccess={(token, user) => {
+            setAuthToken(token);
+            setAuthUser(user);
+            setShowAuthModal(false);
+            showToast(`Welcome back, ${user?.name || 'Streamer'}! 🎉`);
+          }}
+        />
+      )}
+
+      {/* ─── PWA Install Prompt ───────────────────────────────────────────── */}
+      <PWAInstallPrompt />
+
+      {/* ─── Sign In Floating Button (when not authenticated) ─────────────── */}
+      {!authToken && !showAuthModal && (
+        <button
+          onClick={() => setShowAuthModal(true)}
+          style={{
+            position: 'fixed',
+            top: '18px',
+            right: '220px',
+            zIndex: 3000,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            padding: '7px 14px',
+            borderRadius: '20px',
+            background: 'rgba(255,255,255,0.08)',
+            border: '1px solid rgba(255,255,255,0.15)',
+            color: 'rgba(255,255,255,0.8)',
+            fontSize: '0.8rem',
+            fontWeight: 600,
+            cursor: 'pointer',
+            backdropFilter: 'blur(10px)',
+            transition: 'all 0.2s',
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.15)'; e.currentTarget.style.color = '#fff'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; e.currentTarget.style.color = 'rgba(255,255,255,0.8)'; }}
+        >
+          <LogIn size={14} /> Sign In
+        </button>
+      )}
+
+      {/* ─── Auth User Indicator (when signed in) ────────────────────────── */}
+      {authToken && authUser && (
+        <div
+          style={{
+            position: 'fixed',
+            top: '18px',
+            right: '220px',
+            zIndex: 3000,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '7px',
+            padding: '6px 12px',
+            borderRadius: '20px',
+            background: 'rgba(229,9,20,0.15)',
+            border: '1px solid rgba(229,9,20,0.3)',
+            color: '#fff',
+            fontSize: '0.78rem',
+            fontWeight: 600,
+            cursor: 'pointer',
+            backdropFilter: 'blur(10px)',
+          }}
+          onClick={() => {
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('auth_user');
+            setAuthToken(null);
+            setAuthUser(null);
+            showToast('Signed out successfully');
+          }}
+          title="Click to sign out"
+        >
+          <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: 'var(--primary-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', fontWeight: 800 }}>
+            {authUser.name?.charAt(0)?.toUpperCase() || 'U'}
+          </div>
+          {authUser.name?.split(' ')[0]}
         </div>
       )}
     </main>

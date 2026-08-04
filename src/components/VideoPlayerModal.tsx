@@ -294,12 +294,15 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({ movie, onClo
         <CustomPlayer 
           streamUrl={scrapedStreamUrl} 
           movie={activeMovie} 
-          onBack={onClose} 
+          onBack={onClose}
+          onNext={nextEpisode ? playNextEpisode : undefined}
+          hasNext={!!nextEpisode}
           onError={() => {
             console.error('CustomPlayer failed to load stream, falling back to iframe');
             setScrapedStreamUrl(''); // Unmount custom player and show iframe
           }}
         />
+
 
       ) : currentUrl && !sourceFailed ? (
         /* ── Iframe fallback (when scraper returned nothing) ─────────────── */
