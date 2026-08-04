@@ -522,9 +522,7 @@ export default function Home() {
             const active = userData.profiles.find((p) => p.id === userData.currentProfileId) || userData.profiles[0];
             setCurrentProfile(active);
             
-            if (!localStorage.getItem('profileSelected')) {
-              setShowProfileModal(true);
-            }
+            
 
             const profilePrefs = userData.preferencesByProfile?.[active.id];
             if (profilePrefs) {
@@ -778,6 +776,44 @@ export default function Home() {
       .slice(0, 6)
       .map(({ candidate }) => candidate);
   }, [activeDetailMovie, allMovies]);
+
+  const renderFilteredGrid = (title: string, filterFn: (m: Movie) => boolean) => {
+    const matchingMovies = allMovies.filter((m) => filterFn(m) && hasGenre(m, selectedGenreFilter));
+    return (
+      <div style={{ padding: '20px 4%' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+          <h3 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#FFF' }}>
+            {title}
+          </h3>
+          <button
+            onClick={() => setSelectedGenreFilter('All')}
+            style={{ background: 'rgba(255,255,255,0.1)', color: '#FFF', border: 'none', padding: '6px 14px', borderRadius: '16px', fontSize: '0.82rem', cursor: 'pointer', fontWeight: 600 }}
+          >
+            Clear Filter ✕
+          </button>
+        </div>
+        {matchingMovies.length > 0 ? (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '20px' }}>
+            {matchingMovies.map((movie) => (
+              <MovieCard
+                key={movie.id}
+                movie={movie}
+                onPlay={(m) => handlePlayMovie(m)}
+                onOpenDetails={handleOpenDetails}
+                onToggleMyList={handleToggleMyListWithToast}
+                isMyList={myList.includes(movie.id)}
+              />
+            ))}
+          </div>
+        ) : (
+          <div style={{ padding: '60px 0', textAlign: 'center', color: '#808080' }}>
+            <p style={{ fontSize: '1.1rem' }}>No titles available in {selectedGenreFilter} right now.</p>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <main className={platform === 'hotstar' ? 'hotstar-main-content' : ''} style={{ minHeight: '100vh', backgroundColor: 'var(--bg-color)', background: themeColor ? `radial-gradient(circle at 50% 0%, ${themeColor}, var(--bg-color) 70%)` : 'var(--bg-color)', color: '#FFF', width: '100%', position: 'relative', transition: 'background 1.5s ease' }}>
       {/* Top Navigation Bar with Status Bar Genre & Language Dropdowns */}
@@ -1020,40 +1056,7 @@ export default function Home() {
                       <MovieRow title="Top 10 Titles Today" movies={languageFilteredTop10} isTop10={true} onPlay={(m) => handlePlayMovie(m)} onOpenDetails={handleOpenDetails} onToggleMyList={handleToggleMyListWithToast} myList={myList} />
                     )}
                     {selectedGenreFilter !== 'All' ? (
-                      /* Filtered Category Grid View for Hotstar & Pill Selections */
-                      <div style={{ padding: '20px 4%' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
-                          <h3 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#FFF' }}>
-                            {selectedGenreFilter} Catalog
-                          </h3>
-                          <button
-                            onClick={() => setSelectedGenreFilter('All')}
-                            style={{ background: 'rgba(255,255,255,0.1)', color: '#FFF', border: 'none', padding: '6px 14px', borderRadius: '16px', fontSize: '0.82rem', cursor: 'pointer', fontWeight: 600 }}
-                          >
-                            Clear Filter ✕
-                          </button>
-                        </div>
-                        {allMovies.filter((m) => hasGenre(m, selectedGenreFilter)).length > 0 ? (
-                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '20px' }}>
-                            {allMovies
-                              .filter((m) => hasGenre(m, selectedGenreFilter))
-                              .map((movie) => (
-                                <MovieCard
-                                  key={movie.id}
-                                  movie={movie}
-                                  onPlay={(m) => handlePlayMovie(m)}
-                                  onOpenDetails={handleOpenDetails}
-                                  onToggleMyList={handleToggleMyListWithToast}
-                                  isMyList={myList.includes(movie.id)}
-                                />
-                              ))}
-                          </div>
-                        ) : (
-                          <div style={{ padding: '60px 0', textAlign: 'center', color: '#808080' }}>
-                            <p style={{ fontSize: '1.1rem' }}>No titles available in {selectedGenreFilter} right now.</p>
-                          </div>
-                        )}
-                      </div>
+                      renderFilteredGrid(`${selectedGenreFilter} Catalog`, () => true)
                     ) : (
                       curatedCategories.map((category) => (
                         <MovieRow
@@ -1076,7 +1079,11 @@ export default function Home() {
                 {activeTab === 'movies' && (
                   /* Movies Tab: Top 10 Movies + Dynamic Movie Rows with Genre Filter + Upcoming */
                   <div style={{ paddingTop: '10px' }}>
-                    {selectedGenreFilter === 'All' && top10MoviesList.length > 0 && (
+                    {selectedGenreFilter !== 'All' ? (
+                      renderFilteredGrid(`${selectedGenreFilter} Movies`, (m) => !m.isSeries && !m.isAnime)
+                    ) : (
+                      <>
+                        {selectedGenreFilter === 'All' && top10MoviesList.length > 0 && (
                       <MovieRow title="Top 10 Movies Today" movies={top10MoviesList} isTop10={true} onPlay={(m) => handlePlayMovie(m)} onOpenDetails={handleOpenDetails} onToggleMyList={handleToggleMyListWithToast} myList={myList} />
                     )}
                     {curatedCategories
@@ -1119,13 +1126,19 @@ export default function Home() {
                         />
                       ) : null;
                     })()}
+                  </>
+                  )}
                   </div>
                 )}
 
                 {activeTab === 'series' && (
                   /* Series Tab: Top 10 TV Series + Dynamic TV Series Rows with Genre Filter + Upcoming */
                   <div style={{ paddingTop: '10px' }}>
-                    {selectedGenreFilter === 'All' && top10SeriesList.length > 0 && (
+                    {selectedGenreFilter !== 'All' ? (
+                      renderFilteredGrid(`${selectedGenreFilter} Series`, (m) => !!m.isSeries && !m.isAnime)
+                    ) : (
+                      <>
+                        {selectedGenreFilter === 'All' && top10SeriesList.length > 0 && (
                       <MovieRow title="Top 10 TV Series Today" movies={top10SeriesList} isTop10={true} onPlay={(m) => handlePlayMovie(m)} onOpenDetails={handleOpenDetails} onToggleMyList={handleToggleMyListWithToast} myList={myList} />
                     )}
                     {curatedCategories
@@ -1168,13 +1181,19 @@ export default function Home() {
                         />
                       ) : null;
                     })()}
+                  </>
+                  )}
                   </div>
                 )}
 
                 {activeTab === 'anime' && (
                   /* Anime Tab: Top 10 Anime + Dynamic Anime Rows with Genre Filter + Upcoming */
                   <div style={{ paddingTop: '10px' }}>
-                    {selectedGenreFilter === 'All' && top10AnimeList.length > 0 && (
+                    {selectedGenreFilter !== 'All' ? (
+                      renderFilteredGrid(`${selectedGenreFilter} Anime`, (m) => !!m.isAnime)
+                    ) : (
+                      <>
+                        {selectedGenreFilter === 'All' && top10AnimeList.length > 0 && (
                       <MovieRow title="Top 10 Anime Today" movies={top10AnimeList} isTop10={true} onPlay={(m) => handlePlayMovie(m)} onOpenDetails={handleOpenDetails} onToggleMyList={handleToggleMyListWithToast} myList={myList} />
                     )}
                     {curatedCategories
@@ -1217,6 +1236,8 @@ export default function Home() {
                         />
                       ) : null;
                     })()}
+                  </>
+                  )}
                   </div>
                 )}
 
