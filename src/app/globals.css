@@ -759,11 +759,6 @@ main.hotstar-main-content { padding-left: 96px; }
   50% { transform: scale(1.1); opacity: 1; filter: drop-shadow(0 0 15px rgba(229,9,20,0.6)); }
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
 @keyframes primeShimmer {
   0% { left: -40%; }
   100% { left: 100%; }
@@ -799,9 +794,10 @@ main.hotstar-main-content { padding-left: 96px; }
     display: none !important;
   }
   
-  /* Hide Search from top nav since it is now in the bottom tab bar */
-  .navbar-right-actions > div:nth-child(3) {
-    display: none !important; 
+  /* Hide Search from top nav on mobile — search is in the bottom tab bar */
+  .navbar-right-actions > button:has(svg[data-lucide="search"]),
+  .navbar-right-actions > div:has(input[type="text"]) {
+    display: none !important;
   }
   
   /* Show Mobile Bottom Navigation */
@@ -809,11 +805,11 @@ main.hotstar-main-content { padding-left: 96px; }
     display: flex !important;
   }
 
-  /* Hero Banner Responsiveness (Portrait Fullscreen) */
+  /* Hero Banner — mobile portrait, content at bottom */
   div.hero-container {
     height: 85vh !important;
     min-height: 500px !important;
-    padding-bottom: 80px !important; /* Above bottom tabs */
+    padding-bottom: 80px !important;
     padding-left: 16px !important;
     padding-right: 16px !important;
     align-items: flex-end !important;

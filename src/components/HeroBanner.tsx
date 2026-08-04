@@ -142,6 +142,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
   return (
     <div
       className="hero-container"
+      data-testid="hero-container"
       style={{
         position: 'relative',
         height: '80vh',
@@ -196,7 +197,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
       />
 
       {/* Left Column: Hero Content */}
-      <div key={enrichedMovie.id} className="hero-content hero-text-animate" style={{ maxWidth: '680px', zIndex: 10 }}>
+      <div key={enrichedMovie.id} className="hero-content hero-text-animate" data-testid="hero-content" style={{ maxWidth: '680px', zIndex: 10 }}>
         {/* Upcoming Eyebrow Badge */}
         {enrichedMovie.isUpcoming && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--primary-color)', fontSize: '0.85rem', fontWeight: 900, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '12px' }}>
@@ -233,6 +234,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
           ) : (
             <h1
               className="hero-title-text"
+              data-testid="hero-title"
               style={{
                 ...getFallbackTitleStyle(),
                 marginBottom: '0px',
@@ -299,6 +301,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
         <div className="hero-actions-row" style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
           <button
             className="primary-play-btn"
+            data-testid="hero-play-btn"
             onClick={() => onPlay(enrichedMovie)}
             style={{
               background: platform === 'hotstar' ? 'var(--primary-color)' : '#FFF',

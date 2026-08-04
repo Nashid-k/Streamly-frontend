@@ -84,6 +84,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onAuthSuccess }) 
           padding: '20px',
         }}
         onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+        data-testid="auth-modal-overlay"
       >
         <motion.div
           initial={{ scale: 0.92, opacity: 0, y: 20 }}
@@ -124,6 +125,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onAuthSuccess }) 
               </div>
               <button
                 onClick={onClose}
+                data-testid="auth-modal-close"
                 style={{
                   width: '32px', height: '32px', borderRadius: '50%',
                   background: 'rgba(255,255,255,0.08)', border: 'none',
@@ -144,6 +146,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onAuthSuccess }) 
                 <button
                   key={m}
                   onClick={() => switchMode(m)}
+                  data-testid={`auth-tab-${m}`}
                   style={{
                     flex: 1, padding: '9px', borderRadius: '7px',
                     background: mode === m ? 'rgba(255,255,255,0.12)' : 'transparent',
@@ -180,6 +183,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onAuthSuccess }) 
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       required
+                      data-testid="auth-name-input"
                       style={inputStyle}
                       onFocus={(e) => { e.currentTarget.style.borderColor = 'var(--primary-color)'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(229,9,20,0.15)'; }}
                       onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)'; e.currentTarget.style.boxShadow = 'none'; }}
@@ -199,6 +203,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onAuthSuccess }) 
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    data-testid="auth-email-input"
                     style={inputStyle}
                     onFocus={(e) => { e.currentTarget.style.borderColor = 'var(--primary-color)'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(229,9,20,0.15)'; }}
                     onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)'; e.currentTarget.style.boxShadow = 'none'; }}
@@ -217,6 +222,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onAuthSuccess }) 
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    data-testid="auth-password-input"
                     style={{ ...inputStyle, paddingRight: '44px' }}
                     onFocus={(e) => { e.currentTarget.style.borderColor = 'var(--primary-color)'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(229,9,20,0.15)'; }}
                     onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)'; e.currentTarget.style.boxShadow = 'none'; }}
@@ -247,6 +253,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onAuthSuccess }) 
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       required
+                      data-testid="auth-confirm-password-input"
                       style={inputStyle}
                       onFocus={(e) => { e.currentTarget.style.borderColor = 'var(--primary-color)'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(229,9,20,0.15)'; }}
                       onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)'; e.currentTarget.style.boxShadow = 'none'; }}
@@ -276,6 +283,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onAuthSuccess }) 
                 <button
                   type="submit"
                   disabled={loading}
+                  data-testid="auth-submit-btn"
                   style={{
                     padding: '14px', borderRadius: '10px',
                     background: loading ? 'rgba(229,9,20,0.5)' : 'var(--primary-color)',
@@ -296,6 +304,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onAuthSuccess }) 
                 <button
                   type="button"
                   onClick={onClose}
+                  data-testid="auth-guest-btn"
                   style={{
                     padding: '10px', borderRadius: '8px',
                     background: 'transparent', border: '1px solid rgba(255,255,255,0.1)',

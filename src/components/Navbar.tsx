@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, Home, Tv, Film, Plus, Grip, ChevronDown, Filter, Globe, Settings, LogOut } from 'lucide-react';
+import { Search, Home, Tv, Film, Plus, Grip, ChevronDown, Filter, Globe, Settings, LogIn } from 'lucide-react';
 import { usePlatform } from './PlatformContext';
 
 interface NavbarProps {
@@ -19,6 +19,9 @@ interface NavbarProps {
   currentProfile?: { name: string; avatarUrl?: string } | null;
   searchResults?: any[];
   onSearchResultSelect?: (movie: any) => void;
+  /** If provided and authToken is falsy, renders a Sign In button in the navbar */
+  onSignInClick?: () => void;
+  authToken?: string | null;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -37,8 +40,11 @@ export const Navbar: React.FC<NavbarProps> = ({
   uiLanguage = 'English',
   currentProfile,
   searchResults = [],
-  onSearchResultSelect
+  onSearchResultSelect,
+  onSignInClick,
+  authToken,
 }) => {
+  const showSignIn = !authToken && !!onSignInClick;
   const { platform, setPlatform } = usePlatform();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -207,6 +213,25 @@ export const Navbar: React.FC<NavbarProps> = ({
               {showAppSwitcher && renderAppSwitcherDropdown()}
             </div>
 
+            {showSignIn && (
+              <button
+                data-testid="navbar-signin-btn"
+                onClick={onSignInClick}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '5px',
+                  padding: '6px 12px', borderRadius: '16px',
+                  background: '#1F80E0', border: 'none',
+                  color: '#FFF', fontSize: '0.78rem', fontWeight: 700,
+                  cursor: 'pointer', letterSpacing: '0.02em',
+                  transition: 'opacity 0.2s',
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.85'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; }}
+              >
+                <LogIn size={13} /> Sign In
+              </button>
+            )}
+
             <div onClick={onOpenProfileModal} style={{ width: '28px', height: '28px', borderRadius: '50%', overflow: 'hidden', cursor: 'pointer', border: '1.5px solid #1F80E0' }}>
               {currentProfile?.avatarUrl ? (
                 <img src={currentProfile.avatarUrl} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -328,13 +353,45 @@ export const Navbar: React.FC<NavbarProps> = ({
             </nav>
           </div>
 
-          <div className="navbar-right-actions" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          <div className="navbar-right-actions" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <div style={{ position: 'relative' }} ref={appSwitcherRef}>
               <button onClick={() => setShowAppSwitcher(!showAppSwitcher)} style={{ background: 'none', border: 'none', color: '#FFF', cursor: 'pointer', display: 'flex', alignItems: 'center' }} title="Switch App">
                 <Grip size={20} />
               </button>
               {showAppSwitcher && renderAppSwitcherDropdown()}
             </div>
+
+            {showSignIn && (
+              <button
+                data-testid="navbar-signin-btn"
+                onClick={onSignInClick}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '6px',
+                  padding: '7px 16px', borderRadius: '20px',
+                  background: platform === 'nprime'
+                    ? 'rgba(0,168,225,0.18)'
+                    : 'rgba(229,9,20,0.18)',
+                  border: platform === 'nprime'
+                    ? '1px solid rgba(0,168,225,0.45)'
+                    : '1px solid rgba(229,9,20,0.4)',
+                  color: '#fff', fontSize: '0.82rem', fontWeight: 700,
+                  cursor: 'pointer', letterSpacing: '0.02em',
+                  transition: 'all 0.2s', whiteSpace: 'nowrap',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = platform === 'nprime'
+                    ? 'rgba(0,168,225,0.32)'
+                    : 'rgba(229,9,20,0.32)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = platform === 'nprime'
+                    ? 'rgba(0,168,225,0.18)'
+                    : 'rgba(229,9,20,0.18)';
+                }}
+              >
+                <LogIn size={14} /> Sign In
+              </button>
+            )}
 
             {onGenreFilterChange && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>

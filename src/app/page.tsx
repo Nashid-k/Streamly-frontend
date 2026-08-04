@@ -32,7 +32,7 @@ import {
   getAuthToken,
 } from '../lib/api';
 
-import { Film, ArrowUp, Filter, LogIn } from 'lucide-react';
+import { Film, ArrowUp, Filter, LogIn, Sparkles } from 'lucide-react';
 import { Movie, Category, User, UserProfile, UserPreferences, Actor } from '../types';
 
 
@@ -92,11 +92,44 @@ export default function Home() {
   const [allMovies, setAllMovies] = useState<Movie[]>([]);
   const [user, setUser] = useState<User | null>(null);
   const [currentProfile, setCurrentProfile] = useState<UserProfile | null>(null);
+  const [themeColor, setThemeColor] = useState<string | null>(null);
 
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  // Search State
+  const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<Movie[]>([]);
-  const [searchActor, setSearchActor] = useState<Actor | undefined>();
+  const [searchActor, setSearchActor] = useState<Actor | undefined>(undefined);
   const [isSearching, setIsSearching] = useState(false);
+  const [searchFilters, setSearchFilters] = useState<SearchFiltersState>(DEFAULT_SEARCH_FILTERS);
+  const [isAILoading, setIsAILoading] = useState(false);
+
+  const handleAISearch = async () => {
+    if (!searchQuery.trim()) return;
+    setIsAILoading(true);
+    try {
+      const res = await fetch('/api/ai-search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: searchQuery })
+      });
+      if (res.ok) {
+        const filters = await res.json();
+        const newFilters = { ...searchFilters };
+        if (filters.genre) newFilters.genre = filters.genre;
+        if (filters.type) newFilters.type = filters.type as any;
+        if (filters.yearRange) newFilters.yearRange = filters.yearRange as any;
+        if (filters.minRating) newFilters.minRating = Number(filters.minRating);
+        setSearchFilters(newFilters);
+        showToast('AI applied smart filters based on your query ✨');
+      }
+    } catch (err) {
+      showToast('AI search failed. Please try again.');
+    } finally {
+      setIsAILoading(false);
+    }
+  };
+
+  // State mapping & helper refs
+
   const [activeTab, setActiveTab] = useState<'home' | 'movies' | 'series' | 'anime' | 'mylist'>('home');
   const [selectedGenreFilter, setSelectedGenreFilter] = useState<string>('All');
   const [selectedLangFilter, setSelectedLangFilter] = useState<string[]>(['All']);
@@ -135,15 +168,10 @@ export default function Home() {
 
   // Continue Watching List
   const [continueWatching, setContinueWatching] = useState<Movie[]>([]);
-  const [themeColor, setThemeColor] = useState<string | null>(null);
-
   // Auth state
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authToken, setAuthToken] = useState<string | null>(null);
   const [authUser, setAuthUser] = useState<any>(null);
-
-  // Search Filters state
-  const [searchFilters, setSearchFilters] = useState<SearchFiltersState>(DEFAULT_SEARCH_FILTERS);
 
 
   // Ref holding the full movie lookup including search results and top10
@@ -770,6 +798,8 @@ export default function Home() {
         onOpenOnboardingModal={() => setShowOnboardingModal(true)}
         searchResults={searchResults}
         onSearchResultSelect={handleSearchResultPlay}
+        authToken={authToken}
+        onSignInClick={() => setShowAuthModal(true)}
       />
 
       {/* Platform-Authentic Full-Page Initial & Switching Loader */}
@@ -790,22 +820,45 @@ export default function Home() {
               </p>
             </div>
 
-            <button
-              onClick={() => setSearchQuery('')}
-              style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                color: '#FFF',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                padding: '6px 16px',
-                borderRadius: '20px',
-                fontSize: '0.82rem',
-                fontWeight: 700,
-                cursor: 'pointer',
-                transition: 'all 0.2s',
-              }}
-            >
-              Clear Search
-            </button>
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button
+                onClick={handleAISearch}
+                disabled={isAILoading || isSearching}
+                style={{
+                  backgroundColor: 'rgba(229, 9, 20, 0.15)',
+                  color: '#E50914',
+                  border: '1px solid rgba(229, 9, 20, 0.4)',
+                  padding: '6px 16px',
+                  borderRadius: '20px',
+                  fontSize: '0.82rem',
+                  fontWeight: 700,
+                  cursor: (isAILoading || isSearching) ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.2s',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}
+              >
+                <Sparkles size={14} />
+                {isAILoading ? 'AI Thinking...' : 'Smart Search'}
+              </button>
+              <button
+                onClick={() => setSearchQuery('')}
+                style={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                  color: '#FFF',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  padding: '6px 16px',
+                  borderRadius: '20px',
+                  fontSize: '0.82rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                }}
+              >
+                Clear Search
+              </button>
+            </div>
           </div>
 
           {/* Search Genre Suggestion Chips */}
@@ -1011,9 +1064,8 @@ export default function Home() {
                           onOpenDetails={handleOpenDetails}
                           onToggleMyList={handleToggleMyListWithToast}
                           myList={myList}
-                          onExploreAll={(catTitle) => {
-                            const cleanName = catTitle.replace(/❯/g, '').trim();
-                            setSelectedGenreFilter(cleanName);
+                          onExploreAll={() => {
+                            setSelectedGenreFilter(category.name);
                           }}
                         />
                       ))
@@ -1357,6 +1409,7 @@ export default function Home() {
       {toastMessage && (
         <div
           className="toast-animate"
+          data-testid="toast-notification"
           style={{
             position: 'fixed',
             bottom: '30px',
@@ -1396,35 +1449,6 @@ export default function Home() {
       {/* ─── PWA Install Prompt ───────────────────────────────────────────── */}
       <PWAInstallPrompt />
 
-      {/* ─── Sign In Floating Button (when not authenticated) ─────────────── */}
-      {!authToken && !showAuthModal && (
-        <button
-          onClick={() => setShowAuthModal(true)}
-          style={{
-            position: 'fixed',
-            top: '18px',
-            right: '220px',
-            zIndex: 3000,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            padding: '7px 14px',
-            borderRadius: '20px',
-            background: 'rgba(255,255,255,0.08)',
-            border: '1px solid rgba(255,255,255,0.15)',
-            color: 'rgba(255,255,255,0.8)',
-            fontSize: '0.8rem',
-            fontWeight: 600,
-            cursor: 'pointer',
-            backdropFilter: 'blur(10px)',
-            transition: 'all 0.2s',
-          }}
-          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.15)'; e.currentTarget.style.color = '#fff'; }}
-          onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; e.currentTarget.style.color = 'rgba(255,255,255,0.8)'; }}
-        >
-          <LogIn size={14} /> Sign In
-        </button>
-      )}
 
       {/* ─── Auth User Indicator (when signed in) ────────────────────────── */}
       {authToken && authUser && (
