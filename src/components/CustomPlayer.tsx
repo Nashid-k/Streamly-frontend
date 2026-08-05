@@ -744,16 +744,18 @@ export const CustomPlayer = ({ streamUrl, movie, onBack, onNext, hasNext, onErro
 
           {/* TAB 1: CAST */}
           {xRayTab === 'cast' && (() => {
-            const rawCast = movie?.cast?.length ? movie.cast : [
+            // Prime Video X-Ray splits cast into scenes. If we have real TMDB cast, we map them into 3-minute "scenes"
+            const rawCast = movie?.cast?.length > 0 ? movie.cast : [
               { name: 'Lead Performer', character: 'Main Protagonist', profileUrl: null },
               { name: 'Supporting Lead', character: 'Co-Star', profileUrl: null },
               { name: 'Featured Guest', character: 'Special Appearance', profileUrl: null }
             ];
-            const seed = Math.floor(currentTime / 45);
-            const count = Math.min(4, rawCast.length);
+            // Deterministically shuffle cast based on current scene (every 3 mins)
+            const sceneSeed = Math.floor(currentTime / 180);
+            const count = Math.min(6, rawCast.length);
             const inSceneCast = [];
             for (let i = 0; i < count; i++) {
-              inSceneCast.push(rawCast[(seed + i) % rawCast.length]);
+              inSceneCast.push(rawCast[(sceneSeed + i) % rawCast.length]);
             }
 
             return inSceneCast.map((actor: any, idx: number) => {
