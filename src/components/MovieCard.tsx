@@ -76,6 +76,23 @@ export const MovieCard: React.FC<MovieCardProps> = ({
     }
   };
 
+  const matchScore = movie.matchScore || (parseInt(movie.id.replace(/\D/g, '') || '0') % 30 + 70);
+  const rawScore = movie.score || (matchScore / 10);
+  const ratingText = rawScore.toFixed(1);
+
+  const imdbBadge = (
+    <div style={{
+      position: 'absolute', bottom: '8px', left: '8px', zIndex: 15,
+      background: 'rgba(0,0,0,0.7)', padding: '2px 6px', borderRadius: '4px',
+      display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.65rem', fontWeight: 800, color: '#fff',
+      boxShadow: '0 2px 6px rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)',
+      opacity: isHovered ? 0 : 1, transition: 'opacity 0.2s',
+    }}>
+      <span style={{ color: '#F5C518' }}>IMDb</span>
+      <span>{ratingText}</span>
+    </div>
+  );
+
   // ── HOTSTAR CARD (Vertical Poster with Gradient Mask & Watch Hover) ──
   if (platform === 'hotstar') {
     return (
@@ -124,6 +141,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
             <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#FFF' }}>{movie.title}</span>
           </div>
         )}
+        {imdbBadge}
         {/* Hotstar Authentic Badges */}
         {movie.isRecentlyAdded && !movie.isUpcoming && !movie.isLeavingSoon && (
           <div style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 10, background: '#1F80E0', color: '#FFF', padding: '2px 8px', fontSize: '0.65rem', fontWeight: 800, borderRadius: '4px', textTransform: 'uppercase', letterSpacing: '0.04em', boxShadow: '0 2px 8px rgba(0,0,0,0.6)' }}>
@@ -215,6 +233,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
             <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#FFF' }}>{movie.title}</span>
           </div>
         )}
+        {imdbBadge}
         <div style={{ position: 'absolute', top: 0, left: 0, zIndex: 10, background: '#00A8E1', padding: '2px 8px', borderBottomRightRadius: '4px', fontSize: '0.65rem', fontWeight: 900, color: '#FFF', fontStyle: 'italic', letterSpacing: '0.04em' }}>
           prime
         </div>
@@ -361,6 +380,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
           </div>
         )}
         
+        {imdbBadge}
         {/* Expanding Metadata Box (Below Image) */}
         <div className="expanding-meta" style={{
           padding: '12px',

@@ -919,38 +919,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Search Genre Suggestion Chips */}
-          <div style={{ padding: '0 4%', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-            <span style={{ fontSize: '0.82rem', color: '#777', fontWeight: 600 }}>Quick Genres:</span>
-            {availableGenres.slice(0, 12).map((g) => (
-              <button
-                key={g}
-                onClick={() => setSearchQuery(g)}
-                style={{
-                  background: searchQuery.toLowerCase() === g.toLowerCase() ? 'var(--primary-color)' : 'rgba(255, 255, 255, 0.08)',
-                  color: '#FFF',
-                  border: 'none',
-                  padding: '4px 12px',
-                  borderRadius: '16px',
-                  fontSize: '0.78rem',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                }}
-              >
-                {g}
-              </button>
-            ))}
-          </div>
-
-          {/* Advanced Search Filters */}
-          <div style={{ padding: '0 4%' }}>
-            <SearchFilters
-              filters={searchFilters}
-              onChange={setSearchFilters}
-              resultCount={applySearchFilters(languageFilteredSearchResults, searchFilters).length}
-              visible={true}
-            />
-          </div>
+          {/* Removed filters and genres per user request */}
 
 
           {isSearching && languageFilteredSearchResults.length === 0 && !searchActor ? (
@@ -971,7 +940,7 @@ export default function Home() {
                 </div>
               )}
               <div className="classic-grid">
-                {applySearchFilters(languageFilteredSearchResults, searchFilters).map((movie) => (
+                {languageFilteredSearchResults.map((movie) => (
               <MovieCard
                 key={movie.id}
                 movie={movie}
