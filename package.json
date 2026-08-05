@@ -13,6 +13,7 @@
   "dependencies": {
     "framer-motion": "^12.43.0",
     "hls.js": "^1.6.16",
+    "ipapi.co": "^0.3.0",
     "lucide-react": "^0.344.0",
     "next": "14.1.0",
     "next-pwa": "^5.6.0",

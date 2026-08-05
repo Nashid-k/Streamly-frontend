@@ -151,6 +151,32 @@ export default function Home() {
     setIsHeroReady(true);
   }, []);
 
+  // IP Geolocation for Authentic Default Languages
+  useEffect(() => {
+    fetch('https://ipapi.co/json/')
+      .then(res => res.json())
+      .then(data => {
+        if (!data || !data.country_code) return;
+        const country = data.country_code;
+        const region = data.region_code;
+        
+        if (country === 'IN') {
+          if (region === 'KL') setSelectedLangFilter(['Malayalam', 'Tamil', 'Hindi', 'English']);
+          else if (region === 'TN') setSelectedLangFilter(['Tamil', 'Telugu', 'Malayalam', 'Hindi', 'English']);
+          else if (region === 'KA') setSelectedLangFilter(['Kannada', 'Telugu', 'Hindi', 'English']);
+          else if (region === 'MH') setSelectedLangFilter(['Marathi', 'Hindi', 'English']);
+          else if (region === 'WB') setSelectedLangFilter(['Bengali', 'Hindi', 'English']);
+          else if (region === 'AP' || region === 'TG') setSelectedLangFilter(['Telugu', 'Tamil', 'Hindi', 'English']);
+          else setSelectedLangFilter(['Hindi', 'English']);
+        } else if (country === 'AE' || country === 'SA' || country === 'QA' || country === 'OM') {
+          setSelectedLangFilter(['Arabic', 'Hindi', 'English', 'Malayalam']);
+        } else if (country === 'US' || country === 'GB' || country === 'AU' || country === 'CA') {
+          setSelectedLangFilter(['English', 'Hindi', 'Spanish']);
+        }
+      })
+      .catch(err => console.error('Failed to detect geolocation:', err));
+  }, []);
+
   const [activeDetailMovie, setActiveDetailMovie] = useState<Movie | null>(null);
   const [activeVideoMovie, setActiveVideoMovie] = useState<Movie | null>(null);
   const [activeTrailerMovie, setActiveTrailerMovie] = useState<Movie | null>(null);
