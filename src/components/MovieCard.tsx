@@ -59,6 +59,15 @@ export const MovieCard: React.FC<MovieCardProps> = ({
     return null;
   };
 
+  const renderProgressBar = () => {
+    if (movie.watchProgress === undefined) return null;
+    return (
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '4px', background: 'rgba(255,255,255,0.2)', zIndex: 20 }}>
+        <div style={{ width: `${Math.max(5, Math.min(100, movie.watchProgress * 100))}%`, height: '100%', background: platform === 'nprime' ? '#00A8E1' : platform === 'hotstar' ? '#1F80E0' : '#E50914' }} />
+      </div>
+    );
+  };
+
   const platformBadges = movie.availablePlatforms && movie.availablePlatforms.length > 0 ? (
     <div style={{
       position: 'absolute', top: '8px', right: '8px',
@@ -181,6 +190,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
         </div>
         {/* Platform Availability Badges */}
         {platformBadges}
+        {renderProgressBar()}
       </div>
     );
   }
@@ -277,6 +287,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
         </div>
         {/* Platform Availability Badges */}
         {platformBadges}
+        {renderProgressBar()}
       </div>
     );
   }
@@ -430,6 +441,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
         </div>
         {/* Platform Availability Badges */}
         {platformBadges}
+        {!isHovered && renderProgressBar()}
       </div>
     </div>
   );

@@ -200,9 +200,17 @@ export const MovieRow: React.FC<MovieRowProps> = ({
                   style={{
                     position: 'absolute',
                     left: 0,
-                    bottom: '-8px',
+                    bottom: '-25px',
                     zIndex: 0,
                     transform: index === 0 ? 'translateX(-12%)' : 'translateX(-6%)',
+                    fontSize: '160px',
+                    fontWeight: 900,
+                    fontFamily: '"Arial Black", Arial, sans-serif',
+                    color: '#000',
+                    WebkitTextStroke: '4px #595959',
+                    letterSpacing: '-0.1em',
+                    lineHeight: 1,
+                    pointerEvents: 'none',
                   }}
                 >
                   {index + 1}
