@@ -242,6 +242,8 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
                 animation: 'heroBackdropReveal 0.4s ease',
               }}
             />
+          ) : isLogoLoading ? (
+            <div style={{ width: '250px', height: '60px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', animation: 'netflixSkeletonPulse 2s infinite ease-in-out' }} />
           ) : (
             <h1
               className="hero-title-text"
