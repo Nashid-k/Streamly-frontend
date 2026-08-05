@@ -179,8 +179,8 @@ function useTrailerPlayer(encodedUrl: string, backdropUrl: string) {
           onLoad={handleIframeLoad}
           src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&modestbranding=1&showinfo=0&rel=0&iv_load_policy=3&enablejsapi=1&playsinline=1`}
           style={{ 
-            width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, border: 'none', 
-            transform: 'scale(1.4)', zIndex: 5, opacity: isVideoPlaying ? 1 : 0, transition: 'opacity 0.8s ease'
+            width: '150%', height: '150%', position: 'absolute', top: '-25%', left: '-25%', border: 'none', 
+            pointerEvents: 'none', zIndex: 5, opacity: isVideoPlaying ? 1 : 0, transition: 'opacity 0.8s ease'
           }}
           allow="autoplay; encrypted-media"
         />
@@ -229,7 +229,7 @@ function NetflixModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
           <X size={20} />
         </button>
 
-        <div className="detail-hero" style={{ position: 'relative', height: '420px', backgroundColor: '#000', flexShrink: 0 }}>
+        <div className="detail-hero" style={{ position: 'relative', width: '100%', aspectRatio: '16/9', maxHeight: '480px', minHeight: '250px', backgroundColor: '#000', flexShrink: 0, overflow: 'hidden' }}>
           {renderTrailer()}
           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, #181818 0%, transparent 50%)', zIndex: 15 }} />
 
@@ -430,7 +430,7 @@ function PrimeModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, isM
           <X size={24} />
         </button>
 
-        <div className="detail-hero" style={{ position: 'relative', width: '100%', height: '400px', flexShrink: 0 }}>
+        <div className="detail-hero" style={{ position: 'relative', width: '100%', aspectRatio: '16/9', maxHeight: '480px', minHeight: '250px', flexShrink: 0, overflow: 'hidden' }}>
           {renderTrailer()}
           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, #0f171e 30%, rgba(15,23,30,0) 80%), linear-gradient(to top, #0f171e 0%, transparent 40%)', zIndex: 15 }} />
 
@@ -594,7 +594,7 @@ function HotstarModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
           <X size={20} />
         </button>
 
-        <div className="detail-hero" style={{ position: 'relative', width: '100%', height: '420px', flexShrink: 0 }}>
+        <div className="detail-hero" style={{ position: 'relative', width: '100%', aspectRatio: '16/9', maxHeight: '480px', minHeight: '250px', flexShrink: 0, overflow: 'hidden' }}>
           {renderTrailer()}
           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, #0f1014 0%, rgba(15,16,20,0.6) 50%, transparent 100%), linear-gradient(to right, #0f1014 0%, transparent 50%)', zIndex: 15 }} />
 
