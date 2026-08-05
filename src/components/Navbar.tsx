@@ -344,37 +344,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               {showAppSwitcher && renderAppSwitcherDropdown()}
             </div>
 
-            {showSignIn && (
-              <button
-                data-testid="navbar-signin-btn"
-                onClick={onSignInClick}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: '6px',
-                  padding: '7px 16px', borderRadius: '20px',
-                  background: platform === 'nprime'
-                    ? 'rgba(0,168,225,0.18)'
-                    : 'rgba(229,9,20,0.18)',
-                  border: platform === 'nprime'
-                    ? '1px solid rgba(0,168,225,0.45)'
-                    : '1px solid rgba(229,9,20,0.4)',
-                  color: '#fff', fontSize: '0.82rem', fontWeight: 700,
-                  cursor: 'pointer', letterSpacing: '0.02em',
-                  transition: 'all 0.2s', whiteSpace: 'nowrap',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = platform === 'nprime'
-                    ? 'rgba(0,168,225,0.32)'
-                    : 'rgba(229,9,20,0.32)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = platform === 'nprime'
-                    ? 'rgba(0,168,225,0.18)'
-                    : 'rgba(229,9,20,0.18)';
-                }}
-              >
-                <LogIn size={14} /> Sign In
-              </button>
-            )}
 
             {onGenreFilterChange && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
