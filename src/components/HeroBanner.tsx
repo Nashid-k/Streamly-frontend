@@ -81,7 +81,6 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
 
     if (onThemeColorChange && movie.backdropUrl) {
       const img = new Image();
-      img.crossOrigin = 'Anonymous';
       img.onload = () => {
         requestAnimationFrame(() => {
           try {
