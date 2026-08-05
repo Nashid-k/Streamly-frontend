@@ -80,6 +80,12 @@ export const MovieCard: React.FC<MovieCardProps> = ({
 
   const hoverTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
+  React.useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    };
+  }, []);
+
   const handleMouseEnter = () => {
     setIsHovered(true);
     if (movie.id) {
