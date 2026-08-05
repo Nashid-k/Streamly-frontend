@@ -78,11 +78,21 @@ export const MovieCard: React.FC<MovieCardProps> = ({
     </div>
   ) : null;
 
+  const hoverTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+
   const handleMouseEnter = () => {
     setIsHovered(true);
     if (movie.id) {
-      fetchMovieById(movie.id).catch(() => {});
+      if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = setTimeout(() => {
+        fetchMovieById(movie.id).catch(() => {});
+      }, 500);
     }
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
   };
 
   const matchScore = movie.matchScore || (parseInt(movie.id.replace(/\D/g, '') || '0') % 30 + 70);
@@ -109,7 +119,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
         className={`movie-card hotstar-card ${top10Rank !== undefined ? 'top10' : ''}`}
         role="button"
         onMouseEnter={handleMouseEnter}
-        onMouseLeave={() => setIsHovered(false)}
+        onMouseLeave={handleMouseLeave}
         onClick={handleCardClick}
         style={{
           position: 'relative',
@@ -122,7 +132,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
           transform: isHovered ? 'scale(1.08)' : 'scale(1)',
           boxShadow: isHovered ? '0 12px 32px rgba(0,0,0,0.85), 0 0 16px rgba(31, 128, 224, 0.6)' : '0 4px 14px rgba(0,0,0,0.5)',
           border: isHovered ? '2px solid rgba(31, 128, 224, 0.9)' : '1px solid rgba(255,255,255,0.05)',
-          transition: 'all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1)',
+          transition: 'transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), border 0.35s ease',
           zIndex: isHovered ? 50 : 1,
           backgroundColor: '#0F1014',
           willChange: 'transform, box-shadow',
@@ -202,7 +212,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
         className={`movie-card nprime-card ${top10Rank !== undefined ? 'top10' : ''}`}
         role="button"
         onMouseEnter={handleMouseEnter}
-        onMouseLeave={() => setIsHovered(false)}
+        onMouseLeave={handleMouseLeave}
         onClick={handleCardClick}
         style={{
           position: 'relative',
@@ -215,7 +225,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
           transform: isHovered ? 'scale(1.08)' : 'scale(1)',
           boxShadow: isHovered ? '0 12px 30px rgba(0,0,0,0.95), 0 0 20px rgba(0, 168, 225, 0.6)' : '0 4px 12px rgba(0,0,0,0.6)',
           border: isHovered ? '2px solid #00A8E1' : '1px solid rgba(255,255,255,0.06)',
-          transition: 'all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1)',
+          transition: 'transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), border 0.35s ease',
           zIndex: isHovered ? 50 : 1,
           backgroundColor: '#0F171E',
           willChange: 'transform, box-shadow',
@@ -301,7 +311,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
       className={`movie-card netflix-card ${top10Rank !== undefined ? 'top10' : ''}`}
       role="button"
       onMouseEnter={handleMouseEnter}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseLeave={handleMouseLeave}
       onClick={handleCardClick}
       style={{
         position: 'relative',

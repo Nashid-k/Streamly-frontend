@@ -33,12 +33,17 @@ export const MovieRow: React.FC<MovieRowProps> = ({
   const [isAtStart, setIsAtStart] = useState(true);
   const [isAtEnd, setIsAtEnd] = useState(false);
 
+  const checkScrollRef = useRef<number | null>(null);
   const checkScroll = () => {
-    if (rowRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = rowRef.current;
-      setIsAtStart(scrollLeft <= 5);
-      setIsAtEnd(Math.ceil(scrollLeft + clientWidth) >= scrollWidth - 5);
-    }
+    if (checkScrollRef.current) return;
+    checkScrollRef.current = window.requestAnimationFrame(() => {
+      if (rowRef.current) {
+        const { scrollLeft, scrollWidth, clientWidth } = rowRef.current;
+        setIsAtStart(scrollLeft <= 5);
+        setIsAtEnd(Math.ceil(scrollLeft + clientWidth) >= scrollWidth - 5);
+      }
+      checkScrollRef.current = null;
+    });
   };
 
   useEffect(() => {
@@ -59,8 +64,6 @@ export const MovieRow: React.FC<MovieRowProps> = ({
 
   if (!movies || movies.length === 0) return null;
 
-  const [isRowHovered, setIsRowHovered] = useState(false);
-
   return (
     <div 
       className="catalog-row" 
@@ -68,10 +71,10 @@ export const MovieRow: React.FC<MovieRowProps> = ({
         marginBottom: '44px', 
         padding: '0 4%', 
         position: 'relative', 
-        zIndex: isRowHovered ? 50 : 1 
+        zIndex: 1 
       }}
-      onMouseEnter={() => setIsRowHovered(true)}
-      onMouseLeave={() => setIsRowHovered(false)}
+      onMouseEnter={(e) => e.currentTarget.style.zIndex = '50'}
+      onMouseLeave={(e) => e.currentTarget.style.zIndex = '1'}
     >
       {/* Category Row Header with Accent Bar & Explore All Link */}
       <div className="catalog-row-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
