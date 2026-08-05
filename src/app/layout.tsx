@@ -44,6 +44,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://image.tmdb.org" />
         <link rel="preconnect" href="https://api.dicebear.com" crossOrigin="anonymous" />
+        <meta name="mobile-web-app-capable" content="yes" />
       </head>
       <body>
         <PlatformProvider>

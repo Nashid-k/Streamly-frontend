@@ -26,8 +26,8 @@ export const PWAInstallPrompt: React.FC = () => {
     const handleBeforeInstall = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e);
-      // Show after 30 seconds
-      setTimeout(() => setShow(true), 30_000);
+      // Show after 2 seconds
+      setTimeout(() => setShow(true), 2_000);
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstall);

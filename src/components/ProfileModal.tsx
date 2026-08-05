@@ -88,7 +88,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
                   }}
                 >
                   <img
-                    src={prof.avatarUrl || (platform === 'hotstar' ? 'https://img1.hotstarext.com/image/upload/w_200,h_200,c_fill/feature/profile/36.png' : platform === 'nprime' ? 'https://m.media-amazon.com/images/G/01/digital/video/web/v2/default_avatar._CB1582236592_.png' : 'https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png')}
+                    src={prof.avatarUrl || (platform === 'hotstar' ? 'https://img1.hotstarext.com/image/upload/w_200,h_200,c_fill/feature/profile/36.png' : platform === 'nprime' ? 'https://api.dicebear.com/7.x/avataaars/svg?seed=Prime' : 'https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png')}
                     alt={prof.name}
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   />

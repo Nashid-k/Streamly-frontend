@@ -414,7 +414,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 {currentProfile?.avatarUrl ? (
                   <img src={currentProfile.avatarUrl} alt="Profile" style={{ width: '32px', height: '32px', borderRadius: (platform === 'nprime') ? '50%' : '4px', objectFit: 'cover' }} />
                 ) : (
-                  <img src={platform === 'nprime' ? 'https://m.media-amazon.com/images/G/01/digital/video/web/v2/default_avatar._CB1582236592_.png' : 'https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png'} alt="Profile" style={{ width: '32px', height: '32px', borderRadius: (platform === 'nprime') ? '50%' : '4px', objectFit: 'cover' }} />
+                  <img src={platform === 'nprime' ? 'https://api.dicebear.com/7.x/avataaars/svg?seed=Prime' : 'https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png'} alt="Profile" style={{ width: '32px', height: '32px', borderRadius: (platform === 'nprime') ? '50%' : '4px', objectFit: 'cover' }} />
                 )}
                 <ChevronDown size={14} color="#FFF" />
               </div>
