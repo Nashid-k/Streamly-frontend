@@ -43,6 +43,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   searchResults = [],
   onSearchResultSelect,
   onSignInClick,
+  onSignOutClick,
   authToken,
 }) => {
   const showSignIn = !authToken && !!onSignInClick;
@@ -257,7 +258,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 )}
               </div>
               <span style={{ opacity: isHotstarExpanded ? 1 : 0, transition: 'opacity 0.2s 0.1s' }}>My Space</span>
-            </button
+            </button>
 
             <button className="hotstar-sidebar-btn search-btn" onClick={() => setIsSearchOpen(true)}>
               <Search size={24} style={{ flexShrink: 0 }} />
