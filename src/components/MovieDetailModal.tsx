@@ -198,6 +198,20 @@ function NetflixModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
   const isTvShow = Boolean(displayMovie?.isSeries || movie?.isSeries || (displayMovie?.seasonsCount ?? 0) > 0);
   const [activeTab, setActiveTab] = useState<'episodes' | 'similar'>(isTvShow ? 'episodes' : 'similar');
   const [isLiked, setIsLiked] = useState(false);
+  const { setPlatform } = usePlatform();
+  const platformNameMap: Record<string, string> = { nflix: "Netflix", nprime: "Prime Video", hotstar: "Hotstar" };
+  const nativePlatformName = platformNameMap[platform];
+  const isAvailableNative = !movie.availablePlatforms || movie.availablePlatforms.includes(nativePlatformName);
+  const alternativePlatform = movie.availablePlatforms?.find(p => p !== nativePlatformName);
+  const handlePlayClick = () => {
+    if (!isAvailableNative const { isMutedconst { isMuted alternativePlatform) {
+      const target = alternativePlatform === "Netflix" ? "nflix" : alternativePlatform === "Hotstar" ? "hotstar" : "nprime";
+      setPlatform(target);
+      setTimeout(() => onPlay(movie), 100);
+    } else {
+      onPlay(movie);
+    }
+  };
   const { isMuted, toggleMute, renderTrailer, hasTrailer } = useTrailerPlayer(displayMovie?.trailerUrl || '', movie?.backdropUrl || movie?.posterUrl || '');
 
   if (!movie) return null;
@@ -242,7 +256,7 @@ function NetflixModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
               )}
 
               <div style={{ display: 'flex', gap: '10px', width: '100%' }}>
-                <button className="detail-play-btn" onClick={() => onPlay(movie)} style={{
+                <button className="detail-play-btn" onClick={handlePlayClick} style={{
                   background: platform === 'hotstar' ? '#1F80E0' : platform === 'nprime' ? '#00A8E1' : '#FFF',
                   color: platform === 'nflix' ? '#000' : '#FFF',
                   border: 'none', borderRadius: '4px', padding: '10px 28px',
@@ -250,7 +264,7 @@ function NetflixModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
                   boxShadow: platform === 'hotstar' ? '0 4px 18px rgba(31, 128, 224, 0.4)' : platform === 'nprime' ? '0 4px 18px rgba(0, 168, 225, 0.4)' : 'none',
                   transition: 'transform 0.2s ease'
                 }}>
-                  <Play fill={platform === 'nflix' ? '#000' : '#FFF'} size={24} /> {platform === 'hotstar' ? 'Watch Now' : 'Play'}
+                  <Play fill={platform === 'nflix' ? '#000' : '#FFF'} size={24} /> {(!isAvailableNative && alternativePlatform) ? `Watch on ${alternativePlatform}` : (platform === 'hotstar' ? 'Watch Now' : 'Play')}
                 </button>
                 <button className="detail-action-btn" onClick={() => onToggleMyList(movie.id)} style={{
                   background: 'rgba(42,42,42,0.6)', border: '1px solid rgba(255,255,255,0.5)', borderRadius: '50%',
@@ -405,6 +419,20 @@ function PrimeModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, isM
   const isTvShow = Boolean(displayMovie?.isSeries || movie?.isSeries || (displayMovie?.seasonsCount ?? 0) > 0);
   const [activeTab, setActiveTab] = useState<'episodes' | 'related' | 'details'>(isTvShow ? 'episodes' : 'related');
   const [isLiked, setIsLiked] = useState(false);
+  const { setPlatform } = usePlatform();
+  const platformNameMap: Record<string, string> = { nflix: "Netflix", nprime: "Prime Video", hotstar: "Hotstar" };
+  const nativePlatformName = platformNameMap[platform];
+  const isAvailableNative = !movie.availablePlatforms || movie.availablePlatforms.includes(nativePlatformName);
+  const alternativePlatform = movie.availablePlatforms?.find(p => p !== nativePlatformName);
+  const handlePlayClick = () => {
+    if (!isAvailableNative const { isMutedconst { isMuted alternativePlatform) {
+      const target = alternativePlatform === "Netflix" ? "nflix" : alternativePlatform === "Hotstar" ? "hotstar" : "nprime";
+      setPlatform(target);
+      setTimeout(() => onPlay(movie), 100);
+    } else {
+      onPlay(movie);
+    }
+  };
   const { isMuted, toggleMute, renderTrailer, hasTrailer } = useTrailerPlayer(displayMovie?.trailerUrl || '', movie?.backdropUrl || movie?.posterUrl || '');
 
   if (!movie) return null;
@@ -447,11 +475,11 @@ function PrimeModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, isM
               </div>
 
               <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                <button onClick={() => onPlay(movie)} style={{
+                <button onClick={handlePlayClick} style={{
                   background: '#0f79af', color: '#FFF', border: 'none', borderRadius: '4px', padding: '12px 32px',
                   fontSize: '1.1rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer'
                 }}>
-                  <Play fill="#FFF" size={20} /> Play
+                  <Play fill="#FFF" size={20} /> {(!isAvailableNative && alternativePlatform) ? `Watch on ${alternativePlatform}` : 'Play'}
                 </button>
                 <button onClick={() => onToggleMyList(movie.id)} style={{
                   background: 'rgba(255,255,255,0.2)', border: 'none', borderRadius: '50%',
@@ -569,6 +597,20 @@ function HotstarModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
   const displayMovie = detailedMovie || movie;
   const isTvShow = Boolean(displayMovie?.isSeries || movie?.isSeries || (displayMovie?.seasonsCount ?? 0) > 0);
   const [activeTab, setActiveTab] = useState<'episodes' | 'more'>(isTvShow ? 'episodes' : 'more');
+  const { setPlatform } = usePlatform();
+  const platformNameMap: Record<string, string> = { nflix: "Netflix", nprime: "Prime Video", hotstar: "Hotstar" };
+  const nativePlatformName = platformNameMap[platform];
+  const isAvailableNative = !movie.availablePlatforms || movie.availablePlatforms.includes(nativePlatformName);
+  const alternativePlatform = movie.availablePlatforms?.find(p => p !== nativePlatformName);
+  const handlePlayClick = () => {
+    if (!isAvailableNative const { isMutedconst { isMuted alternativePlatform) {
+      const target = alternativePlatform === "Netflix" ? "nflix" : alternativePlatform === "Hotstar" ? "hotstar" : "nprime";
+      setPlatform(target);
+      setTimeout(() => onPlay(movie), 100);
+    } else {
+      onPlay(movie);
+    }
+  };
   const { isMuted, toggleMute, renderTrailer, hasTrailer } = useTrailerPlayer(displayMovie?.trailerUrl || '', movie?.backdropUrl || movie?.posterUrl || '');
 
   if (!movie) return null;
@@ -624,12 +666,12 @@ function HotstarModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
               </div>
 
               <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-                <button onClick={() => onPlay(movie)} style={{
+                <button onClick={handlePlayClick} style={{
                   background: 'linear-gradient(90deg, #1f80e0, #14599c)', color: '#FFF', border: 'none', borderRadius: '8px', padding: '14px 48px',
                   fontSize: '1.1rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer',
                   boxShadow: '0 4px 12px rgba(31,128,224,0.4)'
                 }}>
-                  <Play fill="#FFF" size={20} /> Watch Now
+                  <Play fill="#FFF" size={20} /> {(!isAvailableNative && alternativePlatform) ? `Watch on ${alternativePlatform}` : 'Watch Now'}
                 </button>
                 <button onClick={() => onToggleMyList(movie.id)} style={{
                   background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: '8px',

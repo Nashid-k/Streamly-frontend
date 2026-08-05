@@ -46,34 +46,26 @@ export const MovieCard: React.FC<MovieCardProps> = ({
     onOpenDetails(movie);
   };
 
-  // Platform badge colours
-  const platformBadgeStyle = (label: string): React.CSSProperties => {
-    if (label === 'Netflix') return { background: '#E50914', color: '#FFF' };
-    if (label === 'Prime Video') return { background: '#00A8E1', color: '#FFF' };
-    if (label === 'Hotstar') return { background: '#1F80E0', color: '#FFF' };
-    return { background: '#555', color: '#FFF' };
+  const renderPlatformLogo = (label: string) => {
+    if (label === 'Netflix') {
+      return <div key="Netflix" style={{ width: '22px', height: '22px', background: '#E50914', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: '0.7rem', color: '#fff', boxShadow: '0 2px 6px rgba(0,0,0,0.6)' }} title="Available on Netflix">N</div>;
+    }
+    if (label === 'Prime Video') {
+      return <div key="Prime Video" style={{ width: '22px', height: '22px', background: '#00A8E1', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: '0.7rem', color: '#fff', boxShadow: '0 2px 6px rgba(0,0,0,0.6)' }} title="Available on Prime Video">P</div>;
+    }
+    if (label === 'Hotstar') {
+      return <div key="Hotstar" style={{ width: '22px', height: '22px', background: '#1F80E0', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: '0.6rem', color: '#fff', boxShadow: '0 2px 6px rgba(0,0,0,0.6)' }} title="Available on Disney+ Hotstar">H+</div>;
+    }
+    return null;
   };
 
   const platformBadges = movie.availablePlatforms && movie.availablePlatforms.length > 0 ? (
     <div style={{
-      position: 'absolute', bottom: 0, left: 0, right: 0,
-      display: 'flex', gap: '4px', padding: '8px',
-      background: 'linear-gradient(to top, rgba(0,0,0,0.92) 0%, transparent 100%)',
-      zIndex: 20, flexWrap: 'wrap',
-      opacity: isHovered ? 1 : 0.85,
-      transition: 'opacity 0.2s',
+      position: 'absolute', top: '8px', right: '8px',
+      display: 'flex', gap: '4px',
+      zIndex: 20,
     }}>
-      {movie.availablePlatforms.map((label) => (
-        <span
-          key={label}
-          style={{
-            ...platformBadgeStyle(label),
-            fontSize: '0.58rem', fontWeight: 900, borderRadius: '3px',
-            padding: '2px 6px', letterSpacing: '0.03em', textTransform: 'uppercase',
-            boxShadow: '0 1px 4px rgba(0,0,0,0.7)',
-          }}
-        >{label}</span>
-      ))}
+      {movie.availablePlatforms.map((label) => renderPlatformLogo(label))}
     </div>
   ) : null;
 
