@@ -151,27 +151,48 @@ export default function Home() {
     setIsHeroReady(true);
   }, []);
 
-  // IP Geolocation for Authentic Default Languages
+  // Dynamic Global Geolocation & Browser Language Detection
   useEffect(() => {
+    const languageMap: Record<string, string> = {
+      en: 'English', hi: 'Hindi', ta: 'Tamil', te: 'Telugu', ml: 'Malayalam',
+      kn: 'Kannada', mr: 'Marathi', bn: 'Bengali', ar: 'Arabic', es: 'Spanish',
+      fr: 'French', de: 'German', ja: 'Japanese', ko: 'Korean', zh: 'Mandarin',
+      it: 'Italian', ru: 'Russian', pt: 'Portuguese',
+    };
+
+    // 1. Detect Browser Preferences (e.g., if OS is set to Malayalam, catch it)
+    const browserLangs = typeof navigator !== 'undefined' ? (navigator.languages || [navigator.language]) : [];
+    const browserCodes = browserLangs.map(l => l.split('-')[0].toLowerCase());
+    
+    // 2. Fetch Geolocation as a fallback (since many users set OS to English)
     fetch('https://ipapi.co/json/')
       .then(res => res.json())
       .then(data => {
-        if (!data || !data.country_code) return;
         const country = data.country_code;
         const region = data.region_code;
         
-        if (country === 'IN') {
-          if (region === 'KL') setSelectedLangFilter(['Malayalam', 'Tamil', 'Hindi', 'English']);
-          else if (region === 'TN') setSelectedLangFilter(['Tamil', 'Telugu', 'Malayalam', 'Hindi', 'English']);
-          else if (region === 'KA') setSelectedLangFilter(['Kannada', 'Telugu', 'Hindi', 'English']);
-          else if (region === 'MH') setSelectedLangFilter(['Marathi', 'Hindi', 'English']);
-          else if (region === 'WB') setSelectedLangFilter(['Bengali', 'Hindi', 'English']);
-          else if (region === 'AP' || region === 'TG') setSelectedLangFilter(['Telugu', 'Tamil', 'Hindi', 'English']);
-          else setSelectedLangFilter(['Hindi', 'English']);
-        } else if (country === 'AE' || country === 'SA' || country === 'QA' || country === 'OM') {
-          setSelectedLangFilter(['Arabic', 'Hindi', 'English', 'Malayalam']);
-        } else if (country === 'US' || country === 'GB' || country === 'AU' || country === 'CA') {
-          setSelectedLangFilter(['English', 'Hindi', 'Spanish']);
+        let regionalCodes: string[] = [];
+        
+        // Dynamic Indian State Mapping (Since India has 22 languages, we dynamically route by state code)
+        const indianStateMap: Record<string, string[]> = {
+          'KL': ['ml', 'ta', 'hi'], 'TN': ['ta', 'te', 'ml', 'hi'],
+          'KA': ['kn', 'te', 'hi'], 'MH': ['mr', 'hi'],
+          'WB': ['bn', 'hi'], 'AP': ['te', 'ta', 'hi'], 'TG': ['te', 'ta', 'hi']
+        };
+
+        if (country === 'IN' && region && indianStateMap[region]) {
+           regionalCodes = indianStateMap[region];
+        } else if (data.languages) {
+           // Globally dynamic: use the country's official languages from ipapi
+           regionalCodes = data.languages.split(',').map((l: string) => l.split('-')[0].toLowerCase());
+        }
+
+        // Combine Browser Languages + Regional Languages
+        const combinedCodes = Array.from(new Set([...browserCodes, ...regionalCodes, 'en']));
+        const matched = combinedCodes.map(c => languageMap[c]).filter(Boolean);
+        
+        if (matched.length > 0) {
+          setSelectedLangFilter(matched);
         }
       })
       .catch(err => console.error('Failed to detect geolocation:', err));
