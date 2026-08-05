@@ -21,6 +21,7 @@ interface NavbarProps {
   onSearchResultSelect?: (movie: any) => void;
   /** If provided and authToken is falsy, renders a Sign In button in the navbar */
   onSignInClick?: () => void;
+  onSignOutClick?: () => void;
   authToken?: string | null;
 }
 
@@ -213,34 +214,13 @@ export const Navbar: React.FC<NavbarProps> = ({
               {showAppSwitcher && renderAppSwitcherDropdown()}
             </div>
 
-            {showSignIn && (
-              <button
-                data-testid="navbar-signin-btn"
-                onClick={onSignInClick}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: '5px',
-                  padding: '6px 12px', borderRadius: '16px',
-                  background: '#1F80E0', border: 'none',
-                  color: '#FFF', fontSize: '0.78rem', fontWeight: 700,
-                  cursor: 'pointer', letterSpacing: '0.02em',
-                  transition: 'opacity 0.2s',
-                }}
-                onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.85'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; }}
-              >
-                <LogIn size={13} /> Sign In
-              </button>
-            )}
-
-            {!showSignIn && (
-              <div onClick={onOpenProfileModal} style={{ width: '28px', height: '28px', borderRadius: '50%', overflow: 'hidden', cursor: 'pointer', border: '1.5px solid #1F80E0' }}>
-                {currentProfile?.avatarUrl ? (
-                  <img src={currentProfile.avatarUrl} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                ) : (
-                  <div style={{ width: '100%', height: '100%', background: '#333', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Settings size={14} color="#FFF" /></div>
-                )}
-              </div>
-            )}
+            <div onClick={onOpenProfileModal} style={{ width: '28px', height: '28px', borderRadius: '50%', overflow: 'hidden', cursor: 'pointer', border: '1.5px solid #1F80E0' }}>
+              {currentProfile?.avatarUrl ? (
+                <img src={currentProfile.avatarUrl} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                <div style={{ width: '100%', height: '100%', background: '#333', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Settings size={14} color="#FFF" /></div>
+              )}
+            </div>
           </div>
         </header>
 
@@ -268,18 +248,16 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
 
           <nav style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '280px' }}>
-            {!showSignIn && (
-              <button onClick={onOpenProfileModal} className="hotstar-sidebar-btn">
-                <div style={{ width: '28px', height: '28px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0, border: '1px solid rgba(255,255,255,0.2)' }}>
-                  {currentProfile?.avatarUrl ? (
-                    <img src={currentProfile.avatarUrl} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  ) : (
-                    <div style={{ width: '100%', height: '100%', background: '#333', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Settings size={14} color="#FFF" /></div>
-                  )}
-                </div>
-                <span style={{ opacity: isHotstarExpanded ? 1 : 0, transition: 'opacity 0.2s 0.1s' }}>My Space</span>
-              </button>
-            )}
+            <button onClick={onOpenProfileModal} className="hotstar-sidebar-btn">
+              <div style={{ width: '28px', height: '28px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0, border: '1px solid rgba(255,255,255,0.2)' }}>
+                {currentProfile?.avatarUrl ? (
+                  <img src={currentProfile.avatarUrl} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  <div style={{ width: '100%', height: '100%', background: '#333', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Settings size={14} color="#FFF" /></div>
+                )}
+              </div>
+              <span style={{ opacity: isHotstarExpanded ? 1 : 0, transition: 'opacity 0.2s 0.1s' }}>My Space</span>
+            </button
 
             <button className="hotstar-sidebar-btn search-btn" onClick={() => setIsSearchOpen(true)}>
               <Search size={24} style={{ flexShrink: 0 }} />
@@ -430,31 +408,42 @@ export const Navbar: React.FC<NavbarProps> = ({
               )}
             </div>
 
-            {!showSignIn && (
-              <div style={{ position: 'relative' }} ref={profileRef}>
-                <div onClick={() => setShowProfileDropdown(!showProfileDropdown)} style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
-                  {currentProfile?.avatarUrl ? (
-                    <img src={currentProfile.avatarUrl} alt="Profile" style={{ width: '32px', height: '32px', borderRadius: (platform === 'nprime') ? '50%' : '4px', objectFit: 'cover' }} />
-                  ) : (
-                    <img src={platform === 'nprime' ? 'https://m.media-amazon.com/images/G/01/digital/video/web/v2/default_avatar._CB1582236592_.png' : 'https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png'} alt="Profile" style={{ width: '32px', height: '32px', borderRadius: (platform === 'nprime') ? '50%' : '4px', objectFit: 'cover' }} />
-                  )}
-                  <ChevronDown size={14} color="#FFF" />
-                </div>
+            <div style={{ position: 'relative' }} ref={profileRef}>
+              <div onClick={() => setShowProfileDropdown(!showProfileDropdown)} style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
+                {currentProfile?.avatarUrl ? (
+                  <img src={currentProfile.avatarUrl} alt="Profile" style={{ width: '32px', height: '32px', borderRadius: (platform === 'nprime') ? '50%' : '4px', objectFit: 'cover' }} />
+                ) : (
+                  <img src={platform === 'nprime' ? 'https://m.media-amazon.com/images/G/01/digital/video/web/v2/default_avatar._CB1582236592_.png' : 'https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png'} alt="Profile" style={{ width: '32px', height: '32px', borderRadius: (platform === 'nprime') ? '50%' : '4px', objectFit: 'cover' }} />
+                )}
+                <ChevronDown size={14} color="#FFF" />
+              </div>
 
-                {showProfileDropdown && (
-                  <div style={{ position: 'absolute', right: 0, top: '42px', width: '200px', background: (platform === 'nprime') ? 'var(--bg-elevated)' : 'rgba(0, 0, 0, 0.95)', border: '1px solid rgba(255, 255, 255, 0.15)', padding: '8px 0', borderRadius: (platform === 'nprime') ? '8px' : '4px', zIndex: 100 }}>
-                    {onOpenOnboardingModal && (
-                      <button onClick={() => { setShowProfileDropdown(false); onOpenOnboardingModal(); }} style={{ width: '100%', textAlign: 'left', padding: '8px 16px', background: 'none', border: 'none', color: '#FFF', fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <Globe size={15} color="var(--primary-color)" /> Language & Dub Settings
-                      </button>
-                    )}
+              {showProfileDropdown && (
+                <div style={{ position: 'absolute', right: 0, top: '42px', width: '200px', background: (platform === 'nprime') ? 'var(--bg-elevated)' : 'rgba(0, 0, 0, 0.95)', border: '1px solid rgba(255, 255, 255, 0.15)', padding: '8px 0', borderRadius: (platform === 'nprime') ? '8px' : '4px', zIndex: 100 }}>
+                  
+                  {showSignIn && onSignInClick && (
+                    <button onClick={() => { setShowProfileDropdown(false); onSignInClick(); }} style={{ width: '100%', textAlign: 'left', padding: '8px 16px', background: 'none', border: 'none', color: '#FFF', fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <LogIn size={15} color="var(--primary-color)" /> Sign In
+                    </button>
+                  )}
+                  {onOpenOnboardingModal && (
+                    <button onClick={() => { setShowProfileDropdown(false); onOpenOnboardingModal(); }} style={{ width: '100%', textAlign: 'left', padding: '8px 16px', background: 'none', border: 'none', color: '#FFF', fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <Globe size={15} color="var(--primary-color)" /> Language & Dub Settings
+                    </button>
+                  )}
+                  {!showSignIn && (
                     <button onClick={() => { setShowProfileDropdown(false); onOpenProfileModal(); }} style={{ width: '100%', textAlign: 'left', padding: '8px 16px', background: 'none', border: 'none', color: '#AAA', fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <Settings size={15} /> Manage Profiles
                     </button>
-                  </div>
-                )}
-              </div>
-            )}
+                  )}
+                  {!showSignIn && onSignOutClick && (
+                    <button onClick={() => { setShowProfileDropdown(false); onSignOutClick(); }} style={{ width: '100%', textAlign: 'left', padding: '8px 16px', background: 'none', border: 'none', color: '#E50914', fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <LogIn size={15} /> Log Out
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </header>

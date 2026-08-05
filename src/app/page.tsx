@@ -851,6 +851,13 @@ export default function Home() {
         onSearchResultSelect={handleOpenDetails}
         authToken={authToken}
         onSignInClick={() => setShowAuthModal(true)}
+        onSignOutClick={() => {
+          localStorage.removeItem('auth_token');
+          localStorage.removeItem('auth_user');
+          setAuthToken(null);
+          setAuthUser(null);
+          showToast('Signed out successfully');
+        }}
       />
 
       {/* Platform-Authentic Full-Page Initial & Switching Loader */}
@@ -1482,46 +1489,7 @@ export default function Home() {
         />
       )}
 
-      {/* ─── PWA Install Prompt ───────────────────────────────────────────── */}
       <PWAInstallPrompt />
-
-
-      {/* ─── Auth User Indicator (when signed in) ────────────────────────── */}
-      {authToken && authUser && (
-        <div
-          style={{
-            position: 'fixed',
-            top: '18px',
-            right: '220px',
-            zIndex: 3000,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '7px',
-            padding: '6px 12px',
-            borderRadius: '20px',
-            background: 'rgba(229,9,20,0.15)',
-            border: '1px solid rgba(229,9,20,0.3)',
-            color: '#fff',
-            fontSize: '0.78rem',
-            fontWeight: 600,
-            cursor: 'pointer',
-            backdropFilter: 'blur(10px)',
-          }}
-          onClick={() => {
-            localStorage.removeItem('auth_token');
-            localStorage.removeItem('auth_user');
-            setAuthToken(null);
-            setAuthUser(null);
-            showToast('Signed out successfully');
-          }}
-          title="Click to sign out"
-        >
-          <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: 'var(--primary-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', fontWeight: 800 }}>
-            {authUser.name?.charAt(0)?.toUpperCase() || 'U'}
-          </div>
-          {authUser.name?.split(' ')[0]}
-        </div>
-      )}
     </main>
   );
 }
