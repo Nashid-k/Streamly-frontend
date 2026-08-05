@@ -418,6 +418,7 @@ export default function Home() {
   // Initial Data Fetching & Dynamic Platform Switching Sync
   useEffect(() => {
     let isMounted = true;
+    setIsLoadingPage(true);
     setIsSwitchingPlatform(true);
     
     async function loadData() {
@@ -539,11 +540,7 @@ export default function Home() {
         if (isMounted) {
           setIsLoadingPage(false);
           setHasCompletedInitialLoad(true);
-          // Dynamic loader duration between 3.0s and 5.0s for an authentic streaming platform launch experience
-          const dynamicLoaderTime = Math.floor(Math.random() * 2000) + 3000;
-          setTimeout(() => {
-            if (isMounted) setIsSwitchingPlatform(false);
-          }, dynamicLoaderTime);
+          if (isMounted) setIsSwitchingPlatform(false);
         }
       }
     }
@@ -860,8 +857,8 @@ export default function Home() {
         }}
       />
 
-      {/* Platform-Authentic Full-Page Initial & Switching Loader */}
-      {(!hasCompletedInitialLoad || isSwitchingPlatform) && <PlatformInitialLoader />}
+      {/* Full-Screen Initial Loader */}
+      {(!hasCompletedInitialLoad) && <PlatformInitialLoader />}
 
       {/* Main Page Content Router */}
       <div style={{ opacity: hasCompletedInitialLoad ? 1 : 0, transition: 'opacity 0.3s' }}>
@@ -968,19 +965,22 @@ export default function Home() {
           )}
           {/* Dynamic Hero Banner (Hidden on My List Tab) */}
           {activeTab !== 'mylist' && (
-          <HeroBanner 
-          movie={heroMovie} 
-          carouselMovies={heroCandidates.slice(0, 8)}
-          activeCarouselIndex={heroIndex % (heroCandidates.slice(0, 8).length || 1)}
-          onSelectCarouselIndex={(idx) => { setHeroIndex(idx); setIsHeroReady(true); }}
-          onPlay={handlePlayMovie} 
-          onOpenDetails={handleOpenDetails} 
-          onToggleMyList={handleToggleMyListWithToast}
-          isMyList={heroMovie ? myList.includes(heroMovie.id) : false}
-          onHeroReady={handleHeroReady}
-          onThemeColorChange={setThemeColor}
-        />
-
+            isLoadingPage ? (
+              <HeroSkeleton />
+            ) : (
+              <HeroBanner 
+                movie={heroMovie} 
+                carouselMovies={heroCandidates.slice(0, 8)}
+                activeCarouselIndex={heroIndex % (heroCandidates.slice(0, 8).length || 1)}
+                onSelectCarouselIndex={(idx) => { setHeroIndex(idx); setIsHeroReady(true); }}
+                onPlay={handlePlayMovie} 
+                onOpenDetails={handleOpenDetails} 
+                onToggleMyList={handleToggleMyListWithToast}
+                isMyList={heroMovie ? myList.includes(heroMovie.id) : false}
+                onHeroReady={handleHeroReady}
+                onThemeColorChange={setThemeColor}
+              />
+            )
           )}
 
           {/* Page-Specific Content */}
@@ -993,7 +993,7 @@ export default function Home() {
               transition={{ duration: 0.3, ease: 'easeInOut' }}
               style={{ marginTop: activeTab === 'mylist' ? '110px' : '-40px', position: 'relative', zIndex: 20, width: '100%', minHeight: '50vh' }}
             >
-              {isTabTransitioning ? (
+              {(isTabTransitioning || isLoadingPage) ? (
                 <div style={{ paddingTop: activeTab === 'mylist' ? '20px' : '40px' }}>
                   <MovieRowSkeleton />
                   <MovieRowSkeleton />

@@ -174,8 +174,10 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
           backgroundPosition: 'center top',
           zIndex: 0,
           WebkitMaskImage: platform === 'hotstar' 
-            ? 'linear-gradient(to top, transparent 0%, black 50%, black 100%)' 
+            ? 'linear-gradient(to top, transparent 0%, black 40%), linear-gradient(to right, transparent 0%, black 40%)' 
             : 'none',
+          WebkitMaskComposite: platform === 'hotstar' ? 'source-in' : 'source-over',
+          maskComposite: platform === 'hotstar' ? 'intersect' : 'add',
         }}
       />
       
@@ -198,8 +200,10 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
           backgroundPosition: 'center',
           zIndex: 0,
           WebkitMaskImage: platform === 'hotstar'
-            ? 'linear-gradient(to top, transparent 0%, black 50%, black 100%)'
+            ? 'linear-gradient(to top, transparent 0%, black 40%), linear-gradient(to right, transparent 0%, black 40%)'
             : 'none',
+          WebkitMaskComposite: platform === 'hotstar' ? 'source-in' : 'source-over',
+          maskComposite: platform === 'hotstar' ? 'intersect' : 'add',
         }}
       />
 

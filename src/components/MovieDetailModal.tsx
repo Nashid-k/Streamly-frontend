@@ -201,10 +201,10 @@ function NetflixModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
   const { setPlatform } = usePlatform();
   const platformNameMap: Record<string, string> = { nflix: "Netflix", nprime: "Prime Video", hotstar: "Hotstar" };
   const nativePlatformName = platformNameMap[platform];
-  const isAvailableNative = !movie.availablePlatforms || movie.availablePlatforms.includes(nativePlatformName);
-  const alternativePlatform = movie.availablePlatforms?.find(p => p !== nativePlatformName);
-  const handlePlayClick = () => {
-    if (!isAvailableNative const { isMutedconst { isMuted alternativePlatform) {
+  const isAvailableNative = !movie?.availablePlatforms || movie.availablePlatforms.includes(nativePlatformName);
+  const alternativePlatform = movie?.availablePlatforms?.find(p => p !== nativePlatformName);
+  const handlePlayClick = () => { if (!movie) return;
+    if (!isAvailableNative && alternativePlatform) {
       const target = alternativePlatform === "Netflix" ? "nflix" : alternativePlatform === "Hotstar" ? "hotstar" : "nprime";
       setPlatform(target);
       setTimeout(() => onPlay(movie), 100);
@@ -422,10 +422,10 @@ function PrimeModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, isM
   const { setPlatform } = usePlatform();
   const platformNameMap: Record<string, string> = { nflix: "Netflix", nprime: "Prime Video", hotstar: "Hotstar" };
   const nativePlatformName = platformNameMap[platform];
-  const isAvailableNative = !movie.availablePlatforms || movie.availablePlatforms.includes(nativePlatformName);
-  const alternativePlatform = movie.availablePlatforms?.find(p => p !== nativePlatformName);
-  const handlePlayClick = () => {
-    if (!isAvailableNative const { isMutedconst { isMuted alternativePlatform) {
+  const isAvailableNative = !movie?.availablePlatforms || movie.availablePlatforms.includes(nativePlatformName);
+  const alternativePlatform = movie?.availablePlatforms?.find(p => p !== nativePlatformName);
+  const handlePlayClick = () => { if (!movie) return;
+    if (!isAvailableNative && alternativePlatform) {
       const target = alternativePlatform === "Netflix" ? "nflix" : alternativePlatform === "Hotstar" ? "hotstar" : "nprime";
       setPlatform(target);
       setTimeout(() => onPlay(movie), 100);
@@ -600,10 +600,10 @@ function HotstarModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
   const { setPlatform } = usePlatform();
   const platformNameMap: Record<string, string> = { nflix: "Netflix", nprime: "Prime Video", hotstar: "Hotstar" };
   const nativePlatformName = platformNameMap[platform];
-  const isAvailableNative = !movie.availablePlatforms || movie.availablePlatforms.includes(nativePlatformName);
-  const alternativePlatform = movie.availablePlatforms?.find(p => p !== nativePlatformName);
-  const handlePlayClick = () => {
-    if (!isAvailableNative const { isMutedconst { isMuted alternativePlatform) {
+  const isAvailableNative = !movie?.availablePlatforms || movie.availablePlatforms.includes(nativePlatformName);
+  const alternativePlatform = movie?.availablePlatforms?.find(p => p !== nativePlatformName);
+  const handlePlayClick = () => { if (!movie) return;
+    if (!isAvailableNative && alternativePlatform) {
       const target = alternativePlatform === "Netflix" ? "nflix" : alternativePlatform === "Hotstar" ? "hotstar" : "nprime";
       setPlatform(target);
       setTimeout(() => onPlay(movie), 100);
