@@ -6,6 +6,7 @@ import { Play, Plus, Check, Info, Film, Clock, ChevronDown, ThumbsUp } from 'luc
 import { usePlatform } from './PlatformContext';
 import { Movie } from '../types';
 import { fetchMovieById } from '../lib/api';
+import { HoverTrailer } from './HoverTrailer';
 
 interface MovieCardProps {
   movie: Movie;
@@ -28,6 +29,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
   isSearchResult = false,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [showTrailer, setShowTrailer] = useState(false);
   const [imgFailed, setImgFailed] = useState(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const { platform } = usePlatform();
@@ -91,6 +93,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
     if (movie.id) {
       if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
       hoverTimeoutRef.current = setTimeout(() => {
+        setShowTrailer(true);
         fetchMovieById(movie.id).catch(() => {});
       }, 500);
     }
@@ -98,6 +101,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
 
   const handleMouseLeave = () => {
     setIsHovered(false);
+    setShowTrailer(false);
     if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
   };
 
@@ -165,6 +169,9 @@ export const MovieCard: React.FC<MovieCardProps> = ({
             <Film size={28} color="#1F80E0" style={{ marginBottom: '8px' }} />
             <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#FFF' }}>{movie.title}</span>
           </div>
+        )}
+        {showTrailer && movie.trailerUrl && (
+          <HoverTrailer trailerUrl={movie.trailerUrl} isMuted={true} />
         )}
         {imdbBadge}
         {/* Hotstar Authentic Badges */}
@@ -258,6 +265,9 @@ export const MovieCard: React.FC<MovieCardProps> = ({
             <Film size={24} color="#00A8E1" style={{ marginBottom: '6px' }} />
             <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#FFF' }}>{movie.title}</span>
           </div>
+        )}
+        {showTrailer && movie.trailerUrl && (
+          <HoverTrailer trailerUrl={movie.trailerUrl} isMuted={true} />
         )}
         {imdbBadge}
         <div style={{ position: 'absolute', top: 0, left: 0, zIndex: 10, background: '#00A8E1', padding: '2px 8px', borderBottomRightRadius: '4px', fontSize: '0.65rem', fontWeight: 900, color: '#FFF', fontStyle: 'italic', letterSpacing: '0.04em' }}>
@@ -385,6 +395,9 @@ export const MovieCard: React.FC<MovieCardProps> = ({
             <Film size={24} color="#E50914" style={{ marginBottom: '6px' }} />
             <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#FFF' }}>{movie.title}</span>
           </div>
+        )}
+        {showTrailer && movie.trailerUrl && (
+          <HoverTrailer trailerUrl={movie.trailerUrl} isMuted={true} />
         )}
         
         {/* Title / Logo over image on Hover */}

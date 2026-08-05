@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { MovieCard } from './MovieCard';
 import { usePlatform } from './PlatformContext';
 import { Movie } from '../types';
+import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
 
 interface MovieRowProps {
   title: string;
@@ -30,8 +31,15 @@ export const MovieRow: React.FC<MovieRowProps> = ({
   
   const { platform } = usePlatform();
   const rowRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [isAtStart, setIsAtStart] = useState(true);
   const [isAtEnd, setIsAtEnd] = useState(false);
+
+  const entry = useIntersectionObserver(containerRef, {
+    freezeOnceVisible: true,
+    rootMargin: '200px 0px', // Load 200px before scrolling into view
+  });
+  const isVisible = !!entry?.isIntersecting;
 
   const checkScrollRef = useRef<number | null>(null);
   const checkScroll = () => {
@@ -66,17 +74,23 @@ export const MovieRow: React.FC<MovieRowProps> = ({
 
   return (
     <div 
+      ref={containerRef}
       className="catalog-row" 
       style={{ 
         marginBottom: '44px', 
         padding: '0 4%', 
         position: 'relative', 
-        zIndex: 1 
+        zIndex: 1,
+        minHeight: '280px', // Prevent layout shift before render
       }}
       onMouseEnter={(e) => e.currentTarget.style.zIndex = '50'}
       onMouseLeave={(e) => e.currentTarget.style.zIndex = '1'}
     >
-      {/* Category Row Header with Accent Bar & Explore All Link */}
+      {!isVisible ? (
+        <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }} />
+      ) : (
+        <>
+          {/* Category Row Header with Accent Bar & Explore All Link */}
       <div className="catalog-row-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div style={{ width: '4px', height: '22px', background: platform === 'nprime' ? 'var(--primary-color)' : platform === 'hotstar' ? '#1F80E0' : 'linear-gradient(180deg, #E50914 0%, #FF5252 100%)', borderRadius: '2px' }} />
@@ -283,6 +297,8 @@ export const MovieRow: React.FC<MovieRowProps> = ({
         </button>
         )}
       </div>
+        </>
+      )}
     </div>
   );
 };
