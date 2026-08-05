@@ -769,7 +769,7 @@ export default function Home() {
   }, [allMovies]);
   const relatedMovies = useMemo(() => {
     if (!activeDetailMovie) return [];
-    const genreSet = new Set(activeDetailMovie.genres.map((genre) => genre.toLowerCase()));
+    const genreSet = new Set((activeDetailMovie.genres || []).map((genre) => genre.toLowerCase()));
     const languageSet = new Set([...(activeDetailMovie.audioLanguages || []), ...(activeDetailMovie.subtitleLanguages || [])].map((language) => language.toLowerCase()));
     const tagSet = new Set((activeDetailMovie.tags || []).map((tag) => tag.toLowerCase()));
     return allMovies
