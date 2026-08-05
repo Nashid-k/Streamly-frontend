@@ -1,6 +1,12 @@
-# Nflix Frontend
+# AIOS-ALL IN ONE STREAM Frontend
 
-This is the Next.js frontend for the Nflix catalog application, a movie and TV discovery catalog.
+This is the Next.js frontend for the AIOS-ALL IN ONE STREAM catalog application, featuring themes for Netflix, Prime Video, and Hotstar!
+
+## 🚀 Recent Updates & Features
+- **UI Polish & Perfection:** Resolved 10+ UI alignment issues (including Search dropdown custom scrollbars, Hotstar carousel bounds, and Hero Canvas extraction). 
+- **Performance Fixes:** Drastically improved frontend filtering by pre-processing arrays. Implemented RequestAnimationFrame for heavy canvas paint operations.
+- **Player Enhancements:** Fixed HLS component memory leaks. Added local storage persistence for preferred video quality and subtitle selections.
+- **Feature Addition:** Integrated native IMDb rating badges across all movie detail modals!
 
 ## Configuration
 

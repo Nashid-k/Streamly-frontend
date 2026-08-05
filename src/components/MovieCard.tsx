@@ -43,16 +43,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
   }
 
   const handleCardClick = () => {
-    if (isSearchResult) {
-      // Search results: always direct-play, no modal
-      onPlay(movie);
-      return;
-    }
-    if (typeof window !== 'undefined' && window.innerWidth <= 768) {
-      onOpenDetails(movie);
-    } else {
-      onPlay(movie);
-    }
+    onOpenDetails(movie);
   };
 
   // Platform badge colours
@@ -394,11 +385,19 @@ export const MovieCard: React.FC<MovieCardProps> = ({
               <button style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#FFF', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); onPlay(movie); }}>
                 <Play size={12} fill="#000" color="#000" />
               </button>
-              <button style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#2A2A2A', border: '2px solid rgba(255,255,255,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#FFF' }} onClick={(e) => { e.stopPropagation(); onToggleMyList(movie.id); }}>
-                {isMyList ? <Check size={14} /> : <Plus size={14} />}
+              <button
+                onClick={(e) => { e.stopPropagation(); onToggleMyList(movie.id); }}
+                style={{
+                  background: 'none', border: '2px solid rgba(255, 255, 255, 0.4)', borderRadius: '50%',
+                  width: '38px', height: '38px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFF', cursor: 'pointer', transition: 'all 0.2s', padding: '0'
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#FFF'; e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.4)'; e.currentTarget.style.background = 'none'; }}
+              >
+                {isMyList ? <Check size={18} /> : <Plus size={18} />}
               </button>
-              <button style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#2A2A2A', border: '2px solid rgba(255,255,255,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#FFF' }} onClick={(e) => { e.stopPropagation(); }}>
-                <ThumbsUp size={12} />
+              <button style={{ width: '38px', height: '38px', borderRadius: '50%', background: 'none', border: '2px solid rgba(255, 255, 255, 0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#FFF', padding: '0' }} onClick={(e) => { e.stopPropagation(); }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#FFF'; e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.4)'; e.currentTarget.style.background = 'none'; }}>
+                <ThumbsUp size={18} />
               </button>
             </div>
             <button style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#2A2A2A', border: '2px solid rgba(255,255,255,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#FFF' }} onClick={(e) => { e.stopPropagation(); onOpenDetails(movie); }}>

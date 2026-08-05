@@ -18,10 +18,8 @@ interface MovieDetailModalProps {
 
 function formatCastNames(castList?: any[]): string {
   if (!castList || !Array.isArray(castList) || castList.length === 0) return '';
-  return castList
-    .map((item) => (typeof item === 'string' ? item : item?.name || ''))
-    .filter(Boolean)
-    .join(', ');
+  const names = castList.map((item) => (typeof item === 'string' ? item : item?.name || '')).filter(Boolean);
+  return names.slice(0, 5).join(', ') + (names.length > 5 ? ', ...' : '');
 }
 
 function useMovieDetails(movie: Movie | null, selectedSeason: number, platform: string) {
@@ -29,42 +27,57 @@ function useMovieDetails(movie: Movie | null, selectedSeason: number, platform: 
   const [episodes, setEpisodes] = useState<Episode[]>([]);
   const [isLoadingDetails, setIsLoadingDetails] = useState<boolean>(true);
   const [isLoadingEpisodes, setIsLoadingEpisodes] = useState<boolean>(true);
+  const seasonsCache = useRef<Record<number, Episode[]>>({});
 
   useEffect(() => {
     let isMounted = true;
     if (!movie) return;
     setIsLoadingDetails(true);
-    const isTvShow = Boolean(movie.isSeries || movie.id?.includes('-tv-') || movie.seasonsCount);
-    setIsLoadingEpisodes(isTvShow);
-
+    
     // Fetch full movie details
     fetchMovieById(movie.id)
       .then(data => { 
         if (isMounted) {
           setDetailedMovie(data);
-          const isTV = Boolean(data?.isSeries || data?.seasonsCount || movie.isSeries || movie.id?.includes('-tv-'));
-          if (isTV && selectedSeason) {
-            fetchSeasonEpisodes(movie.id, selectedSeason)
-              .then(epData => { if (isMounted) setEpisodes(Array.isArray(epData) ? epData : []); })
-              .catch(() => { if (isMounted) setEpisodes([]); });
-          }
         } 
       })
       .catch(() => { if (isMounted) setDetailedMovie(movie); })
       .finally(() => { if (isMounted) setIsLoadingDetails(false); });
 
-    if (isTvShow) {
-      fetchSeasonEpisodes(movie.id, selectedSeason)
-        .then(data => { if (isMounted) setEpisodes(Array.isArray(data) ? data : []); })
-        .catch(() => { if (isMounted) setEpisodes([]); })
-        .finally(() => { if (isMounted) setIsLoadingEpisodes(false); });
-    } else {
+    return () => { isMounted = false; };
+  }, [movie, platform]);
+  
+  useEffect(() => {
+    let isMounted = true;
+    if (!movie) return;
+    
+    const isTvShow = Boolean(movie.isSeries || movie.id?.includes('-tv-') || movie.seasonsCount);
+    if (!isTvShow) {
       setEpisodes([]);
       setIsLoadingEpisodes(false);
+      return;
     }
+    
+    if (seasonsCache.current[selectedSeason]) {
+      setEpisodes(seasonsCache.current[selectedSeason]);
+      setIsLoadingEpisodes(false);
+      return;
+    }
+    
+    setIsLoadingEpisodes(true);
+    fetchSeasonEpisodes(movie.id, selectedSeason)
+      .then(data => { 
+        if (isMounted) {
+          const epData = Array.isArray(data) ? data : [];
+          seasonsCache.current[selectedSeason] = epData;
+          setEpisodes(epData); 
+        } 
+      })
+      .catch(() => { if (isMounted) setEpisodes([]); })
+      .finally(() => { if (isMounted) setIsLoadingEpisodes(false); });
 
     return () => { isMounted = false; };
-  }, [movie, selectedSeason, platform]);
+  }, [movie, selectedSeason]);
 
   return { detailedMovie, episodes, isLoadingDetails, isLoadingEpisodes };
 }
@@ -106,6 +119,7 @@ function useTrailerPlayer(encodedUrl: string, backdropUrl: string) {
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       if (event.origin !== 'https://www.youtube.com') return;
+      if (iframeRef.current && iframeRef.current.contentWindow !== event.source) return;
       try {
         const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
         const isPlayingEvent = (data.event === 'infoDelivery' && data.info && data.info.playerState === 1) || 
@@ -149,7 +163,8 @@ function useTrailerPlayer(encodedUrl: string, backdropUrl: string) {
   };
 
   const renderTrailer = () => (
-    <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none', backgroundColor: '#000' }}>
+    <>
+      <div style={{ position: 'absolute', inset: 0, backgroundColor: '#111', zIndex: 1 }} />
       <img 
         src={backdropUrl} 
         style={{ 
@@ -170,7 +185,7 @@ function useTrailerPlayer(encodedUrl: string, backdropUrl: string) {
           allow="autoplay; encrypted-media"
         />
       )}
-    </div>
+    </>
   );
 
   return { isMuted, toggleMute, renderTrailer, hasTrailer: !!videoId };
@@ -186,7 +201,9 @@ function NetflixModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
   const { isMuted, toggleMute, renderTrailer, hasTrailer } = useTrailerPlayer(displayMovie?.trailerUrl || '', movie?.backdropUrl || movie?.posterUrl || '');
 
   if (!movie) return null;
-  const matchScore = parseInt(movie.id.replace(/\D/g, '') || '0') % 30 + 70;
+  const matchScore = (displayMovie?.matchScore || parseInt(movie.id.replace(/\D/g, '') || '0') % 30 + 70);
+  const rawScore = displayMovie?.score || (matchScore / 10);
+  const ratingText = rawScore > 0 ? `${rawScore.toFixed(1)} / 10` : 'N/A';
 
   return (
     <div className="modal-overlay" onClick={onClose} style={{
@@ -270,6 +287,7 @@ function NetflixModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
           <div className="detail-overview-grid" style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
             <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '16px', fontSize: '1rem', fontWeight: 500 }}>
               <span style={{ color: '#46d369', fontWeight: 700 }}>{matchScore}% Match</span>
+              <span style={{ backgroundColor: '#F5C518', color: '#000', padding: '1px 6px', borderRadius: '3px', fontWeight: 700, fontSize: '0.85rem' }}>IMDb {ratingText}</span>
               <span style={{ color: '#BCBCBC' }}>{(displayMovie?.releaseDate || movie?.releaseDate || '').split('-')[0]}</span>
               <span style={{ border: '1px solid #BCBCBC', padding: '0 4px', color: '#BCBCBC', fontSize: '0.8rem' }}>U/A 16+</span>
               <span style={{ color: '#BCBCBC' }}>{displayMovie?.duration || movie?.duration}</span>
@@ -300,17 +318,17 @@ function NetflixModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
           {(!(displayMovie?.isSeries || movie.isSeries || (displayMovie?.seasonsCount ?? 0) > 0) || activeTab === 'similar') && (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '16px' }}>
               {similarMovies.slice(0, 9).map(sim => (
-                <div key={sim.id} onClick={() => onOpenDetails(sim)} style={{ backgroundColor: '#2F2F2F', borderRadius: '4px', overflow: 'hidden', cursor: 'pointer' }}>
-                  <div style={{ position: 'relative', paddingTop: '56.25%' }}>
+                <div key={sim.id} onClick={() => onOpenDetails(sim)} style={{ backgroundColor: '#2F2F2F', borderRadius: '4px', overflow: 'hidden', cursor: 'pointer', display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ position: 'relative', paddingTop: '56.25%', flexShrink: 0 }}>
                     <img src={sim.backdropUrl || sim.posterUrl} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
                   </div>
-                  <div style={{ padding: '16px' }}>
+                  <div style={{ padding: '16px', flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
                     <h4 style={{ margin: '0 0 8px 0', fontSize: '1rem' }}>{sim.title}</h4>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.8rem', color: '#BCBCBC' }}>
-                      <span style={{ color: '#46d369' }}>{parseInt(sim.id.replace(/\D/g, '') || '0') % 30 + 70}% Match</span>
+                      <span style={{ color: '#46d369' }}>{sim.matchScore || (parseInt(sim.id.replace(/\D/g, '') || '0') % 30 + 70)}% Match</span>
                       <span>{(sim.releaseDate || '').split('-')[0]}</span>
                     </div>
-                    <p style={{ fontSize: '0.85rem', color: '#D2D2D2', marginTop: '12px', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{sim.description}</p>
+                    <p style={{ fontSize: '0.85rem', color: '#D2D2D2', marginTop: '12px', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden', flexGrow: 1 }}>{sim.description}</p>
                   </div>
                 </div>
               ))}
@@ -390,6 +408,9 @@ function PrimeModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, isM
   const { isMuted, toggleMute, renderTrailer, hasTrailer } = useTrailerPlayer(displayMovie?.trailerUrl || '', movie?.backdropUrl || movie?.posterUrl || '');
 
   if (!movie) return null;
+  const matchScore = (displayMovie?.matchScore || parseInt(movie.id.replace(/\D/g, '') || '0') % 30 + 70);
+  const rawScore = displayMovie?.score || (matchScore / 10);
+  const ratingText = rawScore > 0 ? `${rawScore.toFixed(1)}` : 'N/A';
 
   return (
     <div className="modal-overlay" onClick={onClose} style={{
@@ -462,7 +483,7 @@ function PrimeModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, isM
 
         <div className="detail-body" style={{ padding: '0 40px 40px 40px', overflowY: 'auto' }}>
           <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '16px', fontSize: '0.95rem', color: '#8197a4', fontWeight: 600 }}>
-            <span style={{ color: '#FFF' }}>IMDb {((parseInt(movie.id.replace(/\D/g, ''))%40)/10 + 6.0).toFixed(1)}</span>
+            <span style={{ backgroundColor: '#F5C518', color: '#000', padding: '1px 4px', borderRadius: '3px', fontWeight: 800 }}>IMDb {ratingText}</span>
             <span>{(displayMovie?.releaseDate || movie?.releaseDate || '').split('-')[0]}</span>
             <span>{displayMovie?.duration || movie?.duration}</span>
             <span style={{ border: '1px solid #8197a4', padding: '1px 4px', borderRadius: '3px', fontSize: '0.8rem' }}>X-Ray</span>
@@ -483,7 +504,7 @@ function PrimeModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, isM
              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '10px' }}>
                 <select value={selectedSeason} onChange={e => setSelectedSeason(Number(e.target.value))} style={{ background: '#19232d', color: '#FFF', border: '1px solid rgba(255,255,255,0.2)', padding: '10px 16px', borderRadius: '4px', fontSize: '1rem', cursor: 'pointer', width: 'fit-content', outline: 'none' }}>
-                  {Array.from({ length: displayMovie?.seasonsCount || 1 }, (_, i) => i + 1).map(s => <option key={s} value={s} style={{ background: '#0f171e', color: '#FFF' }}>Season {s}</option>)}
+                  {Array.from({ length: displayMovie?.seasonsCount || 1 }, (_, i) => i + 1).map(s => <option key={s} value={s} style={{ background: '#24303c', color: '#FFF' }}>Season {s}</option>)}
                 </select>
               </div>
               {isLoadingEpisodes ? (
@@ -583,6 +604,7 @@ function HotstarModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
               )}
 
               <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '20px', fontSize: '0.9rem', color: '#FFF', fontWeight: 600 }}>
+                <span style={{ backgroundColor: '#F5C518', color: '#000', padding: '1px 6px', borderRadius: '3px', fontWeight: 800 }}>IMDb {ratingText}</span>
                 <span>{(displayMovie?.releaseDate || movie?.releaseDate || '').split('-')[0]}</span>
                 <span>•</span>
                 <span>{displayMovie?.duration || movie?.duration}</span>
@@ -656,7 +678,7 @@ function HotstarModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '10px' }}>
                 <select value={selectedSeason} onChange={e => setSelectedSeason(Number(e.target.value))} style={{ background: '#191c24', color: '#FFF', border: '1px solid rgba(31,128,224,0.4)', padding: '10px 16px', borderRadius: '6px', fontSize: '1rem', cursor: 'pointer', width: 'fit-content', outline: 'none' }}>
-                  {Array.from({ length: displayMovie?.seasonsCount || 1 }, (_, i) => i + 1).map(s => <option key={s} value={s} style={{ background: '#0f1014', color: '#FFF' }}>Season {s}</option>)}
+                  {Array.from({ length: displayMovie?.seasonsCount || 1 }, (_, i) => i + 1).map(s => <option key={s} value={s} style={{ background: '#222631', color: '#FFF' }}>Season {s}</option>)}
                 </select>
               </div>
               {isLoadingEpisodes ? (

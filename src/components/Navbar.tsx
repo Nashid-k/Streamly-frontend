@@ -232,13 +232,15 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             )}
 
-            <div onClick={onOpenProfileModal} style={{ width: '28px', height: '28px', borderRadius: '50%', overflow: 'hidden', cursor: 'pointer', border: '1.5px solid #1F80E0' }}>
-              {currentProfile?.avatarUrl ? (
-                <img src={currentProfile.avatarUrl} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              ) : (
-                <div style={{ width: '100%', height: '100%', background: '#333', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Settings size={14} color="#FFF" /></div>
-              )}
-            </div>
+            {!showSignIn && (
+              <div onClick={onOpenProfileModal} style={{ width: '28px', height: '28px', borderRadius: '50%', overflow: 'hidden', cursor: 'pointer', border: '1.5px solid #1F80E0' }}>
+                {currentProfile?.avatarUrl ? (
+                  <img src={currentProfile.avatarUrl} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  <div style={{ width: '100%', height: '100%', background: '#333', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Settings size={14} color="#FFF" /></div>
+                )}
+              </div>
+            )}
           </div>
         </header>
 
@@ -266,16 +268,18 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
 
           <nav style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '280px' }}>
-            <button onClick={onOpenProfileModal} className="hotstar-sidebar-btn">
-              <div style={{ width: '28px', height: '28px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0, border: '1px solid rgba(255,255,255,0.2)' }}>
-                {currentProfile?.avatarUrl ? (
-                  <img src={currentProfile.avatarUrl} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                ) : (
-                  <div style={{ width: '100%', height: '100%', background: '#333', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Settings size={14} color="#FFF" /></div>
-                )}
-              </div>
-              <span style={{ opacity: isHotstarExpanded ? 1 : 0, transition: 'opacity 0.2s 0.1s' }}>My Space</span>
-            </button>
+            {!showSignIn && (
+              <button onClick={onOpenProfileModal} className="hotstar-sidebar-btn">
+                <div style={{ width: '28px', height: '28px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0, border: '1px solid rgba(255,255,255,0.2)' }}>
+                  {currentProfile?.avatarUrl ? (
+                    <img src={currentProfile.avatarUrl} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    <div style={{ width: '100%', height: '100%', background: '#333', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Settings size={14} color="#FFF" /></div>
+                  )}
+                </div>
+                <span style={{ opacity: isHotstarExpanded ? 1 : 0, transition: 'opacity 0.2s 0.1s' }}>My Space</span>
+              </button>
+            )}
 
             <button className="hotstar-sidebar-btn search-btn" onClick={() => setIsSearchOpen(true)}>
               <Search size={24} style={{ flexShrink: 0 }} />
@@ -408,9 +412,9 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button onClick={() => setIsSearchOpen(!isSearchOpen)} style={{ background: 'none', border: 'none', color: '#FFF', cursor: 'pointer', display: 'flex', alignItems: 'center' }} title="Search"><Search size={20} /></button>
               {isSearchOpen && (
                 <div style={{ position: 'relative' }}>
-                  <input aria-label="Search titles, people, or genres" type="text" placeholder="Titles, people, genres" value={searchQuery} onChange={(e) => onSearchChange(e.target.value)} autoFocus onBlur={() => { setTimeout(() => { if (!searchQuery) setIsSearchOpen(false); }, 200); }} style={{ background: 'rgba(0, 0, 0, 0.75)', border: '1px solid rgba(255, 255, 255, 0.8)', color: '#FFF', padding: '6px 12px', marginLeft: '10px', width: '220px', fontSize: '0.9rem', outline: 'none', borderRadius: (platform === 'nprime') ? '8px' : '4px' }} />
+                  <input aria-label="Search titles, people, or genres" type="text" placeholder="Titles, people, genres" value={searchQuery} onChange={(e) => onSearchChange(e.target.value)} autoFocus onBlur={() => { setTimeout(() => { if (!searchQuery) setIsSearchOpen(false); }, 400); }} style={{ background: 'rgba(0, 0, 0, 0.75)', border: '1px solid rgba(255, 255, 255, 0.8)', color: '#FFF', padding: '6px 12px', marginLeft: '10px', width: '220px', fontSize: '0.9rem', outline: 'none', borderRadius: (platform === 'nprime') ? '8px' : '4px' }} />
                   {searchQuery && searchResults.length > 0 && (
-                    <div style={{ position: 'absolute', top: '100%', left: '10px', width: '300px', background: 'rgba(20,20,20,0.95)', border: '1px solid #333', borderRadius: '4px', marginTop: '4px', zIndex: 50, maxHeight: '400px', overflowY: 'auto' }}>
+                    <div className="search-dropdown-custom-scroll" style={{ position: 'absolute', top: '100%', left: '10px', width: '300px', background: 'rgba(20,20,20,0.95)', border: '1px solid #333', borderRadius: '4px', marginTop: '4px', zIndex: 50, maxHeight: '400px', overflowY: 'auto' }}>
                       {searchResults.slice(0, 5).map((m: any) => (
                         <div key={m.id} onClick={() => { if (onSearchResultSelect) onSearchResultSelect(m); onSearchChange(''); setIsSearchOpen(false); }} style={{ display: 'flex', gap: '10px', padding: '10px', cursor: 'pointer', borderBottom: '1px solid #333' }}>
                           <img src={m.thumbnailUrl || m.posterUrl} alt={m.title} style={{ width: '80px', height: '45px', objectFit: 'cover', borderRadius: '2px' }} />
@@ -426,29 +430,31 @@ export const Navbar: React.FC<NavbarProps> = ({
               )}
             </div>
 
-            <div style={{ position: 'relative' }} ref={profileRef}>
-              <div onClick={() => setShowProfileDropdown(!showProfileDropdown)} style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
-                {currentProfile?.avatarUrl ? (
-                  <img src={currentProfile.avatarUrl} alt="Profile" style={{ width: '32px', height: '32px', borderRadius: (platform === 'nprime') ? '50%' : '4px', objectFit: 'cover' }} />
-                ) : (
-                  <img src={platform === 'nprime' ? 'https://m.media-amazon.com/images/G/01/digital/video/web/v2/default_avatar._CB1582236592_.png' : 'https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png'} alt="Profile" style={{ width: '32px', height: '32px', borderRadius: (platform === 'nprime') ? '50%' : '4px', objectFit: 'cover' }} />
-                )}
-                <ChevronDown size={14} color="#FFF" />
-              </div>
-
-              {showProfileDropdown && (
-                <div style={{ position: 'absolute', right: 0, top: '42px', width: '200px', background: (platform === 'nprime') ? 'var(--bg-elevated)' : 'rgba(0, 0, 0, 0.95)', border: '1px solid rgba(255, 255, 255, 0.15)', padding: '8px 0', borderRadius: (platform === 'nprime') ? '8px' : '4px', zIndex: 100 }}>
-                  {onOpenOnboardingModal && (
-                    <button onClick={() => { setShowProfileDropdown(false); onOpenOnboardingModal(); }} style={{ width: '100%', textAlign: 'left', padding: '8px 16px', background: 'none', border: 'none', color: '#FFF', fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <Globe size={15} color="var(--primary-color)" /> Language & Dub Settings
-                    </button>
+            {!showSignIn && (
+              <div style={{ position: 'relative' }} ref={profileRef}>
+                <div onClick={() => setShowProfileDropdown(!showProfileDropdown)} style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
+                  {currentProfile?.avatarUrl ? (
+                    <img src={currentProfile.avatarUrl} alt="Profile" style={{ width: '32px', height: '32px', borderRadius: (platform === 'nprime') ? '50%' : '4px', objectFit: 'cover' }} />
+                  ) : (
+                    <img src={platform === 'nprime' ? 'https://m.media-amazon.com/images/G/01/digital/video/web/v2/default_avatar._CB1582236592_.png' : 'https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png'} alt="Profile" style={{ width: '32px', height: '32px', borderRadius: (platform === 'nprime') ? '50%' : '4px', objectFit: 'cover' }} />
                   )}
-                  <button onClick={() => { setShowProfileDropdown(false); onOpenProfileModal(); }} style={{ width: '100%', textAlign: 'left', padding: '8px 16px', background: 'none', border: 'none', color: '#AAA', fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Settings size={15} /> Manage Profiles
-                  </button>
+                  <ChevronDown size={14} color="#FFF" />
                 </div>
-              )}
-            </div>
+
+                {showProfileDropdown && (
+                  <div style={{ position: 'absolute', right: 0, top: '42px', width: '200px', background: (platform === 'nprime') ? 'var(--bg-elevated)' : 'rgba(0, 0, 0, 0.95)', border: '1px solid rgba(255, 255, 255, 0.15)', padding: '8px 0', borderRadius: (platform === 'nprime') ? '8px' : '4px', zIndex: 100 }}>
+                    {onOpenOnboardingModal && (
+                      <button onClick={() => { setShowProfileDropdown(false); onOpenOnboardingModal(); }} style={{ width: '100%', textAlign: 'left', padding: '8px 16px', background: 'none', border: 'none', color: '#FFF', fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Globe size={15} color="var(--primary-color)" /> Language & Dub Settings
+                      </button>
+                    )}
+                    <button onClick={() => { setShowProfileDropdown(false); onOpenProfileModal(); }} style={{ width: '100%', textAlign: 'left', padding: '8px 16px', background: 'none', border: 'none', color: '#AAA', fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <Settings size={15} /> Manage Profiles
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </header>

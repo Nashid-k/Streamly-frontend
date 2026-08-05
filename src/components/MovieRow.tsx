@@ -51,7 +51,8 @@ export const MovieRow: React.FC<MovieRowProps> = ({
   const handleScroll = (direction: 'left' | 'right') => {
     if (rowRef.current) {
       const { scrollLeft, clientWidth } = rowRef.current;
-      const scrollTo = direction === 'left' ? scrollLeft - clientWidth * 0.75 : scrollLeft + clientWidth * 0.75;
+      // Account for 12px gap between cards in the 0.8 multiplier
+      const scrollTo = direction === 'left' ? scrollLeft - (clientWidth * 0.8) : scrollLeft + (clientWidth * 0.8);
       rowRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
     }
   };
@@ -198,9 +199,10 @@ export const MovieRow: React.FC<MovieRowProps> = ({
                   className="top10-number"
                   style={{
                     position: 'absolute',
-                    left: index === 0 ? '-10px' : '-2px',
+                    left: 0,
                     bottom: '-8px',
                     zIndex: 0,
+                    transform: index === 0 ? 'translateX(-12%)' : 'translateX(-6%)',
                   }}
                 >
                   {index + 1}

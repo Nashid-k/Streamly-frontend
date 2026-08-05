@@ -564,15 +564,17 @@ export default function Home() {
     };
   }, [platform]);
 
+  const currentSearchNonce = useRef(0);
   // Live Search Handling
   useEffect(() => {
     let isMounted = true;
     const timer = setTimeout(async () => {
       if (searchQuery.trim() !== '') {
         setIsSearching(true);
+        const nonce = ++currentSearchNonce.current;
         try {
           const response = await searchMovies(searchQuery.trim(), selectedGenreFilter);
-          if (isMounted) {
+          if (isMounted && nonce === currentSearchNonce.current) {
             setSearchResults(response.movies);
             setSearchActor(response.actor);
             response.movies.forEach((m: Movie) => allMoviesMapRef.current.set(m.id, m));
@@ -637,18 +639,31 @@ export default function Home() {
     },
     [top10Movies]
   );
+  const { moviesOnly, seriesOnly, animeOnly } = useMemo(() => {
+    const moviesOnly = [];
+    const seriesOnly = [];
+    const animeOnly = [];
+    for (const m of allMovies) {
+      if (m.isAnime) animeOnly.push(m);
+      else if (m.isSeries) seriesOnly.push(m);
+      else moviesOnly.push(m);
+    }
+    return { moviesOnly, seriesOnly, animeOnly };
+  }, [allMovies]);
+
   const top10MoviesList = useMemo(() => {
-    const movies = allMovies.filter(m => !m.isSeries && !m.isAnime && matchesPreferredLanguages(m));
-    return movies.sort((a, b) => b.matchScore - a.matchScore || b.releaseYear - a.releaseYear).slice(0, 10);
-  }, [allMovies]);
+    let movies = moviesOnly.filter(m => matchesPreferredLanguages(m));
+    if (movies.length === 0) movies = allMovies.filter(m => matchesPreferredLanguages(m));
+    return movies.slice(0, 10);
+  }, [moviesOnly, allMovies, matchesPreferredLanguages]);
+  
   const top10SeriesList = useMemo(() => {
-    const series = allMovies.filter(m => m.isSeries && !m.isAnime && matchesPreferredLanguages(m));
-    return series.sort((a, b) => b.matchScore - a.matchScore || b.releaseYear - a.releaseYear).slice(0, 10);
-  }, [allMovies]);
+    return seriesOnly.filter(m => matchesPreferredLanguages(m)).slice(0, 10);
+  }, [seriesOnly, matchesPreferredLanguages]);
+  
   const top10AnimeList = useMemo(() => {
-    const anime = allMovies.filter(m => m.isAnime && matchesPreferredLanguages(m));
-    return anime.sort((a, b) => b.matchScore - a.matchScore || b.releaseYear - a.releaseYear).slice(0, 10);
-  }, [allMovies]);
+    return animeOnly.filter(m => matchesPreferredLanguages(m)).slice(0, 10);
+  }, [animeOnly, matchesPreferredLanguages]);
   const languageFilteredCategories = useMemo(
     () => categories.map((category) => ({ ...category, movies: category.movies.filter(matchesPreferredLanguages) })),
     [categories]
@@ -833,7 +848,7 @@ export default function Home() {
         onOpenProfileModal={() => setShowProfileModal(true)}
         onOpenOnboardingModal={() => setShowOnboardingModal(true)}
         searchResults={searchResults}
-        onSearchResultSelect={handleSearchResultPlay}
+        onSearchResultSelect={handleOpenDetails}
         authToken={authToken}
         onSignInClick={() => setShowAuthModal(true)}
       />
@@ -953,8 +968,8 @@ export default function Home() {
               <MovieCard
                 key={movie.id}
                 movie={movie}
-                onPlay={handleSearchResultPlay}
-                onOpenDetails={handleSearchResultPlay}
+                onPlay={handlePlayMovie}
+                onOpenDetails={handleOpenDetails}
                 onToggleMyList={handleToggleMyList}
                 isMyList={myList.includes(movie.id)}
                 isSearchResult={true}

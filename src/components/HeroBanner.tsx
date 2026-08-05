@@ -79,26 +79,27 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
       );
     }
 
-    // Extract dominant color for dynamic theming
     if (onThemeColorChange && movie.backdropUrl) {
       const img = new Image();
       img.crossOrigin = 'Anonymous';
       img.onload = () => {
-        try {
-          const canvas = document.createElement('canvas');
-          canvas.width = 10; canvas.height = 10;
-          const ctx = canvas.getContext('2d');
-          if (ctx) {
-            ctx.drawImage(img, 0, 0, 10, 10);
-            const data = ctx.getImageData(0, 0, 10, 10).data;
-            let r = 0, g = 0, b = 0;
-            for (let i = 0; i < data.length; i += 4) { r += data[i]; g += data[i + 1]; b += data[i + 2]; }
-            const count = data.length / 4;
-            onThemeColorChange(`rgba(${Math.floor(r/count)}, ${Math.floor(g/count)}, ${Math.floor(b/count)}, 0.35)`);
+        requestAnimationFrame(() => {
+          try {
+            const canvas = document.createElement('canvas');
+            canvas.width = 10; canvas.height = 10;
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+              ctx.drawImage(img, 0, 0, 10, 10);
+              const data = ctx.getImageData(0, 0, 10, 10).data;
+              let r = 0, g = 0, b = 0;
+              for (let i = 0; i < data.length; i += 4) { r += data[i]; g += data[i + 1]; b += data[i + 2]; }
+              const count = data.length / 4;
+              onThemeColorChange(`rgba(${Math.floor(r/count)}, ${Math.floor(g/count)}, ${Math.floor(b/count)}, 0.35)`);
+            }
+          } catch (e) {
+            onThemeColorChange(null);
           }
-        } catch (e) {
-          onThemeColorChange(null);
-        }
+        });
       };
       img.onerror = () => onThemeColorChange(null);
       img.src = movie.backdropUrl;
@@ -469,9 +470,9 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
           </div>
 
           {/* Scroll Right Arrow */}
-          {carouselScrollIndex < Math.max(0, carouselMovies.slice(0, 8).length - 5) && (
+          {carouselScrollIndex < Math.max(0, carouselMovies.length - 5) && (
             <button
-              onClick={() => setCarouselScrollIndex(i => Math.min(carouselMovies.slice(0, 8).length - 5, i + 1))}
+              onClick={() => setCarouselScrollIndex(i => Math.min(carouselMovies.length - 5, i + 1))}
               style={{
                 background: 'rgba(15, 16, 20, 0.75)',
                 border: '1px solid rgba(255, 255, 255, 0.2)',

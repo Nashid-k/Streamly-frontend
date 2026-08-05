@@ -1022,3 +1022,4 @@ main.hotstar-main-content { padding-left: 96px; }
   }
 }
 
+.search-dropdown-custom-scroll::-webkit-scrollbar { width: 6px; } .search-dropdown-custom-scroll::-webkit-scrollbar-thumb { background: #555; border-radius: 3px; } .search-dropdown-custom-scroll::-webkit-scrollbar-track { background: transparent; }

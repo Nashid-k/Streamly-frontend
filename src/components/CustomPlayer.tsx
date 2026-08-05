@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import Hls from 'hls.js';
-import { Play, Pause, Volume2, VolumeX, Maximize, Settings, FastForward, Rewind, Mic, ArrowLeft, HelpCircle, Layers, Gauge, MonitorPlay, PictureInPicture } from 'lucide-react';
+import { Play, Pause, Volume2, VolumeX, Maximize, Settings, FastForward, Rewind, Mic, ArrowLeft, HelpCircle, Layers, Gauge, MonitorPlay, PictureInPicture, X } from 'lucide-react';
 import { usePlatform } from './PlatformContext';
 import { fetchIntroTimingsApi, updateContinueWatchingApi } from '../lib/api';
 
@@ -70,10 +70,11 @@ export const CustomPlayer = ({ streamUrl, movie, onBack, onNext, hasNext, onErro
     }
   };
 
-  const handleQualityChange = (level: number) => {
+  const handleQualityChange = (id: number) => {
     if (hlsRef.current) {
-      hlsRef.current.currentLevel = level;
-      setCurrentQuality(level);
+      hlsRef.current.currentLevel = id;
+      setCurrentQuality(id);
+      localStorage.setItem('player_preferred_quality', id.toString());
       setShowQualityMenu(false);
     }
   };
@@ -137,7 +138,9 @@ export const CustomPlayer = ({ streamUrl, movie, onBack, onNext, hasNext, onErro
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (isPlaying) syncContinueWatching();
+      if (isPlaying && videoRef.current && videoRef.current.readyState >= 3 && !videoRef.current.paused) {
+         syncContinueWatching();
+      }
     }, 15_000);
     return () => {
       clearInterval(interval);
@@ -165,6 +168,7 @@ export const CustomPlayer = ({ streamUrl, movie, onBack, onNext, hasNext, onErro
   useEffect(() => {
     if (!videoRef.current || !streamUrl) return;
 
+    let isMounted = true;
     let hls: Hls;
     if (Hls.isSupported()) {
       hls = new Hls({ 
@@ -178,15 +182,16 @@ export const CustomPlayer = ({ streamUrl, movie, onBack, onNext, hasNext, onErro
       hls.loadSource(streamUrl);
       hls.attachMedia(videoRef.current);
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        if (!isMounted) return;
         if (hls.audioTracks && hls.audioTracks.length > 1) {
-          setAudioTracks(hls.audioTracks.map((t, idx) => ({ id: idx, name: t.name || `Audio ${idx + 1}` })));
+          setAudioTracks(hls.audioTracks.map((t, idx) => ({ id: t.id !== undefined ? t.id : idx, name: t.name || `Audio ${idx + 1}` })));
           setCurrentAudioTrack(hls.audioTrack);
         } else {
           setAudioTracks([]);
         }
         
         if (hls.subtitleTracks && hls.subtitleTracks.length > 0) {
-          setSubtitleTracks(hls.subtitleTracks.map((t, idx) => ({ id: idx, name: t.name || `Subtitle ${idx + 1}` })));
+          setSubtitleTracks(hls.subtitleTracks.map((t, idx) => ({ id: t.id !== undefined ? t.id : idx, name: t.name || `Subtitle ${idx + 1}` })));
           setCurrentSubtitleTrack(hls.subtitleTrack);
         } else {
           setSubtitleTracks([]);
@@ -194,7 +199,13 @@ export const CustomPlayer = ({ streamUrl, movie, onBack, onNext, hasNext, onErro
 
         if (hls.levels && hls.levels.length > 1) {
           setQualities(hls.levels.map((l, idx) => ({ id: idx, height: l.height })));
-          setCurrentQuality(hls.currentLevel);
+          const savedQuality = localStorage.getItem('player_preferred_quality');
+          if (savedQuality !== null && !isNaN(Number(savedQuality))) {
+            hls.currentLevel = Number(savedQuality);
+            setCurrentQuality(Number(savedQuality));
+          } else {
+            setCurrentQuality(hls.currentLevel);
+          }
         } else {
           setQualities([]);
         }
@@ -236,8 +247,13 @@ export const CustomPlayer = ({ streamUrl, movie, onBack, onNext, hasNext, onErro
       if (saved && videoRef.current) {
         try {
           const parsed = JSON.parse(saved);
-          if (parsed && typeof parsed.cur === 'number' && parsed.cur > 5) {
+          if (parsed && typeof parsed === 'object' && typeof parsed.cur === 'number' && parsed.cur > 5) {
             videoRef.current.currentTime = parsed.cur;
+          } else {
+            const parsedFloat = parseFloat(saved);
+            if (!isNaN(parsedFloat) && parsedFloat > 5) {
+              videoRef.current.currentTime = parsedFloat;
+            }
           }
         } catch {
           // Fallback to legacy old format (just number)
@@ -250,7 +266,10 @@ export const CustomPlayer = ({ streamUrl, movie, onBack, onNext, hasNext, onErro
     }
 
     return () => {
-      if (hls) hls.destroy();
+      isMounted = false;
+      if (hls) {
+        hls.destroy();
+      }
     };
   }, [streamUrl, movie?.id]);
 
@@ -468,7 +487,7 @@ export const CustomPlayer = ({ streamUrl, movie, onBack, onNext, hasNext, onErro
       onMouseMove={handleMouseMove}
       onMouseLeave={() => setShowControls(false)}
       style={{
-        position: 'absolute', inset: 0, background: '#000', display: 'flex', flexDirection: 'column', zIndex: 10
+        position: 'absolute', inset: 0, background: '#000', display: 'flex', flexDirection: 'column', zIndex: 10, overflow: 'hidden'
       }}
     >
       <video
@@ -550,7 +569,7 @@ export const CustomPlayer = ({ streamUrl, movie, onBack, onNext, hasNext, onErro
       {/* Toast Notification (Speed, Volume, Seek feedback) */}
       {toastMessage && (
         <div style={{
-          position: 'absolute', top: '80px', left: '50%', transform: 'translateX(-50%)',
+          position: 'absolute', top: '100px', left: '50%', transform: 'translateX(-50%)',
           background: 'rgba(0,0,0,0.75)', color: '#fff', padding: '8px 18px', borderRadius: '20px',
           fontSize: '0.95rem', fontWeight: 600, backdropFilter: 'blur(10px)', pointerEvents: 'none',
           boxShadow: '0 4px 15px rgba(0,0,0,0.5)', zIndex: 25, transition: 'all 0.2s ease'
@@ -696,8 +715,13 @@ export const CustomPlayer = ({ streamUrl, movie, onBack, onNext, hasNext, onErro
           {/* Header & Tabs */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '12px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <h3 style={{ margin: 0, color: '#00A8E1', fontSize: '1.15rem', fontWeight: 800, letterSpacing: '0.04em', textTransform: 'uppercase' }}>X-Ray</h3>
-              <span style={{ fontSize: '0.75rem', color: '#00A8E1', background: 'rgba(0,168,225,0.15)', padding: '2px 8px', borderRadius: '4px', fontWeight: 700 }}>In Scene ({formatTime(currentTime)})</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <h3 style={{ margin: 0, color: '#00A8E1', fontSize: '1.15rem', fontWeight: 800, letterSpacing: '0.04em', textTransform: 'uppercase' }}>X-Ray</h3>
+                <span style={{ fontSize: '0.75rem', color: '#00A8E1', background: 'rgba(0,168,225,0.15)', padding: '2px 8px', borderRadius: '4px', fontWeight: 700 }}>In Scene ({formatTime(currentTime)})</span>
+              </div>
+              <button onClick={() => setShowXRay(false)} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', padding: '4px' }}>
+                <X size={18} />
+              </button>
             </div>
             <div style={{ display: 'flex', gap: '20px', fontSize: '0.85rem', fontWeight: 700 }}>
               <span 
