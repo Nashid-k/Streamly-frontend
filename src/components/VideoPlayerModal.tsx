@@ -370,23 +370,7 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({ movie, onClo
             position: 'absolute', top: '16px', left: '16px', zIndex: 20,
             display: 'flex', alignItems: 'center', gap: '10px', ...floatingTransition,
           }}>
-            <div style={{
-              width: '32px', height: '32px',
-              background: platform === 'hotstar' ? '#1F80E0' : platform === 'nprime' ? '#00A8E1' : '#E50914',
-              borderRadius: '8px', display: 'flex', alignItems: 'center',
-              justifyContent: 'center', fontWeight: 900, fontSize: '0.85rem', color: '#fff',
-              boxShadow: platform === 'hotstar' ? '0 0 12px rgba(31, 128, 224, 0.5)' : platform === 'nprime' ? '0 0 12px rgba(0, 168, 225, 0.5)' : '0 0 12px rgba(229, 9, 20, 0.5)'
-            }}>
-              {platform === 'hotstar' ? 'H+' : platform === 'nprime' ? 'P' : 'N'}
-            </div>
-            <div style={{
-              background: 'rgba(0,0,0,0.72)', backdropFilter: 'blur(12px)',
-              border: platform === 'hotstar' ? '1px solid rgba(31, 128, 224, 0.3)' : platform === 'nprime' ? '1px solid rgba(0, 168, 225, 0.3)' : '1px solid rgba(255,255,255,0.1)',
-              borderRadius: '8px',
-              padding: '5px 12px', fontSize: '0.8rem', fontWeight: 700, color: '#fff', maxWidth: '320px',
-            }}>
-              {activeMovie.title}
-            </div>
+            {/* Removed Logo and Title per user request */}
             {nextEpisode && !sourceLoading && !sourceFailed && (
               <button
                 onClick={(e) => { e.stopPropagation(); playNextEpisode(); }}
@@ -425,21 +409,27 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({ movie, onClo
                 {currentSource ? `Server ${sourceIndex + 1}` : 'Server'} {showServerList ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
               </button>
               {showServerList && (
-                <div style={{
-                  position: 'absolute', top: 'calc(100% + 8px)', right: 0,
-                  background: 'rgba(10,10,10,0.97)', border: '1px solid rgba(255,255,255,0.1)',
-                  borderRadius: '12px', padding: '8px 0', minWidth: '180px', zIndex: 400,
-                }}>
-                  {allSources.map((s, i) => (
-                    <div key={s.name} onClick={() => chooseSource(i)} style={{
-                      padding: '9px 14px', cursor: 'pointer', fontSize: '0.82rem',
-                      color: i === sourceIndex ? '#fff' : 'rgba(255,255,255,0.6)',
-                      background: i === sourceIndex ? 'rgba(229,9,20,0.18)' : 'transparent',
-                    }}>
-                      {`Server ${i + 1}`}
-                    </div>
-                  ))}
-                </div>
+                <>
+                  <div 
+                    style={{ position: 'fixed', inset: 0, zIndex: 399 }} 
+                    onClick={(e) => { e.stopPropagation(); setShowServerList(false); }} 
+                  />
+                  <div style={{
+                    position: 'absolute', top: 'calc(100% + 8px)', right: 0,
+                    background: 'rgba(10,10,10,0.97)', border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: '12px', padding: '8px 0', minWidth: '180px', zIndex: 400,
+                  }}>
+                    {allSources.map((s, i) => (
+                      <div key={s.name} onClick={() => chooseSource(i)} style={{
+                        padding: '9px 14px', cursor: 'pointer', fontSize: '0.82rem',
+                        color: i === sourceIndex ? '#fff' : 'rgba(255,255,255,0.6)',
+                        background: i === sourceIndex ? 'rgba(229,9,20,0.18)' : 'transparent',
+                      }}>
+                        {`Server ${i + 1}`}
+                      </div>
+                    ))}
+                  </div>
+                </>
               )}
             </div>
             <button onClick={onClose} style={{
