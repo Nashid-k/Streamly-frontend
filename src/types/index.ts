@@ -39,6 +39,7 @@ export interface Movie {
   embedUrl?: string;
   sources?: StreamSource[];
   matchScore: number;
+  score?: number;
   releaseYear: number;
   releaseDate?: string;
   isUpcoming?: boolean;

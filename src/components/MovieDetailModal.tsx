@@ -572,6 +572,9 @@ function HotstarModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
   const { isMuted, toggleMute, renderTrailer, hasTrailer } = useTrailerPlayer(displayMovie?.trailerUrl || '', movie?.backdropUrl || movie?.posterUrl || '');
 
   if (!movie) return null;
+  const matchScore = (displayMovie?.matchScore || parseInt(movie.id.replace(/\D/g, '') || '0') % 30 + 70);
+  const rawScore = displayMovie?.score || (matchScore / 10);
+  const ratingText = rawScore > 0 ? `${rawScore.toFixed(1)} / 10` : 'N/A';
 
   return (
     <div className="modal-overlay" onClick={onClose} style={{
