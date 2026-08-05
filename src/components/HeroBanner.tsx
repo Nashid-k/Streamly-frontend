@@ -165,7 +165,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
           inset: 0,
           backgroundImage: enrichedMovie.backdropUrl
             ? platform === 'hotstar'
-              ? `linear-gradient(180deg, rgba(15,16,20,0) 0%, rgba(15,16,20,0.4) 60%, rgba(15,16,20,1) 100%), linear-gradient(90deg, rgba(15,16,20,1) 0%, rgba(15,16,20,0) 75%), url(${enrichedMovie.backdropUrl})`
+              ? `linear-gradient(90deg, rgba(15,16,20,0.8) 0%, rgba(15,16,20,0) 75%), url(${enrichedMovie.backdropUrl})`
               : platform === 'nprime'
               ? `linear-gradient(180deg, rgba(15,23,30,0.5) 0%, rgba(15,23,30,0.2) 50%, rgba(15,23,30,1) 100%), linear-gradient(90deg, rgba(15,23,30,0.95) 0%, rgba(15,23,30,0) 65%), url(${enrichedMovie.backdropUrl})`
               : `linear-gradient(180deg, rgba(20,20,20,0.5) 0%, rgba(20,20,20,0.2) 50%, rgba(20,20,20,1) 100%), linear-gradient(90deg, rgba(20,20,20,0.85) 0%, rgba(20,20,20,0) 65%), url(${enrichedMovie.backdropUrl})`
@@ -173,6 +173,9 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
           backgroundSize: 'cover',
           backgroundPosition: 'center top',
           zIndex: 0,
+          WebkitMaskImage: platform === 'hotstar' 
+            ? 'linear-gradient(to top, transparent 0%, black 50%, black 100%)' 
+            : 'none',
         }}
       />
       
@@ -186,7 +189,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
           inset: 0,
           backgroundImage: enrichedMovie.posterUrl 
             ? platform === 'hotstar'
-              ? `linear-gradient(180deg, rgba(15,16,20,0) 50%, rgba(15,16,20,0.8) 80%, rgba(15,16,20,1) 100%), url(${enrichedMovie.posterUrl})`
+              ? `linear-gradient(180deg, rgba(15,16,20,0) 0%, rgba(15,16,20,0.2) 50%, rgba(15,16,20,0.8) 100%), url(${enrichedMovie.posterUrl})`
               : platform === 'nprime'
               ? `linear-gradient(180deg, rgba(15,23,30,0) 50%, rgba(15,23,30,0.8) 80%, rgba(15,23,30,1) 100%), url(${enrichedMovie.posterUrl})`
               : `linear-gradient(180deg, rgba(20,20,20,0) 50%, rgba(20,20,20,0.8) 80%, rgba(20,20,20,1) 100%), url(${enrichedMovie.posterUrl})`
@@ -194,6 +197,9 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           zIndex: 0,
+          WebkitMaskImage: platform === 'hotstar'
+            ? 'linear-gradient(to top, transparent 0%, black 50%, black 100%)'
+            : 'none',
         }}
       />
 
