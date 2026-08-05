@@ -693,12 +693,12 @@ export default function Home() {
       return [`${prefix}-movies`, `${prefix}-series`];
     });
     const baseIds = activeTab === 'movies'
-      ? ['trending-movies', 'recently-added-movies', 'popular-movies', 'top-rated-movies', 'upcoming-movies', 'leaving-soon-movies']
+      ? ['trending-movies', 'indian-cinema-hits', 'recently-added-movies', 'popular-movies', 'top-rated-movies', 'upcoming-movies', 'leaving-soon-movies']
       : activeTab === 'series'
         ? ['trending-series', 'recently-added-series', 'popular-series', 'top-rated-series', 'upcoming-series']
         : activeTab === 'anime'
           ? ['trending-anime', 'recently-added-anime', 'popular-anime', 'top-rated-anime', 'upcoming-anime', 'anime-action', 'anime-fantasy', 'anime-comedy']
-          : ['trending-movies', 'recently-added-movies', 'popular-movies', 'top-rated-movies', 'upcoming-movies', 'leaving-soon-movies', 'trending-series', 'recently-added-series', 'popular-series', 'top-rated-series', 'upcoming-series', 'trending-anime', 'popular-anime', 'upcoming-anime'];
+          : ['trending-movies', 'indian-cinema-hits', 'recently-added-movies', 'popular-movies', 'top-rated-movies', 'upcoming-movies', 'leaving-soon-movies', 'trending-series', 'recently-added-series', 'popular-series', 'top-rated-series', 'upcoming-series', 'trending-anime', 'popular-anime', 'upcoming-anime'];
     const samePageRegional = nonEmpty
       .filter((category) => activeTab === 'movies' ? category.id.endsWith('-movies') : activeTab === 'series' ? category.id.endsWith('-series') : activeTab === 'home')
       .map((category) => category.id);
@@ -717,7 +717,7 @@ export default function Home() {
       .filter((category) => category.movies.length > 0)
       // Keep every matching rail when a genre is selected; the compact ten-rail
       // cap is only for the unfiltered homepage.
-      .slice(0, selectedGenreFilter === 'All' ? 20 : 100);
+      .slice(0, selectedGenreFilter === 'All' ? 40 : 100);
   }, [discoveryCategories, selectedBrowseLanguages, activeTab, selectedGenreFilter]);
   const heroCandidates = useMemo(() => {
     const matchesTab = (movie: Movie) => {
