@@ -35,7 +35,8 @@ function useMovieDetails(movie: Movie | null, selectedSeason: number, platform: 
     setIsLoadingDetails(true);
     
     // Fetch full movie details
-    fetchMovieById(movie.id)
+    const fetchPlatform = movie.platform || platform;
+    fetchMovieById(movie.id, fetchPlatform)
       .then(data => { 
         if (isMounted) {
           setDetailedMovie(data);
@@ -65,7 +66,8 @@ function useMovieDetails(movie: Movie | null, selectedSeason: number, platform: 
     }
     
     setIsLoadingEpisodes(true);
-    fetchSeasonEpisodes(movie.id, selectedSeason)
+    const fetchPlatform = movie.platform || platform;
+    fetchSeasonEpisodes(movie.id, selectedSeason, fetchPlatform)
       .then(data => { 
         if (isMounted) {
           const epData = Array.isArray(data) ? data : [];
@@ -787,7 +789,8 @@ function RecommendationsSection({ movie, onOpenDetails }: { movie: Movie; onOpen
     const timer = setTimeout(async () => {
       setLoading(true);
       try {
-        const results = await fetchRecommendationsApi(movie.id, platform);
+        const fetchPlatform = movie.platform || platform;
+        const results = await fetchRecommendationsApi(movie.id, fetchPlatform);
         setRecs(results.slice(0, 12));
       } catch {}
       setLoading(false);
