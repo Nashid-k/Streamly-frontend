@@ -1,29 +1,51 @@
-# AIOS-ALL IN ONE STREAM Frontend
+# 🎬 StreamUI Frontend (Next.js)
 
-This is the Next.js frontend for the AIOS-ALL IN ONE STREAM catalog application, featuring themes for Netflix, Prime Video, and Hotstar!
+Welcome to the **StreamUI Frontend**, a highly responsive, cinematic streaming interface built with modern web technologies. This application is engineered to deliver an authentic, premium user experience akin to industry leaders like Netflix, Prime Video, and Disney+ Hotstar.
 
-## 🚀 Recent Updates & Features
-- **UI Polish & Perfection:** Resolved 10+ UI alignment issues (including Search dropdown custom scrollbars, Hotstar carousel bounds, and Hero Canvas extraction). 
-- **Performance Fixes:** Drastically improved frontend filtering by pre-processing arrays. Implemented RequestAnimationFrame for heavy canvas paint operations.
-- **Player Enhancements:** Fixed HLS component memory leaks. Added local storage persistence for preferred video quality and subtitle selections.
-- **Feature Addition:** Integrated native IMDb rating badges across all movie detail modals!
+## ✨ Features
 
-## Configuration
+- **Premium UX/UI:** Glassmorphic navigation, smooth 300ms peek-UI card expansions, and satisfying button ripple micro-interactions.
+- **Cinematic Hero Banners:** Edge-to-edge billboards featuring auto-playing background trailers and bold typography.
+- **Magnetic Carousels:** CSS scroll-snapping ensures movie rows glide perfectly into place.
+- **Multi-Platform Theming:** Switch instantly between themes (Netflix, Prime, Hotstar) with dedicated color palettes and CSS variables.
+- **Smart Search & AI Filtering:** Search the entire catalog in real-time, or let AI apply smart filters based on complex queries.
+- **Cross-Platform PWA:** Installable as a Progressive Web App for a native app feel on mobile devices.
 
-Local development uses environment files:
+## 🚀 Getting Started
 
-Copy `frontend/.env.example` to `frontend/.env.local`. Set `NEXT_PUBLIC_API_URL` to the browser-reachable API URL.
+### Prerequisites
+- [Node.js](https://nodejs.org/) (v18+)
+- npm or yarn
 
-Never place TMDB credentials in `frontend/.env.local` or prefix them with `NEXT_PUBLIC_`: all such values are included in the browser bundle.
+### Installation
 
-## Deployment
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
 
-Deploy the frontend and backend as separate services.
+2. **Configure Environment Variables:**
+   Create a `.env.local` file in the root of the `frontend` directory and add your API endpoints or secrets (e.g., your backend URL).
+   ```env
+   NEXT_PUBLIC_API_URL=http://localhost:3001
+   ```
 
-- Frontend: set only `NEXT_PUBLIC_API_URL=https://your-api.example/api` in the frontend build environment, then run `npm run build` and `npm run start`.
+3. **Run the Development Server:**
+   ```bash
+   npm run dev
+   ```
 
-`NEXT_PUBLIC_API_URL` is evaluated at build time, so rebuild the frontend whenever the API URL changes. Do not rely on a root `.env`: the backend and Next.js frontend load their own environment scopes.
+4. **Open in Browser:**
+   Navigate to [http://localhost:3000](http://localhost:3000) to see the magic happen!
 
-## Playback
+## 🛠️ Tech Stack
+- **Framework:** Next.js (React)
+- **Styling:** Custom CSS with Premium Keyframe Animations & CSS Variables
+- **Icons:** Lucide React
+- **Motion:** Framer Motion (for page transitions)
 
-Metadata and playback are separate. Set `NEXT_PUBLIC_LICENSED_PLAYBACK_ORIGIN` only if you operate or are licensed to use that HTTPS media origin. The UI does not send users through third-party embed services.
+## 🎨 Design Philosophy
+The UI is driven by an obsessive focus on detail:
+- **Typography:** Tight letter-spacing for headers, giving a cinematic, heavy weight.
+- **Feedback:** Every interaction (from clicking a button to hovering a card) provides immediate, satisfying visual feedback.
+- **Layout:** Utilizing modern CSS Grid (`.classic-grid`) for flawless responsiveness across mobile, tablet, and ultra-wide displays.

@@ -507,3 +507,11 @@
   color: #FFF;
   font-size: 0.75rem;
 }
+
+
+.movie-card:hover {
+  transition-delay: 300ms;
+}
+.expanding-meta {
+  transition-delay: 300ms;
+}

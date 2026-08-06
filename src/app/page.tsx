@@ -852,7 +852,7 @@ export default function Home() {
           </button>
         </div>
         {matchingMovies.length > 0 ? (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '20px' }}>
+          <div className="classic-grid">
             {matchingMovies.map((movie) => (
               <MovieCard
                 key={movie.id}
