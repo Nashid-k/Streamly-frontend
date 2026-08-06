@@ -351,10 +351,10 @@ export const MovieCard: React.FC<MovieCardProps> = ({
         position: 'relative',
         flexShrink: 0,
         width: '100%',
-          aspectRatio: '16/9',
-          height: 'auto',
-          maxWidth: `${netflixWidth}px`,
-          minWidth: '140px',
+        aspectRatio: top10Rank !== undefined ? '2/3' : '16/9',
+        height: 'auto',
+        maxWidth: `${netflixWidth}px`,
+        minWidth: top10Rank !== undefined ? '100px' : '140px',
         borderRadius: '4px',
         cursor: 'pointer',
         zIndex: isHovered ? 50 : 1,
@@ -365,7 +365,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
       <div className="netflix-card-inner" style={{
         position: 'absolute',
         top: 0, left: 0,
-        width: `${netflixWidth}px`,
+        width: '100%',
         background: '#141414',
         borderRadius: '4px',
         boxShadow: isHovered ? '0 14px 28px rgba(0,0,0,0.9), 0 10px 10px rgba(0,0,0,0.8)' : 'none',
@@ -409,14 +409,14 @@ export const MovieCard: React.FC<MovieCardProps> = ({
                 setIsImageLoaded(true); 
               }
             }}
-            style={{ width: '100%', height: `${netflixHeight}px`, objectFit: 'cover', borderRadius: isHovered ? '4px 4px 0 0' : '4px', opacity: isImageLoaded ? 1 : 0 }}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', aspectRatio: top10Rank !== undefined ? '2/3' : '16/9', borderRadius: isHovered ? '4px 4px 0 0' : '4px', opacity: isImageLoaded ? 1 : 0 }}
           />
         ) : imgSrc === 'broken' ? (
           <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #1f2937 0%, #111827 100%)', textAlign: 'center', padding: '10px' }}>
              <span style={{ fontSize: '0.85rem', fontWeight: 'bold', color: '#888' }}>{movie.title}</span>
           </div>
 ) : (
-          <div style={{ width: '100%', height: `${netflixHeight}px`, background: 'linear-gradient(135deg, #1f1f1f 0%, #111111 100%)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '12px', textAlign: 'center', borderRadius: '4px' }}>
+          <div style={{ width: '100%', height: '100%', aspectRatio: top10Rank !== undefined ? '2/3' : '16/9', background: 'linear-gradient(135deg, #1f1f1f 0%, #111111 100%)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '12px', textAlign: 'center', borderRadius: '4px' }}>
             <Film size={24} color="#E50914" className="moviecard-elem-4398e5" />
             <span className="moviecard-elem-458a1e">{movie.title}</span>
           </div>
