@@ -371,6 +371,13 @@ input:focus-visible,
   padding: 0 4%;
 }
 
+.classic-grid div.movie-card {
+  width: 100% !important;
+  height: auto !important;
+  flex: none !important;
+}
+
+
 /* Authentic Desktop Base Card Styles */
 div.movie-card.netflix-card, div.movie-card.nprime-card { 
   width: 100%; 

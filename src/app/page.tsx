@@ -843,8 +843,8 @@ export default function Home() {
   const renderFilteredGrid = (title: string, filterFn: (m: Movie) => boolean) => {
     const matchingMovies = allMovies.filter((m) => filterFn(m) && hasGenre(m, selectedGenreFilter));
     return (
-      <div style={{ padding: '20px 4%' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+      <div style={{ padding: '20px 0' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', padding: '0 4%' }}>
           <h3 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#FFF' }}>
             {title}
           </h3>
