@@ -83,12 +83,12 @@ function useMovieDetails(movie: Movie | null, selectedSeason: number, platform: 
 }
 
 const EpisodeSkeleton = () => (
-  <div style={{ display: 'flex', gap: '20px', padding: '16px', borderRadius: '12px', backgroundColor: 'rgba(255,255,255,0.04)', alignItems: 'center' }}>
-    <div style={{ width: '160px', height: '90px', borderRadius: '8px', backgroundColor: 'rgba(255,255,255,0.08)', animation: 'pulse 1.5s ease-in-out infinite', flexShrink: 0 }} />
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '10px' }}>
-      <div style={{ width: '40%', height: '18px', borderRadius: '4px', backgroundColor: 'rgba(255,255,255,0.1)', animation: 'pulse 1.5s ease-in-out infinite' }} />
-      <div style={{ width: '85%', height: '14px', borderRadius: '4px', backgroundColor: 'rgba(255,255,255,0.06)', animation: 'pulse 1.5s ease-in-out infinite' }} />
-      <div style={{ width: '20%', height: '12px', borderRadius: '4px', backgroundColor: 'rgba(255,255,255,0.06)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+  <div className="episode-skeleton">
+    <div className="episode-skeleton-img" />
+    <div className="episode-skeleton-info">
+      <div className="episode-skeleton-title" />
+      <div className="episode-skeleton-desc" />
+      <div className="episode-skeleton-meta" />
     </div>
   </div>
 );
@@ -220,7 +220,7 @@ function NetflixModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
   const ratingText = rawScore > 0 ? `${rawScore.toFixed(1)} / 10` : 'N/A';
 
   return (
-    <div className="modal-overlay" onClick={onClose} style={{
+    <div className="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title" onClick={onClose} style={{
       position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', justifyContent: 'center', alignItems: 'flex-start',
       backgroundColor: 'rgba(0,0,0,0.7)', overflowY: 'auto', padding: '32px 0'
     }}>
@@ -232,7 +232,7 @@ function NetflixModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
         animation: 'scaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1)', color: '#FFF', display: 'flex', flexDirection: 'column',
         border: platform === 'hotstar' ? '1px solid rgba(31, 128, 224, 0.3)' : platform === 'nprime' ? '1px solid rgba(0, 168, 225, 0.3)' : '1px solid rgba(255,255,255,0.1)'
       }}>
-        <button onClick={onClose} style={{
+        <button onClick={onClose} autoFocus aria-label="Close modal" style={{
           position: 'absolute', top: '16px', right: '16px', width: '36px', height: '36px',
           borderRadius: '50%',
           backgroundColor: platform === 'hotstar' ? 'rgba(15,16,20,0.8)' : platform === 'nprime' ? 'rgba(15,23,30,0.8)' : '#181818',
@@ -441,7 +441,7 @@ function PrimeModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, isM
   const ratingText = rawScore > 0 ? `${rawScore.toFixed(1)}` : 'N/A';
 
   return (
-    <div className="modal-overlay" onClick={onClose} style={{
+    <div className="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title" onClick={onClose} style={{
       position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', justifyContent: 'center', alignItems: 'center',
       backgroundColor: 'rgba(0,0,0,0.8)', padding: '20px', overflowY: 'auto'
     }}>
@@ -450,7 +450,7 @@ function PrimeModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, isM
         overflow: 'hidden', position: 'relative', color: '#FFF', display: 'flex', flexDirection: 'column',
         boxShadow: '0 20px 60px rgba(0,0,0,0.8)', animation: 'fadeIn 0.3s ease', maxHeight: '90vh'
       }}>
-        <button onClick={onClose} style={{
+        <button onClick={onClose} autoFocus aria-label="Close modal" style={{
           position: 'absolute', top: '20px', right: '20px', width: '40px', height: '40px',
           borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.1)', border: 'none', color: '#FFF',
           display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 40, cursor: 'pointer'
@@ -619,7 +619,7 @@ function HotstarModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
   const ratingText = rawScore > 0 ? `${rawScore.toFixed(1)} / 10` : 'N/A';
 
   return (
-    <div className="modal-overlay" onClick={onClose} style={{
+    <div className="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title" onClick={onClose} style={{
       position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', justifyContent: 'center', alignItems: 'center',
       backgroundColor: 'rgba(0,0,0,0.85)', padding: '20px', overflowY: 'auto'
     }}>
@@ -628,7 +628,7 @@ function HotstarModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
         overflow: 'hidden', position: 'relative', color: '#FFF', display: 'flex', flexDirection: 'column',
         boxShadow: '0 20px 60px rgba(0,0,0,0.9)', maxHeight: '90vh'
       }}>
-        <button onClick={onClose} style={{
+        <button onClick={onClose} autoFocus aria-label="Close modal" style={{
           position: 'absolute', top: '24px', right: '24px', width: '36px', height: '36px',
           borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.1)', border: 'none', color: '#FFF',
           display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 40, cursor: 'pointer'

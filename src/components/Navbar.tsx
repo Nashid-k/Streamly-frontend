@@ -386,7 +386,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
 
             <div style={{ position: 'relative' }} ref={profileRef}>
-              <div onClick={() => setShowProfileDropdown(!showProfileDropdown)} style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
+              <div role="button" tabIndex={0} aria-expanded={showProfileDropdown} aria-label="Profile Menu" onKeyDown={(e) => { if(e.key === 'Enter') setShowProfileDropdown(!showProfileDropdown); }} onClick={() => setShowProfileDropdown(!showProfileDropdown)} style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
                 {currentProfile?.avatarUrl ? (
                   <img src={currentProfile.avatarUrl} alt="Profile" style={{ width: '32px', height: '32px', borderRadius: (platform === 'nprime') ? '50%' : '4px', objectFit: 'cover' }} />
                 ) : (

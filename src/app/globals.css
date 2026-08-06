@@ -1033,3 +1033,31 @@ button:active {
   transform: scale(0.95);
 }
 img { -webkit-user-drag: none; user-select: none; }
+
+/* A11y & Skeleton Fixes */
+.episode-skeleton {
+  display: flex; gap: 20px; padding: 16px; border-radius: 12px; background-color: rgba(255,255,255,0.04); align-items: center;
+}
+.episode-skeleton-img {
+  width: 160px; height: 90px; border-radius: 8px; background-color: rgba(255,255,255,0.08); animation: pulse 1.5s ease-in-out infinite; flex-shrink: 0;
+}
+.episode-skeleton-info {
+  flex: 1; display: flex; flex-direction: column; gap: 10px;
+}
+.episode-skeleton-title {
+  width: 40%; height: 18px; border-radius: 4px; background-color: rgba(255,255,255,0.1); animation: pulse 1.5s ease-in-out infinite;
+}
+.episode-skeleton-desc {
+  width: 85%; height: 14px; border-radius: 4px; background-color: rgba(255,255,255,0.06); animation: pulse 1.5s ease-in-out infinite;
+}
+.episode-skeleton-meta {
+  width: 20%; height: 12px; border-radius: 4px; background-color: rgba(255,255,255,0.06); animation: pulse 1.5s ease-in-out infinite;
+}
+
+.custom-search-input:focus-visible {
+  outline: 2px solid var(--primary-color) !important;
+  outline-offset: 2px;
+}
+
+.trailer-visible { opacity: 1; transition: opacity 0.8s ease; }
+.trailer-hidden { opacity: 0; transition: opacity 0.8s ease; pointer-events: none; }
