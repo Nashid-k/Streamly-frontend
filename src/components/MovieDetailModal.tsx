@@ -29,7 +29,7 @@ function renderPlatformBadges(availablePlatforms?: string[]) {
       {availablePlatforms.map((label) => {
         if (label === 'Netflix') return <img key="Netflix" src="https://assets.nflxext.com/ffe/siteui/common/icons/nficon2016.ico" title="Available on Netflix" style={{width: '26px', height: '26px', borderRadius: '4px', objectFit: 'contain', background: '#000', padding: '2px', boxShadow: '0 2px 8px rgba(0,0,0,0.8)'}} />;
         if (label === 'Prime Video') return <img key="Prime Video" src="https://www.primevideo.com/favicon.ico" title="Available on Prime Video" style={{width: '26px', height: '26px', borderRadius: '4px', objectFit: 'contain', background: '#000', padding: '2px', boxShadow: '0 2px 8px rgba(0,0,0,0.8)'}} />;
-        if (label === 'Hotstar') return <img key="Hotstar" src="https://secure-media.hotstarext.com/web-assets/prod/images/favicon.ico" title="Available on Disney+ Hotstar" style={{width: '26px', height: '26px', borderRadius: '4px', objectFit: 'contain', background: '#000', padding: '2px', boxShadow: '0 2px 8px rgba(0,0,0,0.8)'}} />;
+        if (label === 'Hotstar') return <img key="Hotstar" src="https://secure-media.hotstar.com/web-assets/prod/jhs_favicon.ico" title="Available on Disney+ Hotstar" style={{width: '26px', height: '26px', borderRadius: '4px', objectFit: 'contain', background: '#000', padding: '2px', boxShadow: '0 2px 8px rgba(0,0,0,0.8)'}} />;
         return null;
       })}
     </div>

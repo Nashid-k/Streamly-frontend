@@ -65,7 +65,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
       return <img key="Prime Video" src="https://www.primevideo.com/favicon.ico" title="Available on Prime Video" className="moviecard-elem-115c67" style={{objectFit: 'contain', padding: '2px'}} />;
     }
     if (label === 'Hotstar') {
-      return <img key="Hotstar" src="https://secure-media.hotstarext.com/web-assets/prod/images/favicon.ico" title="Available on Disney+ Hotstar" className="moviecard-elem-cf56c6" style={{objectFit: 'contain', padding: '2px'}} />;
+      return <img key="Hotstar" src="https://secure-media.hotstar.com/web-assets/prod/jhs_favicon.ico" title="Available on Disney+ Hotstar" className="moviecard-elem-cf56c6" style={{objectFit: 'contain', padding: '2px'}} />;
     }
     return null;
   };
