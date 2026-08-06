@@ -28,8 +28,9 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({ movie, onClo
   const decodeSourceUrl = (encodedUrl: string): string => {
     if (!encodedUrl) return '';
     try {
+      const secret = process.env.NEXT_PUBLIC_URL_ENCRYPTION_KEY || 'STREAMLY_SECURE';
       const b64 = atob(encodedUrl);
-      return b64.split('').map((c) => String.fromCharCode(c.charCodeAt(0) ^ 42)).join('');
+      return b64.split('').map((c, i) => String.fromCharCode(c.charCodeAt(0) ^ secret.charCodeAt(i % secret.length))).join('');
     } catch {
       return '';
     }

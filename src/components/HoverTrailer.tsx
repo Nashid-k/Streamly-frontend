@@ -13,12 +13,15 @@ export const HoverTrailer: React.FC<HoverTrailerProps> = ({ trailerUrl, isMuted 
   const decodeTrailerUrl = (encodedUrl: string): string => {
     if (!encodedUrl) return '';
     if (encodedUrl.includes('youtube.com/embed')) return encodedUrl;
+
     try {
+      const secret = process.env.NEXT_PUBLIC_URL_ENCRYPTION_KEY || 'STREAMLY_SECURE';
       const b64 = atob(encodedUrl);
-      return b64.split('').map((c) => String.fromCharCode(c.charCodeAt(0) ^ 42)).join('');
+      return b64.split('').map((c, i) => String.fromCharCode(c.charCodeAt(0) ^ secret.charCodeAt(i % secret.length))).join('');
     } catch {
       return encodedUrl;
     }
+
   };
 
   const decodedUrl = decodeTrailerUrl(trailerUrl);
