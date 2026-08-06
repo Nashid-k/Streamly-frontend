@@ -203,14 +203,40 @@ export async function fetchIntroTimingsApi(
 ): Promise<{ hasIntro: boolean; startSeconds: number; endSeconds: number }> {
   const p = platform || getPlatform();
   const params = new URLSearchParams({ platform: p });
-  if (season) params.set('season', String(season));
   if (episode) params.set('episode', String(episode));
+  
   try {
     return await request<{ hasIntro: boolean; startSeconds: number; endSeconds: number }>(
-      `/movies/${movieId}/intro?${params}`,
-      86_400_000, // 24hr cache
+      `/movies/${movieId}/intro?${params.toString()}`,
+      3600_000
     );
-  } catch {
+  } catch (e) {
     return { hasIntro: false, startSeconds: 0, endSeconds: 0 };
+  }
+}
+
+export const fetchSkipIntroTiming = async (movieId: string, platform = getPlatform()) => {
+  try {
+    return await request<{ hasIntro: boolean; startSeconds: number; endSeconds: number }>(
+      `/movies/${movieId}/skip-intro?platform=${platform}`,
+      3600_000
+    );
+  } catch (e) {
+    return { hasIntro: false, startSeconds: 0, endSeconds: 0 };
+  }
+};
+
+export async function fetchAIRecommendations(historyTitles: string[]): Promise<string[]> {
+  try {
+    const res = await fetch('/api/ai-recommend', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ history: historyTitles })
+    });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.recommendations || [];
+  } catch {
+    return [];
   }
 }

@@ -34,6 +34,7 @@ import {
   prewarmPlatformCatalogs,
   fetchContinueWatchingApi,
   getAuthToken,
+  fetchAIRecommendations,
 } from '../lib/api';
 
 import { Film, ArrowUp, Filter, LogIn, Sparkles } from 'lucide-react';
@@ -219,6 +220,8 @@ export default function Home() {
 
   // Continue Watching List
   const [continueWatching, setContinueWatching] = useState<Movie[]>([]);
+  const [aiRecommendations, setAiRecommendations] = useState<Movie[]>([]);
+  const [isAiRecsLoading, setIsAiRecsLoading] = useState(false);
   // Auth state
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authToken, setAuthToken] = useState<string | null>(null);
@@ -628,6 +631,29 @@ export default function Home() {
     };
   }, [platform]);
 
+  // Load AI Recommendations based on watch history
+  useEffect(() => {
+    let isMounted = true;
+    if (hasCompletedInitialLoad && continueWatching.length > 0 && aiRecommendations.length === 0 && !isAiRecsLoading) {
+      setIsAiRecsLoading(true);
+      const historyTitles = continueWatching.slice(0, 3).map(m => m.title);
+      fetchAIRecommendations(historyTitles).then(titles => {
+        if (!isMounted) return;
+        if (titles.length > 0) {
+          Promise.all(titles.map(t => searchMovies(t, 'All').then(res => res.movies[0]))).then(results => {
+            if (!isMounted) return;
+            const valid = results.filter(Boolean) as Movie[];
+            setAiRecommendations(valid);
+            setIsAiRecsLoading(false);
+          }).catch(() => { if (isMounted) setIsAiRecsLoading(false); });
+        } else {
+          setIsAiRecsLoading(false);
+        }
+      }).catch(() => { if (isMounted) setIsAiRecsLoading(false); });
+    }
+    return () => { isMounted = false; };
+  }, [hasCompletedInitialLoad, continueWatching.length, aiRecommendations.length]);
+
   const currentSearchNonce = useRef(0);
   // Live Search Handling
   useEffect(() => {
@@ -1025,6 +1051,16 @@ export default function Home() {
                       <MovieRow
                         title={`Continue Watching for ${currentProfile?.name || 'You'}`}
                         movies={continueWatching.filter(matchesPreferredLanguages)}
+                        onPlay={(m) => handlePlayMovie(m)}
+                        onOpenDetails={handleOpenDetails}
+                        onToggleMyList={handleToggleMyListWithToast}
+                        myList={myList}
+                      />
+                    )}
+                    {aiRecommendations.length > 0 && (
+                      <MovieRow
+                        title={`✨ AI Recommended for You`}
+                        movies={aiRecommendations.filter(matchesPreferredLanguages)}
                         onPlay={(m) => handlePlayMovie(m)}
                         onOpenDetails={handleOpenDetails}
                         onToggleMyList={handleToggleMyListWithToast}
