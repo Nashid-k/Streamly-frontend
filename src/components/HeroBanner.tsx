@@ -279,7 +279,8 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
         {/* Action Buttons */}
         <div className="hero-actions-row herobanner-elem-bc5904">
           <button
-            className="primary-play-btn" style={{ backgroundColor: '#FFF', color: '#000', padding: '10px 24px', borderRadius: '4px', border: 'none', fontSize: '1.1rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', transition: 'background-color 0.2s' }}> onPlay(enrichedMovie)}
+            className="primary-play-btn"
+            onClick={() => onPlay(enrichedMovie)}
             style={{
               background: platform === 'hotstar' ? 'var(--primary-color)' : '#FFF',
               color: platform === 'hotstar' ? '#FFF' : '#000',

@@ -15,6 +15,10 @@ import { HeroSkeleton, MovieRowSkeleton, PlatformInitialLoader } from '../compon
 import { AuthModal } from '../components/AuthModal';
 import { SearchFilters, SearchFiltersState, DEFAULT_SEARCH_FILTERS, applySearchFilters } from '../components/SearchFilters';
 import { PWAInstallPrompt } from '../components/PWAInstallPrompt';
+import { Footer } from '../components/Footer';
+import { ScrollToTop } from '../components/ScrollToTop';
+import { Toast } from '../components/Toast';
+import { SearchView } from '../components/SearchView';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import {
@@ -911,98 +915,19 @@ export default function Home() {
       <div style={{ opacity: hasCompletedInitialLoad ? 1 : 0, transition: 'opacity 0.3s' }}>
       {searchQuery.trim() !== '' ? (
         /* Search View */
-        <div style={{ paddingTop: '110px', width: '100%', minHeight: '80vh', paddingBottom: '60px' }}>
-          <div style={{ padding: '0 4%', marginBottom: '24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
-            <div>
-              <h2 style={{ fontSize: '2rem', fontWeight: 900, color: '#FFF', marginBottom: '6px' }}>
-                {`Results for "${searchQuery}"`}
-              </h2>
-              <p style={{ color: '#AAA', fontSize: '0.9rem' }}>
-                {isSearching ? 'Searching catalog…' : `Found ${languageFilteredSearchResults.length} matching title${languageFilteredSearchResults.length === 1 ? '' : 's'}`}
-              </p>
-            </div>
-
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <button
-                onClick={handleAISearch}
-                disabled={isAILoading || isSearching}
-                style={{
-                  backgroundColor: 'rgba(229, 9, 20, 0.15)',
-                  color: '#E50914',
-                  border: '1px solid rgba(229, 9, 20, 0.4)',
-                  padding: '6px 16px',
-                  borderRadius: '20px',
-                  fontSize: '0.82rem',
-                  fontWeight: 700,
-                  cursor: (isAILoading || isSearching) ? 'not-allowed' : 'pointer',
-                  transition: 'all 0.2s',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px'
-                }}
-              >
-                <Sparkles size={14} />
-                {isAILoading ? 'AI Thinking...' : 'Smart Search'}
-              </button>
-              <button
-                onClick={() => setSearchQuery('')}
-                style={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                  color: '#FFF',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  padding: '6px 16px',
-                  borderRadius: '20px',
-                  fontSize: '0.82rem',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                }}
-              >
-                Clear Search
-              </button>
-            </div>
-          </div>
-
-          {/* Removed filters and genres per user request */}
-
-
-          {isSearching && languageFilteredSearchResults.length === 0 && !searchActor ? (
-            <div className="classic-grid">
-              {[...Array(12)].map((_, i) => (
-                <div key={i} style={{ aspectRatio: '2/3', backgroundColor: 'rgba(255, 255, 255, 0.08)', borderRadius: '4px', animation: 'pulse 1.5s infinite ease-in-out' }} />
-              ))}
-            </div>
-          ) : languageFilteredSearchResults.length || searchActor || isSearching ? (
-            <>
-              {searchActor && (
-                <div style={{ margin: '0 4% 32px 4%', padding: '24px', backgroundColor: 'rgba(255, 255, 255, 0.05)', borderRadius: '12px', display: 'flex', gap: '24px', alignItems: 'center' }}>
-                  <img src={searchActor.profileUrl} alt={searchActor.name} style={{ width: '120px', height: '120px', borderRadius: '50%', objectFit: 'cover', border: '3px solid var(--primary-color)' }} />
-                  <div>
-                    <h2 style={{ fontSize: '1.8rem', fontWeight: 800, marginBottom: '8px' }}>{searchActor.name}</h2>
-                    <p style={{ color: '#AAA', fontSize: '0.9rem', lineHeight: '1.4' }}>{searchActor.knownFor}</p>
-                  </div>
-                </div>
-              )}
-              <div className="classic-grid">
-                {languageFilteredSearchResults.map((movie) => (
-              <MovieCard
-                key={movie.id}
-                movie={movie}
-                onPlay={handlePlayMovie}
-                onOpenDetails={handleOpenDetails}
-                onToggleMyList={handleToggleMyList}
-                isMyList={myList.includes(movie.id)}
-                isSearchResult={true}
-              />
-            ))}</div>
-            </>
-          ) : (
-            <div style={{ padding: '40px 4%', textAlign: 'center', color: '#AAA' }}>
-              <p style={{ fontSize: '1.2rem', marginBottom: '12px' }}>{`No titles found for "${searchQuery}".`}</p>
-              <p style={{ fontSize: '0.9rem', color: '#777' }}>Try searching by title, cast member, or click one of the quick genre chips above.</p>
-            </div>
-          )}
-        </div>
+        <SearchView
+          searchQuery={searchQuery}
+          isSearching={isSearching}
+          languageFilteredSearchResults={languageFilteredSearchResults}
+          searchActor={searchActor}
+          isAILoading={isAILoading}
+          onAISearch={handleAISearch}
+          onClearSearch={() => setSearchQuery('')}
+          onPlayMovie={handlePlayMovie}
+          onOpenDetails={handleOpenDetails}
+          onToggleMyList={handleToggleMyList}
+          myList={myList}
+        />
       ) : (
         <>
           {catalogError && (
@@ -1369,45 +1294,10 @@ export default function Home() {
       )}
 
       {/* Floating Scroll to Top Button */}
-      {showScrollTop && (
-        <button
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          style={{
-            position: 'fixed',
-            bottom: '30px',
-            right: '30px',
-            width: '46px',
-            height: '46px',
-            borderRadius: '50%',
-            backgroundColor: 'var(--primary-color)',
-            color: '#FFF',
-            border: 'none',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            zIndex: 1000,
-            boxShadow: '0 6px 18px var(--primary-glow-strong)',
-            transition: 'transform 0.2s',
-          }}
-          title="Scroll to Top"
-        >
-          <ArrowUp size={22} />
-        </button>
-      )}
+      <ScrollToTop showScrollTop={showScrollTop} />
 
       {/* Footer */}
-      <footer style={{ borderTop: '1px solid #333', marginTop: '80px', padding: '40px 4%', color: '#757575', fontSize: '0.85rem' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '16px', marginBottom: '24px' }}>
-          <div>High-Speed Servers</div>
-          <div>4K Ultra Resolution</div>
-          <div>Audio & Subtitles</div>
-          <div>Help Center</div>
-          <div>Terms of Use</div>
-          <div>Privacy Policy</div>
-        </div>
-        <p>Catalog metadata provided by TMDB.</p>
-      </footer>
+      <Footer />
 
       {/* Detail Modal */}
       {activeDetailMovie && (
@@ -1465,33 +1355,7 @@ export default function Home() {
         }}
       />
       {/* Dynamic Glassmorphic Toast Notification */}
-      {toastMessage && (
-        <div
-          className="toast-animate"
-          data-testid="toast-notification"
-          style={{
-            position: 'fixed',
-            bottom: '30px',
-            left: '30px',
-            backgroundColor: 'rgba(20, 20, 20, 0.94)',
-            color: '#FFF',
-            border: '1px solid var(--primary-glow-strong)',
-            boxShadow: '0 8px 24px rgba(0,0,0,0.85), 0 0 16px var(--primary-glow)',
-            padding: '12px 24px',
-            borderRadius: '8px',
-            fontSize: '0.9rem',
-            fontWeight: 800,
-            zIndex: 2000,
-            backdropFilter: 'blur(12px)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px',
-          }}
-        >
-          <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--primary-color)', display: 'inline-block', boxShadow: '0 0 8px var(--primary-color)' }} />
-          {toastMessage}
-        </div>
-      )}
+      <Toast message={toastMessage} />
       {/* ─── Auth Modal ──────────────────────────────────────────────────── */}
       {showAuthModal && (
         <AuthModal
