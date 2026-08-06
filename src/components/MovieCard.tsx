@@ -1,6 +1,7 @@
 
 'use client';
 
+import './MovieCard.css';
 import React, { useState } from 'react';
 import { Play, Plus, Check, Info, Film, Clock, ChevronDown, ThumbsUp } from 'lucide-react';
 import { usePlatform } from './PlatformContext';
@@ -41,22 +42,30 @@ export const MovieCard: React.FC<MovieCardProps> = ({
 
   let imgSrc = primaryImg;
   if (imgFailed || !imgSrc) {
-    imgSrc = fallbackImg && fallbackImg !== primaryImg ? fallbackImg : '';
+    imgSrc = fallbackImg && fallbackImg !== primaryImg ? fallbackImg : 'broken';
   }
 
   const handleCardClick = () => {
     onOpenDetails(movie);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleCardClick();
+    }
+  };
+
+
   const renderPlatformLogo = (label: string) => {
     if (label === 'Netflix') {
-      return <div key="Netflix" style={{ width: '22px', height: '22px', background: '#E50914', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: '0.7rem', color: '#fff', boxShadow: '0 2px 6px rgba(0,0,0,0.6)' }} title="Available on Netflix">N</div>;
+      return <div key="Netflix" className="moviecard-elem-f52360" title="Available on Netflix">N</div>;
     }
     if (label === 'Prime Video') {
-      return <div key="Prime Video" style={{ width: '22px', height: '22px', background: '#00A8E1', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: '0.7rem', color: '#fff', boxShadow: '0 2px 6px rgba(0,0,0,0.6)' }} title="Available on Prime Video">P</div>;
+      return <div key="Prime Video" className="moviecard-elem-115c67" title="Available on Prime Video">P</div>;
     }
     if (label === 'Hotstar') {
-      return <div key="Hotstar" style={{ width: '22px', height: '22px', background: '#1F80E0', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: '0.6rem', color: '#fff', boxShadow: '0 2px 6px rgba(0,0,0,0.6)' }} title="Available on Disney+ Hotstar">H+</div>;
+      return <div key="Hotstar" className="moviecard-elem-cf56c6" title="Available on Disney+ Hotstar">H+</div>;
     }
     return null;
   };
@@ -64,18 +73,14 @@ export const MovieCard: React.FC<MovieCardProps> = ({
   const renderProgressBar = () => {
     if (movie.watchProgress === undefined) return null;
     return (
-      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '4px', background: 'rgba(255,255,255,0.2)', zIndex: 20 }}>
+      <div className="moviecard-elem-23d72f">
         <div style={{ width: `${Math.max(5, Math.min(100, movie.watchProgress * 100))}%`, height: '100%', background: platform === 'nprime' ? '#00A8E1' : platform === 'hotstar' ? '#1F80E0' : '#E50914' }} />
       </div>
     );
   };
 
   const platformBadges = movie.availablePlatforms && movie.availablePlatforms.length > 0 ? (
-    <div style={{
-      position: 'absolute', top: '8px', right: '8px',
-      display: 'flex', gap: '4px',
-      zIndex: 20,
-    }}>
+    <div className="moviecard-elem-82a5b2">
       {movie.availablePlatforms.map((label) => renderPlatformLogo(label))}
     </div>
   ) : null;
@@ -117,7 +122,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
       boxShadow: '0 2px 6px rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)',
       opacity: isHovered ? 0 : 1, transition: 'opacity 0.2s',
     }}>
-      <span style={{ color: '#F5C518' }}>IMDb</span>
+      <span className="moviecard-elem-fc373e">IMDb</span>
       <span>{ratingText}</span>
     </div>
   );
@@ -128,14 +133,20 @@ export const MovieCard: React.FC<MovieCardProps> = ({
       <div
         className={`movie-card hotstar-card ${top10Rank !== undefined ? 'top10' : ''}`}
         role="button"
+        tabIndex={0}
+        aria-label={`View details for ${movie.title}`}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onClick={handleCardClick}
+        onKeyDown={handleKeyDown}
         style={{
           position: 'relative',
           flexShrink: 0,
-          width: '185px',
-          height: '275px',
+          width: '100%',
+          aspectRatio: '2/3',
+          height: 'auto',
+          maxWidth: '220px',
+          minWidth: '140px',
           borderRadius: '8px',
           cursor: 'pointer',
           overflow: 'hidden',
@@ -148,7 +159,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
           willChange: 'transform, box-shadow',
         }}
       >
-        {imgSrc ? (
+        {imgSrc && imgSrc !== 'broken' ? (
           <img
             src={imgSrc}
             alt={movie.title}
@@ -164,10 +175,14 @@ export const MovieCard: React.FC<MovieCardProps> = ({
             }}
             style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: isImageLoaded ? 1 : 0, transition: 'opacity 0.2s ease, transform 0.4s ease', transform: isHovered ? 'scale(1.05)' : 'scale(1)' }}
           />
-        ) : (
-          <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, #1f2937 0%, #111827 100%)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '16px', textAlign: 'center' }}>
-            <Film size={28} color="#1F80E0" style={{ marginBottom: '8px' }} />
-            <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#FFF' }}>{movie.title}</span>
+        ) : imgSrc === 'broken' ? (
+          <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #1f2937 0%, #111827 100%)', textAlign: 'center', padding: '10px' }}>
+             <span style={{ fontSize: '0.85rem', fontWeight: 'bold', color: '#888' }}>{movie.title}</span>
+          </div>
+) : (
+          <div className="moviecard-elem-8b9f5c">
+            <Film size={28} color="#1F80E0" className="moviecard-elem-03bd55" />
+            <span className="moviecard-elem-3d2a25">{movie.title}</span>
           </div>
         )}
         {showTrailer && movie.trailerUrl && (
@@ -176,17 +191,17 @@ export const MovieCard: React.FC<MovieCardProps> = ({
         {imdbBadge}
         {/* Hotstar Authentic Badges */}
         {movie.isRecentlyAdded && !movie.isUpcoming && !movie.isLeavingSoon && (
-          <div style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 10, background: '#1F80E0', color: '#FFF', padding: '2px 8px', fontSize: '0.65rem', fontWeight: 800, borderRadius: '4px', textTransform: 'uppercase', letterSpacing: '0.04em', boxShadow: '0 2px 8px rgba(0,0,0,0.6)' }}>
+          <div className="moviecard-elem-66f313">
             NEW
           </div>
         )}
         {movie.isLeavingSoon && (
-          <div style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 10, background: 'rgba(15,16,20,0.85)', border: '1px solid #F59E0B', color: '#F59E0B', padding: '2px 8px', fontSize: '0.65rem', fontWeight: 800, borderRadius: '4px', textTransform: 'uppercase', letterSpacing: '0.04em', backdropFilter: 'blur(4px)' }}>
+          <div className="moviecard-elem-4c27d4">
             LEAVING SOON
           </div>
         )}
         {movie.isUpcoming && (
-          <div style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 10, background: '#F59E0B', color: '#000', padding: '2px 8px', fontSize: '0.65rem', fontWeight: 900, borderRadius: '4px', textTransform: 'uppercase', letterSpacing: '0.04em', boxShadow: '0 2px 8px rgba(0,0,0,0.6)' }}>
+          <div className="moviecard-elem-4e41c2">
             COMING SOON
           </div>
         )}
@@ -199,15 +214,11 @@ export const MovieCard: React.FC<MovieCardProps> = ({
           opacity: isHovered ? 1 : 0,
           transition: 'opacity 0.2s ease',
         }}>
-          <span style={{ fontSize: '0.65rem', fontWeight: 800, color: '#1F80E0', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '4px' }}>
+          <span className="moviecard-elem-09e479">
             {movie.isSeries ? 'Series' : 'Movie'}
           </span>
-          <h4 style={{ color: '#FFF', fontSize: '0.95rem', fontWeight: 700, marginBottom: '10px', lineHeight: 1.2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{movie.title}</h4>
-          <button style={{
-            background: 'var(--primary-color)', color: '#FFF', border: 'none', borderRadius: '6px',
-            padding: '8px 14px', fontWeight: 800, fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', width: '100%', justifyContent: 'center',
-            boxShadow: '0 4px 12px rgba(31, 128, 224, 0.5)'
-          }} onClick={(e) => { e.stopPropagation(); onPlay(movie); }}>
+          <h4 className="moviecard-elem-a0014f">{movie.title}</h4>
+          <button className="moviecard-elem-e39862" onClick={(e) => { e.stopPropagation(); onPlay(movie); }}>
             <Play size={13} fill="#FFF" /> Watch Now
           </button>
         </div>
@@ -224,9 +235,12 @@ export const MovieCard: React.FC<MovieCardProps> = ({
       <div
         className={`movie-card nprime-card ${top10Rank !== undefined ? 'top10' : ''}`}
         role="button"
+        tabIndex={0}
+        aria-label={`View details for ${movie.title}`}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onClick={handleCardClick}
+        onKeyDown={handleKeyDown}
         style={{
           position: 'relative',
           flexShrink: 0,
@@ -244,7 +258,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
           willChange: 'transform, box-shadow',
         }}
       >
-        {imgSrc ? (
+        {imgSrc && imgSrc !== 'broken' ? (
           <img
             src={imgSrc}
             alt={movie.title}
@@ -260,32 +274,36 @@ export const MovieCard: React.FC<MovieCardProps> = ({
             }}
             style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: isImageLoaded ? 1 : 0, transition: 'transform 0.4s ease', transform: isHovered ? 'scale(1.05)' : 'scale(1)' }}
           />
-        ) : (
-          <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, #0f172a 0%, #0284c7 100%)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '12px', textAlign: 'center' }}>
-            <Film size={24} color="#00A8E1" style={{ marginBottom: '6px' }} />
-            <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#FFF' }}>{movie.title}</span>
+        ) : imgSrc === 'broken' ? (
+          <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #1f2937 0%, #111827 100%)', textAlign: 'center', padding: '10px' }}>
+             <span style={{ fontSize: '0.85rem', fontWeight: 'bold', color: '#888' }}>{movie.title}</span>
+          </div>
+) : (
+          <div className="moviecard-elem-54e2d7">
+            <Film size={24} color="#00A8E1" className="moviecard-elem-fc7b7c" />
+            <span className="moviecard-elem-1fa588">{movie.title}</span>
           </div>
         )}
         {showTrailer && movie.trailerUrl && (
           <HoverTrailer trailerUrl={movie.trailerUrl} isMuted={true} />
         )}
         {imdbBadge}
-        <div style={{ position: 'absolute', top: 0, left: 0, zIndex: 10, background: '#00A8E1', padding: '2px 8px', borderBottomRightRadius: '4px', fontSize: '0.65rem', fontWeight: 900, color: '#FFF', fontStyle: 'italic', letterSpacing: '0.04em' }}>
+        <div className="moviecard-elem-24e0e8">
           prime
         </div>
         {/* Prime Authentic Badges */}
         {movie.isRecentlyAdded && !movie.isUpcoming && !movie.isLeavingSoon && (
-          <div style={{ position: 'absolute', top: '6px', right: '6px', zIndex: 10, background: '#00A8E1', color: '#FFF', padding: '2px 6px', fontSize: '0.6rem', fontWeight: 800, borderRadius: '3px', textTransform: 'uppercase', letterSpacing: '0.04em', boxShadow: '0 2px 6px rgba(0,0,0,0.7)' }}>
+          <div className="moviecard-elem-d1c52f">
             NEWLY ADDED
           </div>
         )}
         {movie.isLeavingSoon && (
-          <div style={{ position: 'absolute', top: '6px', right: '6px', zIndex: 10, background: 'rgba(15,23,30,0.9)', border: '1px solid #FF9900', color: '#FF9900', padding: '2px 6px', fontSize: '0.6rem', fontWeight: 800, borderRadius: '3px', textTransform: 'uppercase', letterSpacing: '0.04em', backdropFilter: 'blur(4px)' }}>
+          <div className="moviecard-elem-756e29">
             LEAVING PRIME
           </div>
         )}
         {movie.isUpcoming && (
-          <div style={{ position: 'absolute', top: '6px', right: '6px', zIndex: 10, background: '#FF9900', color: '#000', padding: '2px 6px', fontSize: '0.6rem', fontWeight: 900, borderRadius: '3px', textTransform: 'uppercase', letterSpacing: '0.04em', boxShadow: '0 2px 6px rgba(0,0,0,0.7)' }}>
+          <div className="moviecard-elem-73fae6">
             COMING SOON
           </div>
         )}
@@ -298,15 +316,15 @@ export const MovieCard: React.FC<MovieCardProps> = ({
           opacity: isHovered ? 1 : 0,
           transition: 'opacity 0.2s ease',
         }}>
-          <h4 style={{ color: '#FFF', fontSize: '0.92rem', fontWeight: 700, marginBottom: '8px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{movie.title}</h4>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <button style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#00A8E1', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,168,225,0.6)' }} onClick={(e) => { e.stopPropagation(); onPlay(movie); }}>
+          <h4 className="moviecard-elem-d88b98">{movie.title}</h4>
+          <div className="moviecard-elem-b80cec">
+            <button className="moviecard-elem-915695" onClick={(e) => { e.stopPropagation(); onPlay(movie); }}>
               <Play size={14} fill="#FFF" color="#FFF" />
             </button>
-            <button style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#FFF' }} onClick={(e) => { e.stopPropagation(); onOpenDetails(movie); }}>
+            <button className="moviecard-elem-25e200" onClick={(e) => { e.stopPropagation(); onOpenDetails(movie); }}>
               <Info size={15} />
             </button>
-            <button style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#FFF' }} onClick={(e) => { e.stopPropagation(); onToggleMyList(movie.id); }}>
+            <button className="moviecard-elem-7b4804" onClick={(e) => { e.stopPropagation(); onToggleMyList(movie.id); }}>
               {isMyList ? <Check size={15} /> : <Plus size={15} />}
             </button>
           </div>
@@ -332,8 +350,11 @@ export const MovieCard: React.FC<MovieCardProps> = ({
       style={{
         position: 'relative',
         flexShrink: 0,
-        width: `${netflixWidth}px`,
-        height: `${netflixHeight}px`,
+        width: '100%',
+          aspectRatio: '16/9',
+          height: 'auto',
+          maxWidth: `${netflixWidth}px`,
+          minWidth: '140px',
         borderRadius: '4px',
         cursor: 'pointer',
         zIndex: isHovered ? 50 : 1,
@@ -355,27 +376,27 @@ export const MovieCard: React.FC<MovieCardProps> = ({
       }}>
         {/* Netflix N Logo */}
         {parseInt(movie.id.replace(/\D/g, '') || '0') % 3 === 0 && (
-          <div style={{ position: 'absolute', top: '8px', left: '8px', zIndex: 10 }}>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/1/18/Netflix_2016_N_logo.svg" alt="N" style={{ height: '14px' }} />
+          <div className="moviecard-elem-afc72d">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/1/18/Netflix_2016_N_logo.svg" alt="N" className="moviecard-elem-8ce510" />
           </div>
         )}
         {/* Netflix Authentic Badges */}
         {movie.isRecentlyAdded && !movie.isUpcoming && !movie.isLeavingSoon && (
-          <div style={{ position: 'absolute', top: '8px', right: '8px', zIndex: 10, background: '#E50914', color: '#FFF', padding: '2px 6px', fontSize: '0.62rem', fontWeight: 900, borderRadius: '2px', textTransform: 'uppercase', letterSpacing: '0.05em', boxShadow: '0 2px 6px rgba(0,0,0,0.8)' }}>
+          <div className="moviecard-elem-1886ac">
             NEW
           </div>
         )}
         {movie.isLeavingSoon && (
-          <div style={{ position: 'absolute', top: '8px', right: '8px', zIndex: 10, background: '#E50914', color: '#FFF', padding: '2px 6px', fontSize: '0.62rem', fontWeight: 900, borderRadius: '2px', textTransform: 'uppercase', letterSpacing: '0.05em', boxShadow: '0 2px 6px rgba(0,0,0,0.8)' }}>
+          <div className="moviecard-elem-c2de51">
             LEAVING SOON
           </div>
         )}
         {movie.isUpcoming && (
-          <div style={{ position: 'absolute', top: '8px', right: '8px', zIndex: 10, background: '#E50914', color: '#FFF', padding: '2px 6px', fontSize: '0.62rem', fontWeight: 900, borderRadius: '2px', textTransform: 'uppercase', letterSpacing: '0.05em', boxShadow: '0 2px 6px rgba(0,0,0,0.8)' }}>
+          <div className="moviecard-elem-1f0f68">
             COMING SOON
           </div>
         )}
-        {imgSrc ? (
+        {imgSrc && imgSrc !== 'broken' ? (
           <img
             className="netflix-card-img"
             src={imgSrc}
@@ -390,10 +411,14 @@ export const MovieCard: React.FC<MovieCardProps> = ({
             }}
             style={{ width: '100%', height: `${netflixHeight}px`, objectFit: 'cover', borderRadius: isHovered ? '4px 4px 0 0' : '4px', opacity: isImageLoaded ? 1 : 0 }}
           />
-        ) : (
+        ) : imgSrc === 'broken' ? (
+          <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #1f2937 0%, #111827 100%)', textAlign: 'center', padding: '10px' }}>
+             <span style={{ fontSize: '0.85rem', fontWeight: 'bold', color: '#888' }}>{movie.title}</span>
+          </div>
+) : (
           <div style={{ width: '100%', height: `${netflixHeight}px`, background: 'linear-gradient(135deg, #1f1f1f 0%, #111111 100%)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '12px', textAlign: 'center', borderRadius: '4px' }}>
-            <Film size={24} color="#E50914" style={{ marginBottom: '6px' }} />
-            <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#FFF' }}>{movie.title}</span>
+            <Film size={24} color="#E50914" className="moviecard-elem-4398e5" />
+            <span className="moviecard-elem-458a1e">{movie.title}</span>
           </div>
         )}
         {showTrailer && movie.trailerUrl && (
@@ -413,9 +438,9 @@ export const MovieCard: React.FC<MovieCardProps> = ({
             padding: '12px'
           }}>
             {movie.logoUrl ? (
-               <img src={movie.logoUrl} alt={movie.title} style={{ maxWidth: '100%', maxHeight: '45px', objectFit: 'contain', objectPosition: 'left bottom', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.8))' }} />
+               <img src={movie.logoUrl} alt={movie.title} className="moviecard-elem-8d581f" />
              ) : (
-               <h4 style={{ color: '#FFF', fontSize: '1.2rem', fontWeight: 900, textShadow: '0 2px 4px rgba(0,0,0,0.9)', margin: 0, width: '100%', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{movie.title}</h4>
+               <h4 className="moviecard-elem-a01151">{movie.title}</h4>
              )}
           </div>
         )}
@@ -432,39 +457,36 @@ export const MovieCard: React.FC<MovieCardProps> = ({
           width: '100%',
         }}>
           {/* Action Row */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <button style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#FFF', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); onPlay(movie); }}>
+          <div className="moviecard-elem-464823">
+            <div className="moviecard-elem-b82f88">
+              <button className="moviecard-elem-68038c" onClick={(e) => { e.stopPropagation(); onPlay(movie); }}>
                 <Play size={12} fill="#000" color="#000" />
               </button>
               <button
                 onClick={(e) => { e.stopPropagation(); onToggleMyList(movie.id); }}
-                style={{
-                  background: 'none', border: '2px solid rgba(255, 255, 255, 0.4)', borderRadius: '50%',
-                  width: '38px', height: '38px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFF', cursor: 'pointer', transition: 'all 0.2s', padding: '0'
-                }}
+                className="moviecard-elem-8b8a17"
                 onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#FFF'; e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }}
                 onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.4)'; e.currentTarget.style.background = 'none'; }}
               >
                 {isMyList ? <Check size={18} /> : <Plus size={18} />}
               </button>
-              <button style={{ width: '38px', height: '38px', borderRadius: '50%', background: 'none', border: '2px solid rgba(255, 255, 255, 0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#FFF', padding: '0' }} onClick={(e) => { e.stopPropagation(); }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#FFF'; e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.4)'; e.currentTarget.style.background = 'none'; }}>
+              <button className="moviecard-elem-dec26d" onClick={(e) => { e.stopPropagation(); }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#FFF'; e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.4)'; e.currentTarget.style.background = 'none'; }}>
                 <ThumbsUp size={18} />
               </button>
             </div>
-            <button style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#2A2A2A', border: '2px solid rgba(255,255,255,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#FFF' }} onClick={(e) => { e.stopPropagation(); onOpenDetails(movie); }}>
+            <button className="moviecard-elem-0ea5e5" onClick={(e) => { e.stopPropagation(); onOpenDetails(movie); }}>
               <ChevronDown size={14} />
             </button>
           </div>
           {/* Info Row */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.75rem', fontWeight: 700, marginBottom: '8px', flexWrap: 'wrap' }}>
-            <span style={{ color: '#46d369' }}>{movie.matchScore}% Match</span>
-            <span style={{ border: '1px solid rgba(255,255,255,0.4)', padding: '0 4px', color: '#FFF' }}>{movie.maturityRating || 'U/A 13+'}</span>
-            <span style={{ color: '#FFF' }}>{movie.duration || (movie.isSeries ? 'Series' : 'Film')}</span>
-            <span style={{ border: '1px solid rgba(255,255,255,0.4)', padding: '0 4px', fontSize: '0.65rem', color: '#FFF', borderRadius: '2px', fontWeight: 800 }}>HD</span>
+          <div className="moviecard-elem-0e6893">
+            <span className="moviecard-elem-9789d2">{movie.matchScore}% Match</span>
+            <span className="moviecard-elem-3d8c01">{movie.maturityRating || 'U/A 13+'}</span>
+            <span className="moviecard-elem-32f859">{movie.duration || (movie.isSeries ? 'Series' : 'Film')}</span>
+            <span className="moviecard-elem-ab2d5b">HD</span>
           </div>
           {/* Genre Row */}
-          <div style={{ color: '#FFF', fontSize: '0.75rem' }}>
+          <div className="moviecard-elem-23ca87">
             {movie.genres.slice(0, 3).join(' • ')}
           </div>
         </div>

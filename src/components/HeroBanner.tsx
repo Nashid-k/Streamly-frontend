@@ -1,5 +1,6 @@
 'use client';
 
+import './HeroBanner.css';
 import React, { useState, useEffect } from 'react';
 import { Play, Info, Clock, Check, Plus, Volume2, VolumeX } from 'lucide-react';
 import { usePlatform } from './PlatformContext';
@@ -140,20 +141,8 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
   const backgroundUrl = enrichedMovie.backdropUrl || enrichedMovie.posterUrl || '';
 
   return (
-    <div
-      className="hero-container"
+    <div className="hero-container herobanner-elem-749d84"
       data-testid="hero-container"
-      style={{
-        position: 'relative',
-        height: '80vh',
-        width: '100%',
-        display: 'flex',
-        alignItems: 'flex-end',
-        paddingBottom: '80px',
-        paddingLeft: '4%',
-        paddingRight: '4%',
-        overflow: 'hidden',
-      }}
     >
       {/* High-Resolution Backdrop Image (Desktop/Tablet) */}
       <div
@@ -207,50 +196,40 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
       />
 
       {/* Left Column: Hero Content */}
-      <div key={enrichedMovie.id} className="hero-content hero-text-animate" data-testid="hero-content" style={{ maxWidth: '680px', zIndex: 10 }}>
+      <div className="hero-content hero-text-animate herobanner-elem-023ba0" key={enrichedMovie.id} data-testid="hero-content">
         {/* Upcoming Eyebrow Badge */}
         {enrichedMovie.isUpcoming && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--primary-color)', fontSize: '0.85rem', fontWeight: 900, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '12px' }}>
+          <div className="herobanner-elem-93662c">
             <Clock size={16} /> COMING SOON TO {platform === 'hotstar' ? 'HOTSTAR' : platform === 'nprime' ? 'PRIME' : 'NETFLIX'}
           </div>
         )}
 
         {/* Nflix Original N Eyebrow */}
         {platform === 'nflix' && parseInt(enrichedMovie.id.replace(/\D/g, '') || '0') % 3 === 0 && !enrichedMovie.isUpcoming && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px', textShadow: '0 2px 4px rgba(0,0,0,0.9)' }}>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/1/18/Netflix_2016_N_logo.svg" alt="N" style={{ height: '24px' }} />
-            <span style={{ color: '#B3B3B3', fontSize: '0.9rem', fontWeight: 900, letterSpacing: '0.35em', textTransform: 'uppercase' }}>
+          <div className="herobanner-elem-f28965">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/1/18/Netflix_2016_N_logo.svg" alt="N" className="herobanner-elem-b5c0b1" />
+            <span className="herobanner-elem-03b192">
               {enrichedMovie.isSeries ? 'Series' : 'Film'}
             </span>
           </div>
         )}
 
         {/* Title Logo / Stylized Title Text (Always visible, seamless logo swap) */}
-        <div style={{ marginBottom: '20px', minHeight: '80px', display: 'flex', alignItems: 'flex-end', position: 'relative' }}>
+        <div className="herobanner-elem-37a56f">
           {enrichedMovie.logoUrl ? (
             <img
               key={`logo-${enrichedMovie.id}`}
               src={enrichedMovie.logoUrl}
               alt={enrichedMovie.title}
-              style={{
-                maxHeight: '120px',
-                maxWidth: '100%',
-                objectFit: 'contain',
-                objectPosition: 'left bottom',
-                filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.9))',
-                animation: 'heroBackdropReveal 0.4s ease',
-              }}
+              className="herobanner-elem-227255"
             />
           ) : isLogoLoading ? (
-            <div style={{ width: '250px', height: '60px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', animation: 'netflixSkeletonPulse 2s infinite ease-in-out' }} />
+            <div className="herobanner-elem-1e1dae" />
           ) : (
             <h1
-              className="hero-title-text"
+              className="hero-title-text herobanner-elem-7244b5"
               data-testid="hero-title"
-              style={{
-                ...getFallbackTitleStyle(),
-                marginBottom: '0px',
-              }}
+              style={getFallbackTitleStyle()}
             >
               {enrichedMovie.title}
             </h1>
@@ -258,9 +237,9 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
         </div>
 
         {/* Badges */}
-        <div className="hero-meta-row" style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px', flexWrap: 'wrap' }}>
+        <div className="hero-meta-row herobanner-elem-09425b">
           {enrichedMovie.isUpcoming ? (
-            <span style={{ color: '#F59E0B', fontWeight: 800, fontSize: '1rem' }}>
+            <span className="herobanner-elem-bf0d83">
               {enrichedMovie.releaseDate ? `Releasing ${enrichedMovie.releaseDate}` : 'Coming Soon'}
             </span>
           ) : (
@@ -268,49 +247,37 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
               {enrichedMovie.matchScore}% Match
             </span>
           )}
-          <span style={{ color: '#AAA', fontSize: '0.95rem' }}>{enrichedMovie.releaseYear}</span>
-          <span style={{ border: '1px solid rgba(255,255,255,0.4)', borderRadius: '3px', padding: '1px 6px', fontSize: '0.75rem', fontWeight: 700, color: '#FFF' }}>
+          <span className="herobanner-elem-da6646">{enrichedMovie.releaseYear}</span>
+          <span className="herobanner-elem-9cce30">
             {enrichedMovie.maturityRating}
           </span>
-          <span style={{ color: '#AAA', fontSize: '0.95rem' }}>{enrichedMovie.duration}</span>
+          <span className="herobanner-elem-851fc5">{enrichedMovie.duration}</span>
           
           {/* Authentic High-Tech Badges (4K, HDR, Atmos) */}
-          <span style={{ border: '1px solid rgba(255,255,255,0.3)', borderRadius: '3px', padding: '1px 5px', fontSize: '0.7rem', fontWeight: 800, color: '#E5E5E5', letterSpacing: '0.05em' }}>
+          <span className="herobanner-elem-7c982f">
             4K UHD
           </span>
-          <span style={{ border: '1px solid rgba(255,255,255,0.3)', borderRadius: '3px', padding: '1px 5px', fontSize: '0.7rem', fontWeight: 800, color: '#E5E5E5', letterSpacing: '0.05em' }}>
+          <span className="herobanner-elem-d2597d">
             {platform === 'nprime' ? 'HDR10+' : 'VISION'}
           </span>
-          <span style={{ border: '1px solid rgba(255,255,255,0.3)', borderRadius: '3px', padding: '1px 5px', fontSize: '0.7rem', fontWeight: 800, color: '#E5E5E5', letterSpacing: '0.05em' }}>
+          <span className="herobanner-elem-90f9cb">
             ATMOS
           </span>
           {platform === 'nflix' && (
-            <span style={{ border: '1px solid rgba(255,255,255,0.3)', borderRadius: '3px', padding: '1px 5px', fontSize: '0.7rem', fontWeight: 800, color: '#E5E5E5' }}>
+            <span className="herobanner-elem-593142">
               5.1
             </span>
           )}
         </div>
 
         {/* Description */}
-        <p
-          className="hero-description"
-          style={{
-            fontSize: '1rem',
-            color: '#DDD',
-            lineHeight: 1.5,
-            textShadow: '0 2px 4px rgba(0,0,0,0.8)',
-            marginBottom: '24px',
-            display: '-webkit-box',
-            WebkitLineClamp: 3,
-            WebkitBoxOrient: 'vertical',
-            overflow: 'hidden',
-          }}
+        <p className="hero-description herobanner-elem-98ab02"
         >
           {enrichedMovie.description}
         </p>
 
         {/* Action Buttons */}
-        <div className="hero-actions-row" style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+        <div className="hero-actions-row herobanner-elem-bc5904">
           <button
             className="primary-play-btn"
             data-testid="hero-play-btn"
@@ -392,34 +359,12 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
 
       {/* Hotstar Specific Hero Carousel 5-Visible Thumbnail Bar with Scroll Arrows */}
       {platform === 'hotstar' && carouselMovies.length > 1 && (
-        <div className="hero-carousel-bar" style={{
-          position: 'absolute',
-          right: '4%',
-          bottom: '36px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          zIndex: 20,
-        }}>
+        <div className="hero-carousel-bar herobanner-elem-e8da64">
           {/* Scroll Left Arrow */}
           {carouselScrollIndex > 0 && (
             <button
               onClick={() => setCarouselScrollIndex(i => Math.max(0, i - 1))}
-              style={{
-                background: 'rgba(15, 16, 20, 0.75)',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                color: '#FFF',
-                borderRadius: '50%',
-                width: '32px',
-                height: '32px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                backdropFilter: 'blur(8px)',
-                transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
-              }}
+              className="herobanner-elem-c301d7"
               onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.15)'; e.currentTarget.style.background = 'rgba(255,255,255,0.2)'; }}
               onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.background = 'rgba(15, 16, 20, 0.75)'; }}
             >
@@ -428,7 +373,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
           )}
 
           {/* 5 Visible Thumbnails Window */}
-          <div style={{ display: 'flex', gap: '10px', alignItems: 'center', padding: '6px 2px' }}>
+          <div className="herobanner-elem-3cb1f2">
             {carouselMovies.slice(carouselScrollIndex, carouselScrollIndex + 5).map((item, localIdx) => {
               const realIdx = carouselScrollIndex + localIdx;
               const isActive = realIdx === activeCarouselIndex;
@@ -464,16 +409,10 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
                   <img
                     src={thumbUrl}
                     alt={item.title}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s ease' }}
+                    className="herobanner-elem-28b9d9"
                   />
                   {isActive && (
-                    <div style={{
-                      position: 'absolute',
-                      inset: 0,
-                      border: '1.5px solid #FFF',
-                      borderRadius: '6px',
-                      pointerEvents: 'none'
-                    }} />
+                    <div className="herobanner-elem-d7f8d1" />
                   )}
                 </div>
               );
@@ -484,21 +423,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
           {carouselScrollIndex < Math.max(0, carouselMovies.length - 5) && (
             <button
               onClick={() => setCarouselScrollIndex(i => Math.min(carouselMovies.length - 5, i + 1))}
-              style={{
-                background: 'rgba(15, 16, 20, 0.75)',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                color: '#FFF',
-                borderRadius: '50%',
-                width: '32px',
-                height: '32px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                backdropFilter: 'blur(8px)',
-                transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
-              }}
+              className="herobanner-elem-a23959"
               onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.15)'; e.currentTarget.style.background = 'rgba(255,255,255,0.2)'; }}
               onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.background = 'rgba(15, 16, 20, 0.75)'; }}
             >
@@ -511,26 +436,10 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
       {/* Right Edge: Maturity Rating Tag (Netflix only) */}
       {platform === 'nflix' && (
         <div
-          style={{
-            position: 'absolute',
-            right: '4%',
-            bottom: '80px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-            zIndex: 20,
-          }}
+          className="herobanner-elem-eab72e"
         >
           <div
-            style={{
-              backgroundColor: 'rgba(51, 51, 51, 0.6)',
-              borderLeft: '3px solid #DCDCDC',
-              padding: '4px 12px 4px 8px',
-              fontSize: '0.88rem',
-              fontWeight: 700,
-              color: '#FFF',
-              backdropFilter: 'blur(8px)',
-            }}
+            className="herobanner-elem-8201f7"
           >
             {enrichedMovie.maturityRating}
           </div>
