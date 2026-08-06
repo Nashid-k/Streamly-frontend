@@ -155,6 +155,16 @@ export const MovieCard: React.FC<MovieCardProps> = ({
           willChange: 'transform, box-shadow',
         }}
       >
+        {!isImageLoaded && imgSrc && imgSrc !== 'broken' && (
+          <div style={{
+            position: 'absolute', inset: 0,
+            animation: 'netflixSkeletonPulse 1.5s infinite ease-in-out',
+            zIndex: 0,
+            pointerEvents: 'none',
+            background: 'rgba(255,255,255,0.05)',
+            borderRadius: 'inherit'
+          }} />
+        )}
         {imgSrc && imgSrc !== 'broken' ? (
           <img
             src={imgSrc}
@@ -254,6 +264,16 @@ export const MovieCard: React.FC<MovieCardProps> = ({
           willChange: 'transform, box-shadow',
         }}
       >
+        {!isImageLoaded && imgSrc && imgSrc !== 'broken' && (
+          <div style={{
+            position: 'absolute', inset: 0,
+            animation: 'netflixSkeletonPulse 1.5s infinite ease-in-out',
+            zIndex: 0,
+            pointerEvents: 'none',
+            background: 'rgba(255,255,255,0.05)',
+            borderRadius: 'inherit'
+          }} />
+        )}
         {imgSrc && imgSrc !== 'broken' ? (
           <img
             src={imgSrc}
@@ -388,6 +408,16 @@ export const MovieCard: React.FC<MovieCardProps> = ({
           <div className="moviecard-elem-1f0f68">
             COMING SOON
           </div>
+        )}
+        {!isImageLoaded && imgSrc && imgSrc !== 'broken' && (
+          <div style={{
+            position: 'absolute', inset: 0,
+            animation: 'netflixSkeletonPulse 1.5s infinite ease-in-out',
+            zIndex: 0,
+            pointerEvents: 'none',
+            background: 'rgba(255,255,255,0.05)',
+            borderRadius: 'inherit'
+          }} />
         )}
         {imgSrc && imgSrc !== 'broken' ? (
           <img
