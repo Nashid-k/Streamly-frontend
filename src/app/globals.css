@@ -1032,3 +1032,4 @@ button {
 button:active {
   transform: scale(0.95);
 }
+img { -webkit-user-drag: none; user-select: none; }
