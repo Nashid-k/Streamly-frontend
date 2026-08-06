@@ -22,6 +22,20 @@ function formatCastNames(castList?: any[]): string {
   return names.slice(0, 5).join(', ') + (names.length > 5 ? ', ...' : '');
 }
 
+function renderPlatformBadges(availablePlatforms?: string[]) {
+  if (!availablePlatforms || availablePlatforms.length === 0) return null;
+  return (
+    <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+      {availablePlatforms.map((label) => {
+        if (label === 'Netflix') return <img key="Netflix" src="https://assets.nflxext.com/ffe/siteui/common/icons/nficon2016.ico" title="Available on Netflix" style={{width: '26px', height: '26px', borderRadius: '4px', objectFit: 'contain', background: '#000', padding: '2px', boxShadow: '0 2px 8px rgba(0,0,0,0.8)'}} />;
+        if (label === 'Prime Video') return <img key="Prime Video" src="https://www.primevideo.com/favicon.ico" title="Available on Prime Video" style={{width: '26px', height: '26px', borderRadius: '4px', objectFit: 'contain', background: '#000', padding: '2px', boxShadow: '0 2px 8px rgba(0,0,0,0.8)'}} />;
+        if (label === 'Hotstar') return <img key="Hotstar" src="https://secure-media.hotstarext.com/web-assets/prod/images/favicon.ico" title="Available on Disney+ Hotstar" style={{width: '26px', height: '26px', borderRadius: '4px', objectFit: 'contain', background: '#000', padding: '2px', boxShadow: '0 2px 8px rgba(0,0,0,0.8)'}} />;
+        return null;
+      })}
+    </div>
+  );
+}
+
 function useMovieDetails(movie: Movie | null, selectedSeason: number, platform: string) {
   const [detailedMovie, setDetailedMovie] = useState<Movie | null>(null);
   const [episodes, setEpisodes] = useState<Episode[]>([]);
@@ -251,6 +265,7 @@ function NetflixModal({ movie, onClose, onPlay, onOpenDetails, onToggleMyList, i
 
           <div className="detail-hero-content" style={{ position: 'absolute', bottom: '20px', left: '24px', right: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', zIndex: 20 }}>
             <div>
+              {renderPlatformBadges(movie.availablePlatforms)}
               {displayMovie?.logoUrl ? (
                 <img className="detail-logo-img" src={displayMovie.logoUrl} style={{ maxWidth: '350px', maxHeight: '120px', objectFit: 'contain', marginBottom: '20px' }} />
               ) : (

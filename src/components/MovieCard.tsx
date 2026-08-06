@@ -59,13 +59,13 @@ export const MovieCard: React.FC<MovieCardProps> = ({
 
   const renderPlatformLogo = (label: string) => {
     if (label === 'Netflix') {
-      return <div key="Netflix" className="moviecard-elem-f52360" title="Available on Netflix">N</div>;
+      return <img key="Netflix" src="https://assets.nflxext.com/ffe/siteui/common/icons/nficon2016.ico" title="Available on Netflix" className="moviecard-elem-f52360" style={{objectFit: 'contain', padding: '2px'}} />;
     }
     if (label === 'Prime Video') {
-      return <div key="Prime Video" className="moviecard-elem-115c67" title="Available on Prime Video">P</div>;
+      return <img key="Prime Video" src="https://www.primevideo.com/favicon.ico" title="Available on Prime Video" className="moviecard-elem-115c67" style={{objectFit: 'contain', padding: '2px'}} />;
     }
     if (label === 'Hotstar') {
-      return <div key="Hotstar" className="moviecard-elem-cf56c6" title="Available on Disney+ Hotstar">H+</div>;
+      return <img key="Hotstar" src="https://secure-media.hotstarext.com/web-assets/prod/images/favicon.ico" title="Available on Disney+ Hotstar" className="moviecard-elem-cf56c6" style={{objectFit: 'contain', padding: '2px'}} />;
     }
     return null;
   };
@@ -149,7 +149,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
           transform: isHovered ? 'scale(1.08)' : 'scale(1)',
           boxShadow: isHovered ? '0 12px 32px rgba(0,0,0,0.85), 0 0 16px rgba(31, 128, 224, 0.6)' : '0 4px 14px rgba(0,0,0,0.5)',
           border: isHovered ? '2px solid rgba(31, 128, 224, 0.9)' : '1px solid rgba(255,255,255,0.05)',
-          transition: 'transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), border 0.35s ease',
+          transition: `transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), border 0.35s ease, z-index 0s ${isHovered ? '0s' : '0.35s'}`,
           zIndex: isHovered ? 50 : 1,
           backgroundColor: '#0F1014',
           willChange: 'transform, box-shadow',
@@ -258,7 +258,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
           transform: isHovered ? 'scale(1.08)' : 'scale(1)',
           boxShadow: isHovered ? '0 12px 30px rgba(0,0,0,0.95), 0 0 20px rgba(0, 168, 225, 0.6)' : '0 4px 12px rgba(0,0,0,0.6)',
           border: isHovered ? '2px solid #00A8E1' : '1px solid rgba(255,255,255,0.06)',
-          transition: 'transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), border 0.35s ease',
+          transition: `transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), border 0.35s ease, z-index 0s ${isHovered ? '0s' : '0.35s'}`,
           zIndex: isHovered ? 50 : 1,
           backgroundColor: '#0F171E',
           willChange: 'transform, box-shadow',
@@ -371,6 +371,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
         borderRadius: '4px',
         cursor: 'pointer',
         zIndex: isHovered ? 50 : 1,
+        transition: `z-index 0s ${isHovered ? '0s' : '0.4s'}`,
         // When hovered, the card breaks out of overflow to show the dropdown
         overflow: 'visible',
       }}
@@ -384,7 +385,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
         boxShadow: isHovered ? '0 14px 28px rgba(0,0,0,0.9), 0 10px 10px rgba(0,0,0,0.8)' : 'none',
         transform: isHovered ? 'scale(1.25)' : 'scale(1)',
         transformOrigin: 'center center',
-        transition: 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s ease',
+        transition: `transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s ease, z-index 0s ${isHovered ? '0s' : '0.4s'}`,
         zIndex: isHovered ? 50 : 1,
       }}>
         {/* Netflix N Logo */}

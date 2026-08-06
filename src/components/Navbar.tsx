@@ -368,19 +368,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               {isSearchOpen && (
                 <div style={{ position: 'relative' }}>
                   <input aria-label="Search titles, people, or genres" type="text" placeholder="Titles, people, genres" value={searchQuery} onChange={(e) => onSearchChange(e.target.value)} autoFocus onBlur={() => { setTimeout(() => { if (!searchQuery) setIsSearchOpen(false); }, 400); }} style={{ background: 'rgba(0, 0, 0, 0.75)', border: '1px solid rgba(255, 255, 255, 0.8)', color: '#FFF', padding: '6px 12px', marginLeft: '10px', width: '220px', fontSize: '0.9rem', outline: 'none', borderRadius: (platform === 'nprime') ? '8px' : '4px' }} />
-                  {searchQuery && searchResults.length > 0 && (
-                    <div className="search-dropdown-custom-scroll" style={{ position: 'absolute', top: '100%', left: '10px', width: '300px', background: 'rgba(20,20,20,0.95)', border: '1px solid #333', borderRadius: '4px', marginTop: '4px', zIndex: 50, maxHeight: '400px', overflowY: 'auto' }}>
-                      {searchResults.slice(0, 5).map((m: any) => (
-                        <div key={m.id} onClick={() => { if (onSearchResultSelect) onSearchResultSelect(m); onSearchChange(''); setIsSearchOpen(false); }} style={{ display: 'flex', gap: '10px', padding: '10px', cursor: 'pointer', borderBottom: '1px solid #333' }}>
-                          <img src={m.thumbnailUrl || m.posterUrl} alt={m.title} style={{ width: '80px', height: '45px', objectFit: 'cover', borderRadius: '2px' }} />
-                          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                            <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>{m.title}</span>
-                            <span style={{ fontSize: '0.75rem', color: '#888' }}>{m.year} • {m.genre}</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                  {/* Search Dropdown Removed */}
                 </div>
               )}
             </div>
